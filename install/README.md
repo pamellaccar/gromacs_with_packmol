@@ -1,5 +1,5 @@
 # Install GROMACS
-
+```
 wget ftp://ftp.gromacs.org/pub/gromacs/gromacs-2022.1.tar.gz
 tar -xzf gromacs-2022.1.tar.gz
 cd gromacs-2022.1
@@ -9,10 +9,12 @@ cmake .. -DGMX_BUILD_OWN_FFTW=ON -DREGRESSIONTEST_DOWNLOAD=OFF -DGMX_MPI=ON -DGM
 make -j 4
 make install
 source $PATH/gromacs-2022.1/bin/GMXRC
+```
 
 # Install PACKMOL
-
+```
 wget http://leandro.iqm.unicamp.br/m3g/packmol/packmol.tar.gz
 tar -xzf packmol.tar.gz
 cd packmol
 make
+```
