@@ -1,0 +1,1 @@
+/usr/bin/c++ -fPIC -O3 -DNDEBUG -shared -Wl,-soname,libgmock_main.so.1.11.0 -o ../../../../lib/libgmock_main.so.1.11.0 CMakeFiles/gmock_main.dir/src/gmock_main.cc.o  -Wl,-rpath,"\$ORIGIN/../lib" ../../../../lib/libgmock.so.1.11.0 ../../../../lib/libgtest.so.1.11.0 

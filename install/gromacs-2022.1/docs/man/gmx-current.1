@@ -1,0 +1,171 @@
+.\" Man page generated from reStructuredText.
+.
+.
+.nr rst2man-indent-level 0
+.
+.de1 rstReportMargin
+\\$1 \\n[an-margin]
+level \\n[rst2man-indent-level]
+level margin: \\n[rst2man-indent\\n[rst2man-indent-level]]
+-
+\\n[rst2man-indent0]
+\\n[rst2man-indent1]
+\\n[rst2man-indent2]
+..
+.de1 INDENT
+.\" .rstReportMargin pre:
+. RS \\$1
+. nr rst2man-indent\\n[rst2man-indent-level] \\n[an-margin]
+. nr rst2man-indent-level +1
+.\" .rstReportMargin post:
+..
+.de UNINDENT
+. RE
+.\" indent \\n[an-margin]
+.\" old: \\n[rst2man-indent\\n[rst2man-indent-level]]
+.nr rst2man-indent-level -1
+.\" new: \\n[rst2man-indent\\n[rst2man-indent-level]]
+.in \\n[rst2man-indent\\n[rst2man-indent-level]]u
+..
+.TH "GMX-CURRENT" "1" "Apr 22, 2022" "2022.1" "GROMACS"
+.SH NAME
+gmx-current \- Calculate dielectric constants and current autocorrelation function
+.SH SYNOPSIS
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+gmx current [\fB\-s\fP \fI[<.tpr/.gro/...>]\fP] [\fB\-n\fP \fI[<.ndx>]\fP] [\fB\-f\fP \fI[<.xtc/.trr/...>]\fP]
+            [\fB\-o\fP \fI[<.xvg>]\fP] [\fB\-caf\fP \fI[<.xvg>]\fP] [\fB\-dsp\fP \fI[<.xvg>]\fP]
+            [\fB\-md\fP \fI[<.xvg>]\fP] [\fB\-mj\fP \fI[<.xvg>]\fP] [\fB\-mc\fP \fI[<.xvg>]\fP] [\fB\-b\fP \fI<time>\fP]
+            [\fB\-e\fP \fI<time>\fP] [\fB\-dt\fP \fI<time>\fP] [\fB\-[no]w\fP] [\fB\-xvg\fP \fI<enum>\fP]
+            [\fB\-sh\fP \fI<int>\fP] [\fB\-[no]nojump\fP] [\fB\-eps\fP \fI<real>\fP] [\fB\-bfit\fP \fI<real>\fP]
+            [\fB\-efit\fP \fI<real>\fP] [\fB\-bvit\fP \fI<real>\fP] [\fB\-evit\fP \fI<real>\fP]
+            [\fB\-temp\fP \fI<real>\fP]
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.SH DESCRIPTION
+.sp
+\fBgmx current\fP is a tool for calculating the current autocorrelation function, the correlation
+of the rotational and translational dipole moment of the system, and the resulting static
+dielectric constant. To obtain a reasonable result, the index group has to be neutral.
+Furthermore, the routine is capable of extracting the static conductivity from the current
+autocorrelation function, if velocities are given. Additionally, an Einstein\-Helfand fit
+can be used to obtain the static conductivity.
+.sp
+The flag \fB\-caf\fP is for the output of the current autocorrelation function and \fB\-mc\fP writes the
+correlation of the rotational and translational part of the dipole moment in the corresponding
+file. However, this option is only available for trajectories containing velocities.
+Options \fB\-sh\fP and \fB\-tr\fP are responsible for the averaging and integration of the
+autocorrelation functions. Since averaging proceeds by shifting the starting point
+through the trajectory, the shift can be modified with \fB\-sh\fP to enable the choice of uncorrelated
+starting points. Towards the end, statistical inaccuracy grows and integrating the
+correlation function only yields reliable values until a certain point, depending on
+the number of frames. The option \fB\-tr\fP controls the region of the integral taken into account
+for calculating the static dielectric constant.
+.sp
+Option \fB\-temp\fP sets the temperature required for the computation of the static dielectric constant.
+.sp
+Option \fB\-eps\fP controls the dielectric constant of the surrounding medium for simulations using
+a Reaction Field or dipole corrections of the Ewald summation (\fB\-eps\fP=0 corresponds to
+tin\-foil boundary conditions).
+.sp
+\fB\-[no]nojump\fP unfolds the coordinates to allow free diffusion. This is required to get a continuous
+translational dipole moment, required for the Einstein\-Helfand fit. The results from the fit allow
+the determination of the dielectric constant for system of charged molecules. However, it is also possible to extract
+the dielectric constant from the fluctuations of the total dipole moment in folded coordinates. But this
+option has to be used with care, since only very short time spans fulfill the approximation that the density
+of the molecules is approximately constant and the averages are already converged. To be on the safe side,
+the dielectric constant should be calculated with the help of the Einstein\-Helfand method for
+the translational part of the dielectric constant.
+.SH OPTIONS
+.sp
+Options to specify input files:
+.INDENT 0.0
+.TP
+.B \fB\-s\fP [<.tpr/.gro/...>] (topol.tpr)
+Structure+mass(db): tpr gro g96 pdb brk ent
+.TP
+.B \fB\-n\fP [<.ndx>] (index.ndx) (Optional)
+Index file
+.TP
+.B \fB\-f\fP [<.xtc/.trr/...>] (traj.xtc)
+Trajectory: xtc trr cpt gro g96 pdb tng
+.UNINDENT
+.sp
+Options to specify output files:
+.INDENT 0.0
+.TP
+.B \fB\-o\fP [<.xvg>] (current.xvg)
+xvgr/xmgr file
+.TP
+.B \fB\-caf\fP [<.xvg>] (caf.xvg) (Optional)
+xvgr/xmgr file
+.TP
+.B \fB\-dsp\fP [<.xvg>] (dsp.xvg)
+xvgr/xmgr file
+.TP
+.B \fB\-md\fP [<.xvg>] (md.xvg)
+xvgr/xmgr file
+.TP
+.B \fB\-mj\fP [<.xvg>] (mj.xvg)
+xvgr/xmgr file
+.TP
+.B \fB\-mc\fP [<.xvg>] (mc.xvg) (Optional)
+xvgr/xmgr file
+.UNINDENT
+.sp
+Other options:
+.INDENT 0.0
+.TP
+.B \fB\-b\fP <time> (0)
+Time of first frame to read from trajectory (default unit ps)
+.TP
+.B \fB\-e\fP <time> (0)
+Time of last frame to read from trajectory (default unit ps)
+.TP
+.B \fB\-dt\fP <time> (0)
+Only use frame when t MOD dt = first time (default unit ps)
+.TP
+.B \fB\-[no]w\fP  (no)
+View output \&.xvg, \&.xpm, \&.eps and \&.pdb files
+.TP
+.B \fB\-xvg\fP <enum> (xmgrace)
+xvg plot formatting: xmgrace, xmgr, none
+.TP
+.B \fB\-sh\fP <int> (1000)
+Shift of the frames for averaging the correlation functions and the mean\-square displacement.
+.TP
+.B \fB\-[no]nojump\fP  (yes)
+Removes jumps of atoms across the box.
+.TP
+.B \fB\-eps\fP <real> (0)
+Dielectric constant of the surrounding medium. The value zero corresponds to infinity (tin\-foil boundary conditions).
+.TP
+.B \fB\-bfit\fP <real> (100)
+Begin of the fit of the straight line to the MSD of the translational fraction of the dipole moment.
+.TP
+.B \fB\-efit\fP <real> (400)
+End of the fit of the straight line to the MSD of the translational fraction of the dipole moment.
+.TP
+.B \fB\-bvit\fP <real> (0.5)
+Begin of the fit of the current autocorrelation function to a*t^b.
+.TP
+.B \fB\-evit\fP <real> (5)
+End of the fit of the current autocorrelation function to a*t^b.
+.TP
+.B \fB\-temp\fP <real> (300)
+Temperature for calculating epsilon.
+.UNINDENT
+.SH SEE ALSO
+.sp
+\fBgmx(1)\fP
+.sp
+More information about GROMACS is available at <\fI\%http://www.gromacs.org/\fP>.
+.SH COPYRIGHT
+2022, GROMACS development team
+.\" Generated by docutils manpage writer.
+.

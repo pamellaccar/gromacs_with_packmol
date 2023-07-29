@@ -1,0 +1,158 @@
+.\" Man page generated from reStructuredText.
+.
+.
+.nr rst2man-indent-level 0
+.
+.de1 rstReportMargin
+\\$1 \\n[an-margin]
+level \\n[rst2man-indent-level]
+level margin: \\n[rst2man-indent\\n[rst2man-indent-level]]
+-
+\\n[rst2man-indent0]
+\\n[rst2man-indent1]
+\\n[rst2man-indent2]
+..
+.de1 INDENT
+.\" .rstReportMargin pre:
+. RS \\$1
+. nr rst2man-indent\\n[rst2man-indent-level] \\n[an-margin]
+. nr rst2man-indent-level +1
+.\" .rstReportMargin post:
+..
+.de UNINDENT
+. RE
+.\" indent \\n[an-margin]
+.\" old: \\n[rst2man-indent\\n[rst2man-indent-level]]
+.nr rst2man-indent-level -1
+.\" new: \\n[rst2man-indent\\n[rst2man-indent-level]]
+.in \\n[rst2man-indent\\n[rst2man-indent-level]]u
+..
+.TH "GMX-SOLVATE" "1" "Apr 22, 2022" "2022.1" "GROMACS"
+.SH NAME
+gmx-solvate \- Solvate a system
+.SH SYNOPSIS
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+gmx solvate [\fB\-cp\fP \fI[<.gro/.g96/...>]\fP] [\fB\-cs\fP \fI[<.gro/.g96/...>]\fP]
+            [\fB\-p\fP \fI[<.top>]\fP] [\fB\-o\fP \fI[<.gro/.g96/...>]\fP] [\fB\-box\fP \fI<vector>\fP]
+            [\fB\-radius\fP \fI<real>\fP] [\fB\-scale\fP \fI<real>\fP] [\fB\-shell\fP \fI<real>\fP]
+            [\fB\-maxsol\fP \fI<int>\fP] [\fB\-[no]vel\fP]
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.SH DESCRIPTION
+.sp
+\fBgmx solvate\fP can do one of 2 things:
+.sp
+1) Generate a box of solvent. Specify \fB\-cs\fP and \fB\-box\fP\&.
+Or specify \fB\-cs\fP and \fB\-cp\fP with a structure file with
+a box, but without atoms.
+.sp
+2) Solvate a solute configuration, e.g. a protein, in a bath of solvent
+molecules. Specify \fB\-cp\fP (solute) and \fB\-cs\fP (solvent).
+The box specified in the solute coordinate file (\fB\-cp\fP) is used,
+unless \fB\-box\fP is set.
+If you want the solute to be centered in the box,
+the program gmx editconf has sophisticated options
+to change the box dimensions and center the solute.
+Solvent molecules are removed from the box where the
+distance between any atom of the solute molecule(s) and any atom of
+the solvent molecule is less than the sum of the scaled van der Waals
+radii of both atoms. A database (\fBvdwradii.dat\fP) of van der
+Waals radii is read by the program, and the resulting radii scaled
+by \fB\-scale\fP\&. If radii are not found in the database, those
+atoms are assigned the (pre\-scaled) distance \fB\-radius\fP\&.
+Note that the usefulness of those radii depends on the atom names,
+and thus varies widely with force field.
+.sp
+The default solvent is Simple Point Charge water (SPC), with coordinates
+from \fB$GMXLIB/spc216.gro\fP\&. These coordinates can also be used
+for other 3\-site water models, since a short equibilibration will remove
+the small differences between the models.
+Other solvents are also supported, as well as mixed solvents. The
+only restriction to solvent types is that a solvent molecule consists
+of exactly one residue. The residue information in the coordinate
+files is used, and should therefore be more or less consistent.
+In practice this means that two subsequent solvent molecules in the
+solvent coordinate file should have different residue number.
+The box of solute is built by stacking the coordinates read from
+the coordinate file. This means that these coordinates should be
+equlibrated in periodic boundary conditions to ensure a good
+alignment of molecules on the stacking interfaces.
+The \fB\-maxsol\fP option simply adds only the first \fB\-maxsol\fP
+solvent molecules and leaves out the rest that would have fitted
+into the box. This can create a void that can cause problems later.
+Choose your volume wisely.
+.sp
+Setting \fB\-shell\fP larger than zero will place a layer of water of
+the specified thickness (nm) around the solute. Hint: it is a good
+idea to put the protein in the center of a box first (using gmx editconf).
+.sp
+Finally, \fBgmx solvate\fP will optionally remove lines from your topology file in
+which a number of solvent molecules is already added, and adds a
+line with the total number of solvent molecules in your coordinate file.
+.SH OPTIONS
+.sp
+Options to specify input files:
+.INDENT 0.0
+.TP
+.B \fB\-cp\fP [<.gro/.g96/...>] (protein.gro) (Optional)
+Structure file: gro g96 pdb brk ent esp tpr
+.TP
+.B \fB\-cs\fP [<.gro/.g96/...>] (spc216.gro) (Library)
+Structure file: gro g96 pdb brk ent esp tpr
+.UNINDENT
+.sp
+Options to specify input/output files:
+.INDENT 0.0
+.TP
+.B \fB\-p\fP [<.top>] (topol.top) (Optional)
+Topology file
+.UNINDENT
+.sp
+Options to specify output files:
+.INDENT 0.0
+.TP
+.B \fB\-o\fP [<.gro/.g96/...>] (out.gro)
+Structure file: gro g96 pdb brk ent esp
+.UNINDENT
+.sp
+Other options:
+.INDENT 0.0
+.TP
+.B \fB\-box\fP <vector> (0 0 0)
+Box size (in nm)
+.TP
+.B \fB\-radius\fP <real> (0.105)
+Default van der Waals distance
+.TP
+.B \fB\-scale\fP <real> (0.57)
+Scale factor to multiply Van der Waals radii from the database in share/gromacs/top/vdwradii.dat. The default value of 0.57 yields density close to 1000 g/l for proteins in water.
+.TP
+.B \fB\-shell\fP <real> (0)
+Thickness of optional water layer around solute
+.TP
+.B \fB\-maxsol\fP <int> (0)
+Maximum number of solvent molecules to add if they fit in the box. If zero (default) this is ignored
+.TP
+.B \fB\-[no]vel\fP  (no)
+Keep velocities from input solute and solvent
+.UNINDENT
+.SH KNOWN ISSUES
+.INDENT 0.0
+.IP \(bu 2
+Molecules must be whole in the initial configurations.
+.UNINDENT
+.SH SEE ALSO
+.sp
+\fBgmx(1)\fP
+.sp
+More information about GROMACS is available at <\fI\%http://www.gromacs.org/\fP>.
+.SH COPYRIGHT
+2022, GROMACS development team
+.\" Generated by docutils manpage writer.
+.

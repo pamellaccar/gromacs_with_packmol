@@ -1,0 +1,192 @@
+.\" Man page generated from reStructuredText.
+.
+.
+.nr rst2man-indent-level 0
+.
+.de1 rstReportMargin
+\\$1 \\n[an-margin]
+level \\n[rst2man-indent-level]
+level margin: \\n[rst2man-indent\\n[rst2man-indent-level]]
+-
+\\n[rst2man-indent0]
+\\n[rst2man-indent1]
+\\n[rst2man-indent2]
+..
+.de1 INDENT
+.\" .rstReportMargin pre:
+. RS \\$1
+. nr rst2man-indent\\n[rst2man-indent-level] \\n[an-margin]
+. nr rst2man-indent-level +1
+.\" .rstReportMargin post:
+..
+.de UNINDENT
+. RE
+.\" indent \\n[an-margin]
+.\" old: \\n[rst2man-indent\\n[rst2man-indent-level]]
+.nr rst2man-indent-level -1
+.\" new: \\n[rst2man-indent\\n[rst2man-indent-level]]
+.in \\n[rst2man-indent\\n[rst2man-indent-level]]u
+..
+.TH "GMX-GANGLE" "1" "Apr 22, 2022" "2022.1" "GROMACS"
+.SH NAME
+gmx-gangle \- Calculate angles
+.SH SYNOPSIS
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+gmx gangle [\fB\-f\fP \fI[<.xtc/.trr/...>]\fP] [\fB\-s\fP \fI[<.tpr/.gro/...>]\fP] [\fB\-n\fP \fI[<.ndx>]\fP]
+           [\fB\-oav\fP \fI[<.xvg>]\fP] [\fB\-oall\fP \fI[<.xvg>]\fP] [\fB\-oh\fP \fI[<.xvg>]\fP]
+           [\fB\-b\fP \fI<time>\fP] [\fB\-e\fP \fI<time>\fP] [\fB\-dt\fP \fI<time>\fP] [\fB\-tu\fP \fI<enum>\fP]
+           [\fB\-fgroup\fP \fI<selection>\fP] [\fB\-xvg\fP \fI<enum>\fP] [\fB\-[no]rmpbc\fP]
+           [\fB\-[no]pbc\fP] [\fB\-sf\fP \fI<file>\fP] [\fB\-selrpos\fP \fI<enum>\fP]
+           [\fB\-seltype\fP \fI<enum>\fP] [\fB\-g1\fP \fI<enum>\fP] [\fB\-g2\fP \fI<enum>\fP] [\fB\-binw\fP \fI<real>\fP]
+           [\fB\-group1\fP \fI<selection>\fP] [\fB\-group2\fP \fI<selection>\fP]
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.SH DESCRIPTION
+.sp
+\fBgmx gangle\fP computes different types of angles between vectors.
+It supports both vectors defined by two positions and normals of
+planes defined by three positions.
+The z axis or the local normal of a sphere can also be used as
+one of the vectors.
+There are also convenience options \(aqangle\(aq and \(aqdihedral\(aq for
+calculating bond angles and dihedrals defined by three/four
+positions.
+.sp
+The type of the angle is specified with \fB\-g1\fP and \fB\-g2\fP\&.
+If \fB\-g1\fP is \fBangle\fP or \fBdihedral\fP, \fB\-g2\fP
+should not be specified.
+In this case, \fB\-group1\fP should specify one or more selections,
+and each should contain triplets or quartets of positions that define
+the angles to be calculated.
+.sp
+If \fB\-g1\fP is \fBvector\fP or \fBplane\fP, \fB\-group1\fP
+should specify selections that contain either pairs (\fBvector\fP)
+or triplets (\fBplane\fP) of positions. For vectors, the positions
+set the endpoints of the vector, and for planes, the three positions
+are used to calculate the normal of the plane. In both cases,
+\fB\-g2\fP specifies the other vector to use (see below).
+.sp
+With \fB\-g2 vector\fP or \fB\-g2 plane\fP, \fB\-group2\fP should
+specify another set of vectors. \fB\-group1\fP and \fB\-group2\fP
+should specify the same number of selections. It is also allowed to
+only have a single selection for one of the options, in which case
+the same selection is used with each selection in the other group.
+Similarly, for each selection in \fB\-group1\fP, the corresponding
+selection in \fB\-group2\fP should specify the same number of
+vectors or a single vector. In the latter case, the angle is
+calculated between that single vector and each vector from the other
+selection.
+.sp
+With \fB\-g2 sphnorm\fP, each selection in \fB\-group2\fP should
+specify a single position that is the center of the sphere.
+The second vector is calculated as the vector from the center to the
+midpoint of the positions specified by \fB\-group1\fP\&.
+.sp
+With \fB\-g2 z\fP, \fB\-group2\fP is not necessary, and angles
+between the first vectors and the positive Z axis are calculated.
+.sp
+With \fB\-g2 t0\fP, \fB\-group2\fP is not necessary, and angles
+are calculated from the vectors as they are in the first frame.
+.sp
+There are three options for output:
+\fB\-oav\fP writes an xvg file with the time and the average angle
+for each frame.
+\fB\-oall\fP writes all the individual angles.
+\fB\-oh\fP writes a histogram of the angles. The bin width can be
+set with \fB\-binw\fP\&.
+For \fB\-oav\fP and \fB\-oh\fP, separate average/histogram is
+computed for each selection in \fB\-group1\fP\&.
+.SH OPTIONS
+.sp
+Options to specify input files:
+.INDENT 0.0
+.TP
+.B \fB\-f\fP [<.xtc/.trr/...>] (traj.xtc) (Optional)
+Input trajectory or single configuration: xtc trr cpt gro g96 pdb tng
+.TP
+.B \fB\-s\fP [<.tpr/.gro/...>] (topol.tpr) (Optional)
+Input structure: tpr gro g96 pdb brk ent
+.TP
+.B \fB\-n\fP [<.ndx>] (index.ndx) (Optional)
+Extra index groups
+.UNINDENT
+.sp
+Options to specify output files:
+.INDENT 0.0
+.TP
+.B \fB\-oav\fP [<.xvg>] (angaver.xvg) (Optional)
+Average angles as a function of time
+.TP
+.B \fB\-oall\fP [<.xvg>] (angles.xvg) (Optional)
+All angles as a function of time
+.TP
+.B \fB\-oh\fP [<.xvg>] (anghist.xvg) (Optional)
+Histogram of the angles
+.UNINDENT
+.sp
+Other options:
+.INDENT 0.0
+.TP
+.B \fB\-b\fP <time> (0)
+First frame (ps) to read from trajectory
+.TP
+.B \fB\-e\fP <time> (0)
+Last frame (ps) to read from trajectory
+.TP
+.B \fB\-dt\fP <time> (0)
+Only use frame if t MOD dt == first time (ps)
+.TP
+.B \fB\-tu\fP <enum> (ps)
+Unit for time values: fs, ps, ns, us, ms, s
+.TP
+.B \fB\-fgroup\fP <selection>
+Atoms stored in the trajectory file (if not set, assume first N atoms)
+.TP
+.B \fB\-xvg\fP <enum> (xmgrace)
+Plot formatting: xmgrace, xmgr, none
+.TP
+.B \fB\-[no]rmpbc\fP  (yes)
+Make molecules whole for each frame
+.TP
+.B \fB\-[no]pbc\fP  (yes)
+Use periodic boundary conditions for distance calculation
+.TP
+.B \fB\-sf\fP <file>
+Provide selections from files
+.TP
+.B \fB\-selrpos\fP <enum> (atom)
+Selection reference positions: atom, res_com, res_cog, mol_com, mol_cog, whole_res_com, whole_res_cog, whole_mol_com, whole_mol_cog, part_res_com, part_res_cog, part_mol_com, part_mol_cog, dyn_res_com, dyn_res_cog, dyn_mol_com, dyn_mol_cog
+.TP
+.B \fB\-seltype\fP <enum> (atom)
+Default selection output positions: atom, res_com, res_cog, mol_com, mol_cog, whole_res_com, whole_res_cog, whole_mol_com, whole_mol_cog, part_res_com, part_res_cog, part_mol_com, part_mol_cog, dyn_res_com, dyn_res_cog, dyn_mol_com, dyn_mol_cog
+.TP
+.B \fB\-g1\fP <enum> (angle)
+Type of analysis/first vector group: angle, dihedral, vector, plane
+.TP
+.B \fB\-g2\fP <enum> (none)
+Type of second vector group: none, vector, plane, t0, z, sphnorm
+.TP
+.B \fB\-binw\fP <real> (1)
+Binwidth for \-oh in degrees
+.TP
+.B \fB\-group1\fP <selection>
+First analysis/vector selection
+.TP
+.B \fB\-group2\fP <selection>
+Second analysis/vector selection
+.UNINDENT
+.SH SEE ALSO
+.sp
+\fBgmx(1)\fP
+.sp
+More information about GROMACS is available at <\fI\%http://www.gromacs.org/\fP>.
+.SH COPYRIGHT
+2022, GROMACS development team
+.\" Generated by docutils manpage writer.
+.

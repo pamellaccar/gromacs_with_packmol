@@ -1,0 +1,164 @@
+.\" Man page generated from reStructuredText.
+.
+.
+.nr rst2man-indent-level 0
+.
+.de1 rstReportMargin
+\\$1 \\n[an-margin]
+level \\n[rst2man-indent-level]
+level margin: \\n[rst2man-indent\\n[rst2man-indent-level]]
+-
+\\n[rst2man-indent0]
+\\n[rst2man-indent1]
+\\n[rst2man-indent2]
+..
+.de1 INDENT
+.\" .rstReportMargin pre:
+. RS \\$1
+. nr rst2man-indent\\n[rst2man-indent-level] \\n[an-margin]
+. nr rst2man-indent-level +1
+.\" .rstReportMargin post:
+..
+.de UNINDENT
+. RE
+.\" indent \\n[an-margin]
+.\" old: \\n[rst2man-indent\\n[rst2man-indent-level]]
+.nr rst2man-indent-level -1
+.\" new: \\n[rst2man-indent\\n[rst2man-indent-level]]
+.in \\n[rst2man-indent\\n[rst2man-indent-level]]u
+..
+.TH "GMX-VANHOVE" "1" "Apr 22, 2022" "2022.1" "GROMACS"
+.SH NAME
+gmx-vanhove \- Compute Van Hove displacement and correlation functions
+.SH SYNOPSIS
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+gmx vanhove [\fB\-f\fP \fI[<.xtc/.trr/...>]\fP] [\fB\-s\fP \fI[<.tpr/.gro/...>]\fP] [\fB\-n\fP \fI[<.ndx>]\fP]
+            [\fB\-om\fP \fI[<.xpm>]\fP] [\fB\-or\fP \fI[<.xvg>]\fP] [\fB\-ot\fP \fI[<.xvg>]\fP] [\fB\-b\fP \fI<time>\fP]
+            [\fB\-e\fP \fI<time>\fP] [\fB\-dt\fP \fI<time>\fP] [\fB\-[no]w\fP] [\fB\-xvg\fP \fI<enum>\fP]
+            [\fB\-sqrt\fP \fI<real>\fP] [\fB\-fm\fP \fI<int>\fP] [\fB\-rmax\fP \fI<real>\fP] [\fB\-rbin\fP \fI<real>\fP]
+            [\fB\-mmax\fP \fI<real>\fP] [\fB\-nlevels\fP \fI<int>\fP] [\fB\-nr\fP \fI<int>\fP] [\fB\-fr\fP \fI<int>\fP]
+            [\fB\-rt\fP \fI<real>\fP] [\fB\-ft\fP \fI<int>\fP]
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.SH DESCRIPTION
+.sp
+\fBgmx vanhove\fP computes the Van Hove correlation function.
+The Van Hove G(r,t) is the probability that a particle that is at r_0
+at time zero can be found at position r_0+r at time t.
+\fBgmx vanhove\fP determines G not for a vector r, but for the length of r.
+Thus it gives the probability that a particle moves a distance of r
+in time t.
+Jumps across the periodic boundaries are removed.
+Corrections are made for scaling due to isotropic
+or anisotropic pressure coupling.
+.sp
+With option \fB\-om\fP the whole matrix can be written as a function
+of t and r or as a function of sqrt(t) and r (option \fB\-sqrt\fP).
+.sp
+With option \fB\-or\fP the Van Hove function is plotted for one
+or more values of t. Option \fB\-nr\fP sets the number of times,
+option \fB\-fr\fP the number spacing between the times.
+The binwidth is set with option \fB\-rbin\fP\&. The number of bins
+is determined automatically.
+.sp
+With option \fB\-ot\fP the integral up to a certain distance
+(option \fB\-rt\fP) is plotted as a function of time.
+.sp
+For all frames that are read the coordinates of the selected particles
+are stored in memory. Therefore the program may use a lot of memory.
+For options \fB\-om\fP and \fB\-ot\fP the program may be slow.
+This is because the calculation scales as the number of frames times
+\fB\-fm\fP or \fB\-ft\fP\&.
+Note that with the \fB\-dt\fP option the memory usage and calculation
+time can be reduced.
+.SH OPTIONS
+.sp
+Options to specify input files:
+.INDENT 0.0
+.TP
+.B \fB\-f\fP [<.xtc/.trr/...>] (traj.xtc)
+Trajectory: xtc trr cpt gro g96 pdb tng
+.TP
+.B \fB\-s\fP [<.tpr/.gro/...>] (topol.tpr)
+Structure+mass(db): tpr gro g96 pdb brk ent
+.TP
+.B \fB\-n\fP [<.ndx>] (index.ndx) (Optional)
+Index file
+.UNINDENT
+.sp
+Options to specify output files:
+.INDENT 0.0
+.TP
+.B \fB\-om\fP [<.xpm>] (vanhove.xpm) (Optional)
+X PixMap compatible matrix file
+.TP
+.B \fB\-or\fP [<.xvg>] (vanhove_r.xvg) (Optional)
+xvgr/xmgr file
+.TP
+.B \fB\-ot\fP [<.xvg>] (vanhove_t.xvg) (Optional)
+xvgr/xmgr file
+.UNINDENT
+.sp
+Other options:
+.INDENT 0.0
+.TP
+.B \fB\-b\fP <time> (0)
+Time of first frame to read from trajectory (default unit ps)
+.TP
+.B \fB\-e\fP <time> (0)
+Time of last frame to read from trajectory (default unit ps)
+.TP
+.B \fB\-dt\fP <time> (0)
+Only use frame when t MOD dt = first time (default unit ps)
+.TP
+.B \fB\-[no]w\fP  (no)
+View output \&.xvg, \&.xpm, \&.eps and \&.pdb files
+.TP
+.B \fB\-xvg\fP <enum> (xmgrace)
+xvg plot formatting: xmgrace, xmgr, none
+.TP
+.B \fB\-sqrt\fP <real> (0)
+Use sqrt(t) on the matrix axis which binspacing # in sqrt(ps)
+.TP
+.B \fB\-fm\fP <int> (0)
+Number of frames in the matrix, 0 is plot all
+.TP
+.B \fB\-rmax\fP <real> (2)
+Maximum r in the matrix (nm)
+.TP
+.B \fB\-rbin\fP <real> (0.01)
+Binwidth in the matrix and for \fB\-or\fP (nm)
+.TP
+.B \fB\-mmax\fP <real> (0)
+Maximum density in the matrix, 0 is calculate (1/nm)
+.TP
+.B \fB\-nlevels\fP <int> (81)
+Number of levels in the matrix
+.TP
+.B \fB\-nr\fP <int> (1)
+Number of curves for the \fB\-or\fP output
+.TP
+.B \fB\-fr\fP <int> (0)
+Frame spacing for the \fB\-or\fP output
+.TP
+.B \fB\-rt\fP <real> (0)
+Integration limit for the \fB\-ot\fP output (nm)
+.TP
+.B \fB\-ft\fP <int> (0)
+Number of frames in the \fB\-ot\fP output, 0 is plot all
+.UNINDENT
+.SH SEE ALSO
+.sp
+\fBgmx(1)\fP
+.sp
+More information about GROMACS is available at <\fI\%http://www.gromacs.org/\fP>.
+.SH COPYRIGHT
+2022, GROMACS development team
+.\" Generated by docutils manpage writer.
+.

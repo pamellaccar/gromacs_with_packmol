@@ -1,0 +1,165 @@
+.\" Man page generated from reStructuredText.
+.
+.
+.nr rst2man-indent-level 0
+.
+.de1 rstReportMargin
+\\$1 \\n[an-margin]
+level \\n[rst2man-indent-level]
+level margin: \\n[rst2man-indent\\n[rst2man-indent-level]]
+-
+\\n[rst2man-indent0]
+\\n[rst2man-indent1]
+\\n[rst2man-indent2]
+..
+.de1 INDENT
+.\" .rstReportMargin pre:
+. RS \\$1
+. nr rst2man-indent\\n[rst2man-indent-level] \\n[an-margin]
+. nr rst2man-indent-level +1
+.\" .rstReportMargin post:
+..
+.de UNINDENT
+. RE
+.\" indent \\n[an-margin]
+.\" old: \\n[rst2man-indent\\n[rst2man-indent-level]]
+.nr rst2man-indent-level -1
+.\" new: \\n[rst2man-indent\\n[rst2man-indent-level]]
+.in \\n[rst2man-indent\\n[rst2man-indent-level]]u
+..
+.TH "GMX-NMEIG" "1" "Apr 22, 2022" "2022.1" "GROMACS"
+.SH NAME
+gmx-nmeig \- Diagonalize the Hessian for normal mode analysis
+.SH SYNOPSIS
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+gmx nmeig [\fB\-f\fP \fI[<.mtx>]\fP] [\fB\-s\fP \fI[<.tpr>]\fP] [\fB\-of\fP \fI[<.xvg>]\fP] [\fB\-ol\fP \fI[<.xvg>]\fP]
+          [\fB\-os\fP \fI[<.xvg>]\fP] [\fB\-qc\fP \fI[<.xvg>]\fP] [\fB\-v\fP \fI[<.trr/.cpt/...>]\fP]
+          [\fB\-xvg\fP \fI<enum>\fP] [\fB\-[no]m\fP] [\fB\-first\fP \fI<int>\fP] [\fB\-last\fP \fI<int>\fP]
+          [\fB\-maxspec\fP \fI<int>\fP] [\fB\-T\fP \fI<real>\fP] [\fB\-P\fP \fI<real>\fP] [\fB\-sigma\fP \fI<int>\fP]
+          [\fB\-scale\fP \fI<real>\fP] [\fB\-linear_toler\fP \fI<real>\fP] [\fB\-[no]constr\fP]
+          [\fB\-width\fP \fI<real>\fP]
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.SH DESCRIPTION
+.sp
+\fBgmx nmeig\fP calculates the eigenvectors/values of a (Hessian) matrix,
+which can be calculated with gmx mdrun\&.
+The eigenvectors are written to a trajectory file (\fB\-v\fP).
+The structure is written first with t=0. The eigenvectors
+are written as frames with the eigenvector number and eigenvalue
+written as step number and timestamp, respectively.
+The eigenvectors can be analyzed with gmx anaeig\&.
+An ensemble of structures can be generated from the eigenvectors with
+gmx nmens\&. When mass weighting is used, the generated eigenvectors
+will be scaled back to plain Cartesian coordinates before generating the
+output. In this case, they will no longer be exactly orthogonal in the
+standard Cartesian norm, but in the mass\-weighted norm they would be.
+.sp
+This program can be optionally used to compute quantum corrections to heat capacity
+and enthalpy by providing an extra file argument \fB\-qcorr\fP\&. See the GROMACS
+manual, Chapter 1, for details. The result includes subtracting a harmonic
+degree of freedom at the given temperature.
+The total correction is printed on the terminal screen.
+The recommended way of getting the corrections out is:
+.sp
+\fBgmx nmeig \-s topol.tpr \-f nm.mtx \-first 7 \-last 10000 \-T 300 \-qc [\-constr]\fP
+.sp
+The \fB\-constr\fP option should be used when bond constraints were used during the
+simulation \fBfor all the covalent bonds\fP\&. If this is not the case,
+you need to analyze the \fBquant_corr.xvg\fP file yourself.
+.sp
+To make things more flexible, the program can also take virtual sites into account
+when computing quantum corrections. When selecting \fB\-constr\fP and
+\fB\-qc\fP, the \fB\-begin\fP and \fB\-end\fP options will be set automatically as
+well.
+.sp
+Based on a harmonic analysis of the normal mode frequencies,
+thermochemical properties S0 (Standard Entropy),
+Cv (Heat capacity at constant volume), Zero\-point energy and the internal energy are
+computed, much in the same manner as popular quantum chemistry
+programs.
+.SH OPTIONS
+.sp
+Options to specify input files:
+.INDENT 0.0
+.TP
+.B \fB\-f\fP [<.mtx>] (hessian.mtx)
+Hessian matrix
+.TP
+.B \fB\-s\fP [<.tpr>] (topol.tpr)
+Portable xdr run input file
+.UNINDENT
+.sp
+Options to specify output files:
+.INDENT 0.0
+.TP
+.B \fB\-of\fP [<.xvg>] (eigenfreq.xvg)
+xvgr/xmgr file
+.TP
+.B \fB\-ol\fP [<.xvg>] (eigenval.xvg)
+xvgr/xmgr file
+.TP
+.B \fB\-os\fP [<.xvg>] (spectrum.xvg) (Optional)
+xvgr/xmgr file
+.TP
+.B \fB\-qc\fP [<.xvg>] (quant_corr.xvg) (Optional)
+xvgr/xmgr file
+.TP
+.B \fB\-v\fP [<.trr/.cpt/...>] (eigenvec.trr)
+Full precision trajectory: trr cpt tng
+.UNINDENT
+.sp
+Other options:
+.INDENT 0.0
+.TP
+.B \fB\-xvg\fP <enum> (xmgrace)
+xvg plot formatting: xmgrace, xmgr, none
+.TP
+.B \fB\-[no]m\fP  (yes)
+Divide elements of Hessian by product of sqrt(mass) of involved atoms prior to diagonalization. This should be used for \(aqNormal Modes\(aq analysis
+.TP
+.B \fB\-first\fP <int> (1)
+First eigenvector to write away
+.TP
+.B \fB\-last\fP <int> (50)
+Last eigenvector to write away. \-1 is use all dimensions.
+.TP
+.B \fB\-maxspec\fP <int> (4000)
+Highest frequency (1/cm) to consider in the spectrum
+.TP
+.B \fB\-T\fP <real> (298.15)
+Temperature for computing entropy, quantum heat capacity and enthalpy when using normal mode calculations to correct classical simulations
+.TP
+.B \fB\-P\fP <real> (1)
+Pressure (bar) when computing entropy
+.TP
+.B \fB\-sigma\fP <int> (1)
+Number of symmetric copies used when computing entropy. E.g. for water the number is 2, for NH3 it is 3 and for methane it is 12.
+.TP
+.B \fB\-scale\fP <real> (1)
+Factor to scale frequencies before computing thermochemistry values
+.TP
+.B \fB\-linear_toler\fP <real> (1e\-05)
+Tolerance for determining whether a compound is linear as determined from the ration of the moments inertion Ix/Iy and Ix/Iz.
+.TP
+.B \fB\-[no]constr\fP  (no)
+If constraints were used in the simulation but not in the normal mode analysis you will need to set this for computing the quantum corrections.
+.TP
+.B \fB\-width\fP <real> (1)
+Width (sigma) of the gaussian peaks (1/cm) when generating a spectrum
+.UNINDENT
+.SH SEE ALSO
+.sp
+\fBgmx(1)\fP
+.sp
+More information about GROMACS is available at <\fI\%http://www.gromacs.org/\fP>.
+.SH COPYRIGHT
+2022, GROMACS development team
+.\" Generated by docutils manpage writer.
+.

@@ -1,0 +1,11 @@
+libdir=/home/pamella/Documentos/softwares/gromacs-2022.1/lib
+
+Name: libgromacs_mpi
+Description: Gromacs library
+URL: http://www.gromacs.org
+Version: 2022.1
+Requires:  
+Libs.private:   
+Libs: -L${libdir} -lgromacs_mpi  -lm
+Cflags:  -I/home/pamella/Documentos/softwares/gromacs-2022.1/include -DGMX_DOUBLE=0 -fopenmp
+

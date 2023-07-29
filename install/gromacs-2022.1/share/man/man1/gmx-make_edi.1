@@ -1,0 +1,300 @@
+.\" Man page generated from reStructuredText.
+.
+.
+.nr rst2man-indent-level 0
+.
+.de1 rstReportMargin
+\\$1 \\n[an-margin]
+level \\n[rst2man-indent-level]
+level margin: \\n[rst2man-indent\\n[rst2man-indent-level]]
+-
+\\n[rst2man-indent0]
+\\n[rst2man-indent1]
+\\n[rst2man-indent2]
+..
+.de1 INDENT
+.\" .rstReportMargin pre:
+. RS \\$1
+. nr rst2man-indent\\n[rst2man-indent-level] \\n[an-margin]
+. nr rst2man-indent-level +1
+.\" .rstReportMargin post:
+..
+.de UNINDENT
+. RE
+.\" indent \\n[an-margin]
+.\" old: \\n[rst2man-indent\\n[rst2man-indent-level]]
+.nr rst2man-indent-level -1
+.\" new: \\n[rst2man-indent\\n[rst2man-indent-level]]
+.in \\n[rst2man-indent\\n[rst2man-indent-level]]u
+..
+.TH "GMX-MAKE_EDI" "1" "Apr 22, 2022" "2022.1" "GROMACS"
+.SH NAME
+gmx-make_edi \- Generate input files for essential dynamics sampling
+.SH SYNOPSIS
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+gmx make_edi [\fB\-f\fP \fI[<.trr/.cpt/...>]\fP] [\fB\-eig\fP \fI[<.xvg>]\fP]
+             [\fB\-s\fP \fI[<.tpr/.gro/...>]\fP] [\fB\-n\fP \fI[<.ndx>]\fP]
+             [\fB\-tar\fP \fI[<.gro/.g96/...>]\fP] [\fB\-ori\fP \fI[<.gro/.g96/...>]\fP]
+             [\fB\-o\fP \fI[<.edi>]\fP] [\fB\-xvg\fP \fI<enum>\fP] [\fB\-mon\fP \fI<string>\fP]
+             [\fB\-linfix\fP \fI<string>\fP] [\fB\-linacc\fP \fI<string>\fP] [\fB\-radfix\fP \fI<string>\fP]
+             [\fB\-radacc\fP \fI<string>\fP] [\fB\-radcon\fP \fI<string>\fP] [\fB\-flood\fP \fI<string>\fP]
+             [\fB\-outfrq\fP \fI<int>\fP] [\fB\-slope\fP \fI<real>\fP] [\fB\-linstep\fP \fI<string>\fP]
+             [\fB\-accdir\fP \fI<string>\fP] [\fB\-radstep\fP \fI<real>\fP] [\fB\-maxedsteps\fP \fI<int>\fP]
+             [\fB\-eqsteps\fP \fI<int>\fP] [\fB\-deltaF0\fP \fI<real>\fP] [\fB\-deltaF\fP \fI<real>\fP]
+             [\fB\-tau\fP \fI<real>\fP] [\fB\-Eflnull\fP \fI<real>\fP] [\fB\-T\fP \fI<real>\fP]
+             [\fB\-alpha\fP \fI<real>\fP] [\fB\-[no]restrain\fP] [\fB\-[no]hessian\fP]
+             [\fB\-[no]harmonic\fP] [\fB\-constF\fP \fI<string>\fP]
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.SH DESCRIPTION
+.sp
+\fBgmx make_edi\fP generates an essential dynamics (ED) sampling input file to be used with
+\fBmdrun\fP based on eigenvectors of a covariance matrix (gmx covar) or from a
+normal modes analysis (gmx nmeig).
+ED sampling can be used to manipulate the position along collective coordinates
+(eigenvectors) of (biological) macromolecules during a simulation. Particularly,
+it may be used to enhance the sampling efficiency of MD simulations by stimulating
+the system to explore new regions along these collective coordinates. A number
+of different algorithms are implemented to drive the system along the eigenvectors
+(\fB\-linfix\fP, \fB\-linacc\fP, \fB\-radfix\fP, \fB\-radacc\fP, \fB\-radcon\fP),
+to keep the position along a certain (set of) coordinate(s) fixed (\fB\-linfix\fP),
+or to only monitor the projections of the positions onto
+these coordinates (\fB\-mon\fP).
+.sp
+References:
+.sp
+A. Amadei, A.B.M. Linssen, B.L. de Groot, D.M.F. van Aalten and
+H.J.C. Berendsen; An efficient method for sampling the essential subspace
+of proteins., J. Biomol. Struct. Dyn. 13:615\-626 (1996)
+.sp
+B.L. de Groot, A. Amadei, D.M.F. van Aalten and H.J.C. Berendsen;
+Towards an exhaustive sampling of the configurational spaces of the
+two forms of the peptide hormone guanylin,
+J. Biomol. Struct. Dyn. 13 : 741\-751 (1996)
+.sp
+B.L. de Groot, A.Amadei, R.M. Scheek, N.A.J. van Nuland and H.J.C. Berendsen;
+An extended sampling of the configurational space of HPr from E. coli
+Proteins: Struct. Funct. Gen. 26: 314\-322 (1996)
+.sp
+You will be prompted for one or more index groups that correspond to the
+eigenvectors,
+reference structure, target positions, etc.
+.sp
+\fB\-mon\fP: monitor projections of the coordinates onto selected eigenvectors.
+.sp
+\fB\-linfix\fP: perform fixed\-step linear expansion along selected eigenvectors.
+.sp
+\fB\-linacc\fP: perform acceptance linear expansion along selected eigenvectors.
+(steps in the desired directions will be accepted, others will be rejected).
+.sp
+\fB\-radfix\fP: perform fixed\-step radius expansion along selected eigenvectors.
+.sp
+\fB\-radacc\fP: perform acceptance radius expansion along selected eigenvectors.
+(steps in the desired direction will be accepted, others will be rejected).
+\fBNote:\fP by default the starting MD structure will be taken as origin of the first
+expansion cycle for radius expansion. If \fB\-ori\fP is specified, you will be able
+to read in a structure file that defines an external origin.
+.sp
+\fB\-radcon\fP: perform acceptance radius contraction along selected eigenvectors
+towards a target structure specified with \fB\-tar\fP\&.
+.sp
+NOTE: each eigenvector can be selected only once.
+.sp
+\fB\-outfrq\fP: frequency (in steps) of writing out projections etc. to \&.xvg
+file
+.sp
+\fB\-slope\fP: minimal slope in acceptance radius expansion. A new expansion
+cycle will be started if the spontaneous increase of the radius (in nm/step)
+is less than the value specified.
+.sp
+\fB\-maxedsteps\fP: maximum number of steps per cycle in radius expansion
+before a new cycle is started.
+.sp
+Note on the parallel implementation: since ED sampling is a \(aqglobal\(aq thing
+(collective coordinates etc.), at least on the \(aqprotein\(aq side, ED sampling
+is not very parallel\-friendly from an implementation point of view. Because
+parallel ED requires some extra communication, expect the performance to be
+lower as in a free MD simulation, especially on a large number of ranks and/or
+when the ED group contains a lot of atoms.
+.sp
+Please also note that if your ED group contains more than a single protein,
+then the \&.tpr file must contain the correct PBC representation of the ED group.
+Take a look on the initial RMSD from the reference structure, which is printed
+out at the start of the simulation; if this is much higher than expected, one
+of the ED molecules might be shifted by a box vector.
+.sp
+All ED\-related output of \fBmdrun\fP (specify with \fB\-eo\fP) is written to a
+\&.xvg file as a function of time in intervals of OUTFRQ steps.
+.sp
+\fBNote\fP that you can impose multiple ED constraints and flooding potentials in
+a single simulation (on different molecules) if several \&.edi files were
+concatenated first. The constraints are applied in the order they appear in
+the \&.edi file. Depending on what was specified in the \&.edi
+input file, the output file contains for each ED dataset
+.INDENT 0.0
+.INDENT 3.5
+.INDENT 0.0
+.IP \(bu 2
+the RMSD of the fitted molecule to the reference structure (for atoms involved in
+fitting prior to calculating the ED constraints)
+.IP \(bu 2
+projections of the positions onto selected eigenvectors
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.sp
+FLOODING:
+.sp
+with \fB\-flood\fP, you can specify which eigenvectors are used to compute a flooding
+potential,
+which will lead to extra forces expelling the structure out of the region described
+by the covariance matrix. If you switch \-restrain the potential is inverted and the
+structure is kept in that region.
+.sp
+The origin is normally the average structure stored in the \fBeigvec.trr\fP file.
+It can be changed with \fB\-ori\fP to an arbitrary position in configuration space.
+With \fB\-tau\fP, \fB\-deltaF0\fP, and \fB\-Eflnull\fP you control the flooding
+behaviour. Efl is the flooding strength, it is updated according to the rule of
+adaptive flooding. Tau is the time constant of adaptive flooding, high
+tau means slow adaption (i.e. growth).
+DeltaF0 is the flooding strength you want to reach after tau ps of simulation.
+To use constant Efl set \fB\-tau\fP to zero.
+.sp
+\fB\-alpha\fP is a fudge parameter to control the width of the flooding potential. A
+value of 2 has been found
+to give good results for most standard cases in flooding of proteins.
+alpha basically accounts for incomplete sampling, if you sampled further the
+width of the ensemble would
+increase, this is mimicked by alpha > 1.
+For restraining, alpha < 1 can give you smaller width in the restraining
+potential.
+.sp
+RESTART and FLOODING:
+If you want to restart a crashed flooding simulation please find the values deltaF and
+Efl in
+the output file and manually put them into the \&.edi file under DELTA_F0 and
+EFL_NULL.
+.SH OPTIONS
+.sp
+Options to specify input files:
+.INDENT 0.0
+.TP
+.B \fB\-f\fP [<.trr/.cpt/...>] (eigenvec.trr)
+Full precision trajectory: trr cpt tng
+.TP
+.B \fB\-eig\fP [<.xvg>] (eigenval.xvg) (Optional)
+xvgr/xmgr file
+.TP
+.B \fB\-s\fP [<.tpr/.gro/...>] (topol.tpr)
+Structure+mass(db): tpr gro g96 pdb brk ent
+.TP
+.B \fB\-n\fP [<.ndx>] (index.ndx) (Optional)
+Index file
+.TP
+.B \fB\-tar\fP [<.gro/.g96/...>] (target.gro) (Optional)
+Structure file: gro g96 pdb brk ent esp tpr
+.TP
+.B \fB\-ori\fP [<.gro/.g96/...>] (origin.gro) (Optional)
+Structure file: gro g96 pdb brk ent esp tpr
+.UNINDENT
+.sp
+Options to specify output files:
+.INDENT 0.0
+.TP
+.B \fB\-o\fP [<.edi>] (sam.edi)
+ED sampling input
+.UNINDENT
+.sp
+Other options:
+.INDENT 0.0
+.TP
+.B \fB\-xvg\fP <enum> (xmgrace)
+xvg plot formatting: xmgrace, xmgr, none
+.TP
+.B \fB\-mon\fP <string>
+Indices of eigenvectors for projections of x (e.g. 1,2\-5,9) or 1\-100:10 means 1 11 21 31 ... 91
+.TP
+.B \fB\-linfix\fP <string>
+Indices of eigenvectors for fixed increment linear sampling
+.TP
+.B \fB\-linacc\fP <string>
+Indices of eigenvectors for acceptance linear sampling
+.TP
+.B \fB\-radfix\fP <string>
+Indices of eigenvectors for fixed increment radius expansion
+.TP
+.B \fB\-radacc\fP <string>
+Indices of eigenvectors for acceptance radius expansion
+.TP
+.B \fB\-radcon\fP <string>
+Indices of eigenvectors for acceptance radius contraction
+.TP
+.B \fB\-flood\fP <string>
+Indices of eigenvectors for flooding
+.TP
+.B \fB\-outfrq\fP <int> (100)
+Frequency (in steps) of writing output in \&.xvg file
+.TP
+.B \fB\-slope\fP <real> (0)
+Minimal slope in acceptance radius expansion
+.TP
+.B \fB\-linstep\fP <string>
+Stepsizes (nm/step) for fixed increment linear sampling (put in quotes! "1.0 2.3 5.1 \-3.1")
+.TP
+.B \fB\-accdir\fP <string>
+Directions for acceptance linear sampling \- only sign counts! (put in quotes! "\-1 +1 \-1.1")
+.TP
+.B \fB\-radstep\fP <real> (0)
+Stepsize (nm/step) for fixed increment radius expansion
+.TP
+.B \fB\-maxedsteps\fP <int> (0)
+Maximum number of steps per cycle
+.TP
+.B \fB\-eqsteps\fP <int> (0)
+Number of steps to run without any perturbations
+.TP
+.B \fB\-deltaF0\fP <real> (150)
+Target destabilization energy for flooding
+.TP
+.B \fB\-deltaF\fP <real> (0)
+Start deltaF with this parameter \- default 0, nonzero values only needed for restart
+.TP
+.B \fB\-tau\fP <real> (0.1)
+Coupling constant for adaption of flooding strength according to deltaF0, 0 = infinity i.e. constant flooding strength
+.TP
+.B \fB\-Eflnull\fP <real> (0)
+The starting value of the flooding strength. The flooding strength is updated according to the adaptive flooding scheme. For a constant flooding strength use \fB\-tau\fP 0.
+.TP
+.B \fB\-T\fP <real> (300)
+T is temperature, the value is needed if you want to do flooding
+.TP
+.B \fB\-alpha\fP <real> (1)
+Scale width of gaussian flooding potential with alpha^2
+.TP
+.B \fB\-[no]restrain\fP  (no)
+Use the flooding potential with inverted sign \-> effects as quasiharmonic restraining potential
+.TP
+.B \fB\-[no]hessian\fP  (no)
+The eigenvectors and eigenvalues are from a Hessian matrix
+.TP
+.B \fB\-[no]harmonic\fP  (no)
+The eigenvalues are interpreted as spring constant
+.TP
+.B \fB\-constF\fP <string>
+Constant force flooding: manually set the forces for the eigenvectors selected with \-flood (put in quotes! "1.0 2.3 5.1 \-3.1"). No other flooding parameters are needed when specifying the forces directly.
+.UNINDENT
+.SH SEE ALSO
+.sp
+\fBgmx(1)\fP
+.sp
+More information about GROMACS is available at <\fI\%http://www.gromacs.org/\fP>.
+.SH COPYRIGHT
+2022, GROMACS development team
+.\" Generated by docutils manpage writer.
+.

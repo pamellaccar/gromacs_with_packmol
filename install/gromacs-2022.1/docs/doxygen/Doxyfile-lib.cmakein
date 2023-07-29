@@ -1,0 +1,11 @@
+@INCLUDE               = Doxyfile-common
+
+ENABLED_SECTIONS      += libapi
+INTERNAL_DOCS          = NO
+HIDE_UNDOC_CLASSES     = YES
+WARN_LOGFILE           = doxygen-lib.log
+HTML_OUTPUT            = html-lib
+
+ALIASES               += inpublicapi="\ingroup group_publicapi"
+ALIASES               += inlibraryapi="\ingroup group_libraryapi"
+ALIASES               += libinternal=

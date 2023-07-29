@@ -1,0 +1,273 @@
+.\" Man page generated from reStructuredText.
+.
+.
+.nr rst2man-indent-level 0
+.
+.de1 rstReportMargin
+\\$1 \\n[an-margin]
+level \\n[rst2man-indent-level]
+level margin: \\n[rst2man-indent\\n[rst2man-indent-level]]
+-
+\\n[rst2man-indent0]
+\\n[rst2man-indent1]
+\\n[rst2man-indent2]
+..
+.de1 INDENT
+.\" .rstReportMargin pre:
+. RS \\$1
+. nr rst2man-indent\\n[rst2man-indent-level] \\n[an-margin]
+. nr rst2man-indent-level +1
+.\" .rstReportMargin post:
+..
+.de UNINDENT
+. RE
+.\" indent \\n[an-margin]
+.\" old: \\n[rst2man-indent\\n[rst2man-indent-level]]
+.nr rst2man-indent-level -1
+.\" new: \\n[rst2man-indent\\n[rst2man-indent-level]]
+.in \\n[rst2man-indent\\n[rst2man-indent-level]]u
+..
+.TH "GMX-HBOND" "1" "Apr 22, 2022" "2022.1" "GROMACS"
+.SH NAME
+gmx-hbond \- Compute and analyze hydrogen bonds
+.SH SYNOPSIS
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+gmx hbond [\fB\-f\fP \fI[<.xtc/.trr/...>]\fP] [\fB\-s\fP \fI[<.tpr>]\fP] [\fB\-n\fP \fI[<.ndx>]\fP]
+          [\fB\-num\fP \fI[<.xvg>]\fP] [\fB\-g\fP \fI[<.log>]\fP] [\fB\-ac\fP \fI[<.xvg>]\fP]
+          [\fB\-dist\fP \fI[<.xvg>]\fP] [\fB\-ang\fP \fI[<.xvg>]\fP] [\fB\-hx\fP \fI[<.xvg>]\fP]
+          [\fB\-hbn\fP \fI[<.ndx>]\fP] [\fB\-hbm\fP \fI[<.xpm>]\fP] [\fB\-don\fP \fI[<.xvg>]\fP]
+          [\fB\-dan\fP \fI[<.xvg>]\fP] [\fB\-life\fP \fI[<.xvg>]\fP] [\fB\-nhbdist\fP \fI[<.xvg>]\fP]
+          [\fB\-b\fP \fI<time>\fP] [\fB\-e\fP \fI<time>\fP] [\fB\-dt\fP \fI<time>\fP] [\fB\-tu\fP \fI<enum>\fP]
+          [\fB\-xvg\fP \fI<enum>\fP] [\fB\-a\fP \fI<real>\fP] [\fB\-r\fP \fI<real>\fP] [\fB\-[no]da\fP]
+          [\fB\-r2\fP \fI<real>\fP] [\fB\-abin\fP \fI<real>\fP] [\fB\-rbin\fP \fI<real>\fP] [\fB\-[no]nitacc\fP]
+          [\fB\-[no]contact\fP] [\fB\-shell\fP \fI<real>\fP] [\fB\-fitstart\fP \fI<real>\fP]
+          [\fB\-fitend\fP \fI<real>\fP] [\fB\-temp\fP \fI<real>\fP] [\fB\-dump\fP \fI<int>\fP]
+          [\fB\-max_hb\fP \fI<real>\fP] [\fB\-[no]merge\fP] [\fB\-acflen\fP \fI<int>\fP]
+          [\fB\-[no]normalize\fP] [\fB\-P\fP \fI<enum>\fP] [\fB\-fitfn\fP \fI<enum>\fP]
+          [\fB\-beginfit\fP \fI<real>\fP] [\fB\-endfit\fP \fI<real>\fP]
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.SH DESCRIPTION
+.sp
+\fBgmx hbond\fP computes and analyzes hydrogen bonds. Hydrogen bonds are
+determined based on cutoffs for the angle Hydrogen \- Donor \- Acceptor
+(zero is extended) and the distance Donor \- Acceptor
+(or Hydrogen \- Acceptor using \fB\-noda\fP).
+OH and NH groups are regarded as donors, O is an acceptor always,
+N is an acceptor by default, but this can be switched using
+\fB\-nitacc\fP\&. Dummy hydrogen atoms are assumed to be connected
+to the first preceding non\-hydrogen atom.
+.sp
+You need to specify two groups for analysis, which must be either
+identical or non\-overlapping. All hydrogen bonds between the two
+groups are analyzed.
+.sp
+If you set \fB\-shell\fP, you will be asked for an additional index group
+which should contain exactly one atom. In this case, only hydrogen
+bonds between atoms within the shell distance from the one atom are
+considered.
+.sp
+With option \-ac, rate constants for hydrogen bonding can be derived with the
+model of Luzar and Chandler (Nature 379:55, 1996; J. Chem. Phys. 113:23, 2000).
+If contact kinetics are analyzed by using the \-contact option, then
+n(t) can be defined as either all pairs that are not within contact distance r at time t
+(corresponding to leaving the \-r2 option at the default value 0) or all pairs that
+are within distance r2 (corresponding to setting a second cut\-off value with option \-r2).
+See mentioned literature for more details and definitions.
+.sp
+\fBOutput:\fP
+.INDENT 0.0
+.INDENT 3.5
+.INDENT 0.0
+.IP \(bu 2
+\fB\-num\fP:  number of hydrogen bonds as a function of time.
+.IP \(bu 2
+\fB\-ac\fP:   average over all autocorrelations of the existence
+functions (either 0 or 1) of all hydrogen bonds.
+.IP \(bu 2
+\fB\-dist\fP: distance distribution of all hydrogen bonds.
+.IP \(bu 2
+\fB\-ang\fP:  angle distribution of all hydrogen bonds.
+.IP \(bu 2
+\fB\-hx\fP:   the number of n\-n+i hydrogen bonds as a function of time
+where n and n+i stand for residue numbers and i ranges from 0 to 6.
+This includes the n\-n+3, n\-n+4 and n\-n+5 hydrogen bonds associated
+with helices in proteins.
+.IP \(bu 2
+\fB\-hbn\fP:  all selected groups, donors, hydrogens and acceptors
+for selected groups, all hydrogen bonded atoms from all groups and
+all solvent atoms involved in insertion.
+.IP \(bu 2
+\fB\-hbm\fP:  existence matrix for all hydrogen bonds over all
+frames, this also contains information on solvent insertion
+into hydrogen bonds. Ordering is identical to that in \fB\-hbn\fP
+index file.
+.IP \(bu 2
+\fB\-dan\fP: write out the number of donors and acceptors analyzed for
+each timeframe. This is especially useful when using \fB\-shell\fP\&.
+.IP \(bu 2
+\fB\-nhbdist\fP: compute the number of HBonds per hydrogen in order to
+compare results to Raman Spectroscopy.
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.sp
+Note: options \fB\-ac\fP, \fB\-life\fP, \fB\-hbn\fP and \fB\-hbm\fP
+require an amount of memory proportional to the total numbers of donors
+times the total number of acceptors in the selected group(s).
+.SH OPTIONS
+.sp
+Options to specify input files:
+.INDENT 0.0
+.TP
+.B \fB\-f\fP [<.xtc/.trr/...>] (traj.xtc)
+Trajectory: xtc trr cpt gro g96 pdb tng
+.TP
+.B \fB\-s\fP [<.tpr>] (topol.tpr)
+Portable xdr run input file
+.TP
+.B \fB\-n\fP [<.ndx>] (index.ndx) (Optional)
+Index file
+.UNINDENT
+.sp
+Options to specify output files:
+.INDENT 0.0
+.TP
+.B \fB\-num\fP [<.xvg>] (hbnum.xvg)
+xvgr/xmgr file
+.TP
+.B \fB\-g\fP [<.log>] (hbond.log) (Optional)
+Log file
+.TP
+.B \fB\-ac\fP [<.xvg>] (hbac.xvg) (Optional)
+xvgr/xmgr file
+.TP
+.B \fB\-dist\fP [<.xvg>] (hbdist.xvg) (Optional)
+xvgr/xmgr file
+.TP
+.B \fB\-ang\fP [<.xvg>] (hbang.xvg) (Optional)
+xvgr/xmgr file
+.TP
+.B \fB\-hx\fP [<.xvg>] (hbhelix.xvg) (Optional)
+xvgr/xmgr file
+.TP
+.B \fB\-hbn\fP [<.ndx>] (hbond.ndx) (Optional)
+Index file
+.TP
+.B \fB\-hbm\fP [<.xpm>] (hbmap.xpm) (Optional)
+X PixMap compatible matrix file
+.TP
+.B \fB\-don\fP [<.xvg>] (donor.xvg) (Optional)
+xvgr/xmgr file
+.TP
+.B \fB\-dan\fP [<.xvg>] (danum.xvg) (Optional)
+xvgr/xmgr file
+.TP
+.B \fB\-life\fP [<.xvg>] (hblife.xvg) (Optional)
+xvgr/xmgr file
+.TP
+.B \fB\-nhbdist\fP [<.xvg>] (nhbdist.xvg) (Optional)
+xvgr/xmgr file
+.UNINDENT
+.sp
+Other options:
+.INDENT 0.0
+.TP
+.B \fB\-b\fP <time> (0)
+Time of first frame to read from trajectory (default unit ps)
+.TP
+.B \fB\-e\fP <time> (0)
+Time of last frame to read from trajectory (default unit ps)
+.TP
+.B \fB\-dt\fP <time> (0)
+Only use frame when t MOD dt = first time (default unit ps)
+.TP
+.B \fB\-tu\fP <enum> (ps)
+Unit for time values: fs, ps, ns, us, ms, s
+.TP
+.B \fB\-xvg\fP <enum> (xmgrace)
+xvg plot formatting: xmgrace, xmgr, none
+.TP
+.B \fB\-a\fP <real> (30)
+Cutoff angle (degrees, Hydrogen \- Donor \- Acceptor)
+.TP
+.B \fB\-r\fP <real> (0.35)
+Cutoff radius (nm, X \- Acceptor, see next option)
+.TP
+.B \fB\-[no]da\fP  (yes)
+Use distance Donor\-Acceptor (if TRUE) or Hydrogen\-Acceptor (FALSE)
+.TP
+.B \fB\-r2\fP <real> (0)
+Second cutoff radius. Mainly useful with \fB\-contact\fP and \fB\-ac\fP
+.TP
+.B \fB\-abin\fP <real> (1)
+Binwidth angle distribution (degrees)
+.TP
+.B \fB\-rbin\fP <real> (0.005)
+Binwidth distance distribution (nm)
+.TP
+.B \fB\-[no]nitacc\fP  (yes)
+Regard nitrogen atoms as acceptors
+.TP
+.B \fB\-[no]contact\fP  (no)
+Do not look for hydrogen bonds, but merely for contacts within the cut\-off distance
+.TP
+.B \fB\-shell\fP <real> (\-1)
+when > 0, only calculate hydrogen bonds within # nm shell around one particle
+.TP
+.B \fB\-fitstart\fP <real> (1)
+Time (ps) from which to start fitting the correlation functions in order to obtain the forward and backward rate constants for HB breaking and formation. With \fB\-gemfit\fP we suggest \fB\-fitstart 0\fP
+.TP
+.B \fB\-fitend\fP <real> (60)
+Time (ps) to which to stop fitting the correlation functions in order to obtain the forward and backward rate constants for HB breaking and formation (only with \fB\-gemfit\fP)
+.TP
+.B \fB\-temp\fP <real> (298.15)
+Temperature (K) for computing the Gibbs energy corresponding to HB breaking and reforming
+.TP
+.B \fB\-dump\fP <int> (0)
+Dump the first N hydrogen bond ACFs in a single \&.xvg file for debugging
+.TP
+.B \fB\-max_hb\fP <real> (0)
+Theoretical maximum number of hydrogen bonds used for normalizing HB autocorrelation function. Can be useful in case the program estimates it wrongly
+.TP
+.B \fB\-[no]merge\fP  (yes)
+H\-bonds between the same donor and acceptor, but with different hydrogen are treated as a single H\-bond. Mainly important for the ACF.
+.TP
+.B \fB\-acflen\fP <int> (\-1)
+Length of the ACF, default is half the number of frames
+.TP
+.B \fB\-[no]normalize\fP  (yes)
+Normalize ACF
+.TP
+.B \fB\-P\fP <enum> (0)
+Order of Legendre polynomial for ACF (0 indicates none): 0, 1, 2, 3
+.TP
+.B \fB\-fitfn\fP <enum> (none)
+Fit function: none, exp, aexp, exp_exp, exp5, exp7, exp9
+.TP
+.B \fB\-beginfit\fP <real> (0)
+Time where to begin the exponential fit of the correlation function
+.TP
+.B \fB\-endfit\fP <real> (\-1)
+Time where to end the exponential fit of the correlation function, \-1 is until the end
+.UNINDENT
+.SH KNOWN ISSUES
+.INDENT 0.0
+.IP \(bu 2
+The option \fB\-sel\fP that used to work on selected hbonds is out of order, and therefore not available for the time being.
+.UNINDENT
+.SH SEE ALSO
+.sp
+\fBgmx(1)\fP
+.sp
+More information about GROMACS is available at <\fI\%http://www.gromacs.org/\fP>.
+.SH COPYRIGHT
+2022, GROMACS development team
+.\" Generated by docutils manpage writer.
+.

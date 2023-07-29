@@ -1,0 +1,215 @@
+.\" Man page generated from reStructuredText.
+.
+.
+.nr rst2man-indent-level 0
+.
+.de1 rstReportMargin
+\\$1 \\n[an-margin]
+level \\n[rst2man-indent-level]
+level margin: \\n[rst2man-indent\\n[rst2man-indent-level]]
+-
+\\n[rst2man-indent0]
+\\n[rst2man-indent1]
+\\n[rst2man-indent2]
+..
+.de1 INDENT
+.\" .rstReportMargin pre:
+. RS \\$1
+. nr rst2man-indent\\n[rst2man-indent-level] \\n[an-margin]
+. nr rst2man-indent-level +1
+.\" .rstReportMargin post:
+..
+.de UNINDENT
+. RE
+.\" indent \\n[an-margin]
+.\" old: \\n[rst2man-indent\\n[rst2man-indent-level]]
+.nr rst2man-indent-level -1
+.\" new: \\n[rst2man-indent\\n[rst2man-indent-level]]
+.in \\n[rst2man-indent\\n[rst2man-indent-level]]u
+..
+.TH "GMX-TRAJ" "1" "Apr 22, 2022" "2022.1" "GROMACS"
+.SH NAME
+gmx-traj \- Plot x, v, f, box, temperature and rotational energy from trajectories
+.SH SYNOPSIS
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+gmx traj [\fB\-f\fP \fI[<.xtc/.trr/...>]\fP] [\fB\-s\fP \fI[<.tpr/.gro/...>]\fP] [\fB\-n\fP \fI[<.ndx>]\fP]
+         [\fB\-ox\fP \fI[<.xvg>]\fP] [\fB\-oxt\fP \fI[<.xtc/.trr/...>]\fP] [\fB\-ov\fP \fI[<.xvg>]\fP]
+         [\fB\-of\fP \fI[<.xvg>]\fP] [\fB\-ob\fP \fI[<.xvg>]\fP] [\fB\-ot\fP \fI[<.xvg>]\fP] [\fB\-ekt\fP \fI[<.xvg>]\fP]
+         [\fB\-ekr\fP \fI[<.xvg>]\fP] [\fB\-vd\fP \fI[<.xvg>]\fP] [\fB\-cv\fP \fI[<.pdb>]\fP] [\fB\-cf\fP \fI[<.pdb>]\fP]
+         [\fB\-av\fP \fI[<.xvg>]\fP] [\fB\-af\fP \fI[<.xvg>]\fP] [\fB\-b\fP \fI<time>\fP] [\fB\-e\fP \fI<time>\fP]
+         [\fB\-dt\fP \fI<time>\fP] [\fB\-tu\fP \fI<enum>\fP] [\fB\-[no]w\fP] [\fB\-xvg\fP \fI<enum>\fP] [\fB\-[no]com\fP]
+         [\fB\-[no]pbc\fP] [\fB\-[no]mol\fP] [\fB\-[no]nojump\fP] [\fB\-[no]x\fP] [\fB\-[no]y\fP]
+         [\fB\-[no]z\fP] [\fB\-ng\fP \fI<int>\fP] [\fB\-[no]len\fP] [\fB\-[no]fp\fP] [\fB\-bin\fP \fI<real>\fP]
+         [\fB\-ctime\fP \fI<real>\fP] [\fB\-scale\fP \fI<real>\fP]
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.SH DESCRIPTION
+.sp
+\fBgmx traj\fP plots coordinates, velocities, forces and/or the box.
+With \fB\-com\fP the coordinates, velocities and forces are
+calculated for the center of mass of each group.
+When \fB\-mol\fP is set, the numbers in the index file are
+interpreted as molecule numbers and the same procedure as with
+\fB\-com\fP is used for each molecule.
+.sp
+Option \fB\-ot\fP plots the temperature of each group,
+provided velocities are present in the trajectory file.
+No corrections are made for constrained degrees of freedom!
+This implies \fB\-com\fP\&.
+.sp
+Options \fB\-ekt\fP and \fB\-ekr\fP plot the translational and
+rotational kinetic energy of each group,
+provided velocities are present in the trajectory file.
+This implies \fB\-com\fP\&.
+.sp
+Options \fB\-cv\fP and \fB\-cf\fP write the average velocities
+and average forces as temperature factors to a \&.pdb file with
+the average coordinates or the coordinates at \fB\-ctime\fP\&.
+The temperature factors are scaled such that the maximum is 10.
+The scaling can be changed with the option \fB\-scale\fP\&.
+To get the velocities or forces of one
+frame set both \fB\-b\fP and \fB\-e\fP to the time of
+desired frame. When averaging over frames you might need to use
+the \fB\-nojump\fP option to obtain the correct average coordinates.
+If you select either of these option the average force and velocity
+for each atom are written to an \&.xvg file as well
+(specified with \fB\-av\fP or \fB\-af\fP).
+.sp
+Option \fB\-vd\fP computes a velocity distribution, i.e. the
+norm of the vector is plotted. In addition in the same graph
+the kinetic energy distribution is given.
+.sp
+See gmx trajectory for plotting similar data for selections.
+.SH OPTIONS
+.sp
+Options to specify input files:
+.INDENT 0.0
+.TP
+.B \fB\-f\fP [<.xtc/.trr/...>] (traj.xtc)
+Trajectory: xtc trr cpt gro g96 pdb tng
+.TP
+.B \fB\-s\fP [<.tpr/.gro/...>] (topol.tpr)
+Structure+mass(db): tpr gro g96 pdb brk ent
+.TP
+.B \fB\-n\fP [<.ndx>] (index.ndx) (Optional)
+Index file
+.UNINDENT
+.sp
+Options to specify output files:
+.INDENT 0.0
+.TP
+.B \fB\-ox\fP [<.xvg>] (coord.xvg) (Optional)
+xvgr/xmgr file
+.TP
+.B \fB\-oxt\fP [<.xtc/.trr/...>] (coord.xtc) (Optional)
+Trajectory: xtc trr cpt gro g96 pdb tng
+.TP
+.B \fB\-ov\fP [<.xvg>] (veloc.xvg) (Optional)
+xvgr/xmgr file
+.TP
+.B \fB\-of\fP [<.xvg>] (force.xvg) (Optional)
+xvgr/xmgr file
+.TP
+.B \fB\-ob\fP [<.xvg>] (box.xvg) (Optional)
+xvgr/xmgr file
+.TP
+.B \fB\-ot\fP [<.xvg>] (temp.xvg) (Optional)
+xvgr/xmgr file
+.TP
+.B \fB\-ekt\fP [<.xvg>] (ektrans.xvg) (Optional)
+xvgr/xmgr file
+.TP
+.B \fB\-ekr\fP [<.xvg>] (ekrot.xvg) (Optional)
+xvgr/xmgr file
+.TP
+.B \fB\-vd\fP [<.xvg>] (veldist.xvg) (Optional)
+xvgr/xmgr file
+.TP
+.B \fB\-cv\fP [<.pdb>] (veloc.pdb) (Optional)
+Protein data bank file
+.TP
+.B \fB\-cf\fP [<.pdb>] (force.pdb) (Optional)
+Protein data bank file
+.TP
+.B \fB\-av\fP [<.xvg>] (all_veloc.xvg) (Optional)
+xvgr/xmgr file
+.TP
+.B \fB\-af\fP [<.xvg>] (all_force.xvg) (Optional)
+xvgr/xmgr file
+.UNINDENT
+.sp
+Other options:
+.INDENT 0.0
+.TP
+.B \fB\-b\fP <time> (0)
+Time of first frame to read from trajectory (default unit ps)
+.TP
+.B \fB\-e\fP <time> (0)
+Time of last frame to read from trajectory (default unit ps)
+.TP
+.B \fB\-dt\fP <time> (0)
+Only use frame when t MOD dt = first time (default unit ps)
+.TP
+.B \fB\-tu\fP <enum> (ps)
+Unit for time values: fs, ps, ns, us, ms, s
+.TP
+.B \fB\-[no]w\fP  (no)
+View output \&.xvg, \&.xpm, \&.eps and \&.pdb files
+.TP
+.B \fB\-xvg\fP <enum> (xmgrace)
+xvg plot formatting: xmgrace, xmgr, none
+.TP
+.B \fB\-[no]com\fP  (no)
+Plot data for the com of each group
+.TP
+.B \fB\-[no]pbc\fP  (yes)
+Make molecules whole for COM
+.TP
+.B \fB\-[no]mol\fP  (no)
+Index contains molecule numbers instead of atom numbers
+.TP
+.B \fB\-[no]nojump\fP  (no)
+Remove jumps of atoms across the box
+.TP
+.B \fB\-[no]x\fP  (yes)
+Plot X\-component
+.TP
+.B \fB\-[no]y\fP  (yes)
+Plot Y\-component
+.TP
+.B \fB\-[no]z\fP  (yes)
+Plot Z\-component
+.TP
+.B \fB\-ng\fP <int> (1)
+Number of groups to consider
+.TP
+.B \fB\-[no]len\fP  (no)
+Plot vector length
+.TP
+.B \fB\-[no]fp\fP  (no)
+Full precision output
+.TP
+.B \fB\-bin\fP <real> (1)
+Binwidth for velocity histogram (nm/ps)
+.TP
+.B \fB\-ctime\fP <real> (\-1)
+Use frame at this time for x in \fB\-cv\fP and \fB\-cf\fP instead of the average x
+.TP
+.B \fB\-scale\fP <real> (0)
+Scale factor for \&.pdb output, 0 is autoscale
+.UNINDENT
+.SH SEE ALSO
+.sp
+\fBgmx(1)\fP
+.sp
+More information about GROMACS is available at <\fI\%http://www.gromacs.org/\fP>.
+.SH COPYRIGHT
+2022, GROMACS development team
+.\" Generated by docutils manpage writer.
+.

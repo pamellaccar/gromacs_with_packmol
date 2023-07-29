@@ -1,0 +1,14 @@
+# CMake generated Testfile for 
+# Source directory: /home/pamella/Documentos/softwares/gromacs-2022.1/src/gromacs/gmxpreprocess/tests
+# Build directory: /home/pamella/Documentos/softwares/gromacs-2022.1/build/src/gromacs/gmxpreprocess/tests
+# 
+# This file includes the relevant testing commands required for 
+# testing this directory and lists subdirectories to be tested as well.
+add_test(GmxPreprocessTests "/home/pamella/Documentos/softwares/gromacs-2022.1/build/bin/gmxpreprocess-test" "--gtest_output=xml:/home/pamella/Documentos/softwares/gromacs-2022.1/build/Testing/Temporary/GmxPreprocessTests.xml")
+set_tests_properties(GmxPreprocessTests PROPERTIES  LABELS "GTest;SlowTest" TIMEOUT "480" _BACKTRACE_TRIPLES "/home/pamella/Documentos/softwares/gromacs-2022.1/src/testutils/TestMacros.cmake;297;add_test;/home/pamella/Documentos/softwares/gromacs-2022.1/src/gromacs/gmxpreprocess/tests/CMakeLists.txt;48;gmx_register_gtest_test;/home/pamella/Documentos/softwares/gromacs-2022.1/src/gromacs/gmxpreprocess/tests/CMakeLists.txt;0;")
+add_test(Pdb2gmx1Test "/home/pamella/Documentos/softwares/gromacs-2022.1/build/bin/pdb2gmx1-test" "--gtest_output=xml:/home/pamella/Documentos/softwares/gromacs-2022.1/build/Testing/Temporary/Pdb2gmx1Test.xml")
+set_tests_properties(Pdb2gmx1Test PROPERTIES  LABELS "GTest;SlowTest" TIMEOUT "480" _BACKTRACE_TRIPLES "/home/pamella/Documentos/softwares/gromacs-2022.1/src/testutils/TestMacros.cmake;297;add_test;/home/pamella/Documentos/softwares/gromacs-2022.1/src/gromacs/gmxpreprocess/tests/CMakeLists.txt;59;gmx_register_gtest_test;/home/pamella/Documentos/softwares/gromacs-2022.1/src/gromacs/gmxpreprocess/tests/CMakeLists.txt;0;")
+add_test(Pdb2gmx2Test "/home/pamella/Documentos/softwares/gromacs-2022.1/build/bin/pdb2gmx2-test" "--gtest_output=xml:/home/pamella/Documentos/softwares/gromacs-2022.1/build/Testing/Temporary/Pdb2gmx2Test.xml")
+set_tests_properties(Pdb2gmx2Test PROPERTIES  LABELS "GTest;SlowTest" TIMEOUT "480" _BACKTRACE_TRIPLES "/home/pamella/Documentos/softwares/gromacs-2022.1/src/testutils/TestMacros.cmake;297;add_test;/home/pamella/Documentos/softwares/gromacs-2022.1/src/gromacs/gmxpreprocess/tests/CMakeLists.txt;67;gmx_register_gtest_test;/home/pamella/Documentos/softwares/gromacs-2022.1/src/gromacs/gmxpreprocess/tests/CMakeLists.txt;0;")
+add_test(Pdb2gmx3Test "/home/pamella/Documentos/softwares/gromacs-2022.1/build/bin/pdb2gmx3-test" "--gtest_output=xml:/home/pamella/Documentos/softwares/gromacs-2022.1/build/Testing/Temporary/Pdb2gmx3Test.xml")
+set_tests_properties(Pdb2gmx3Test PROPERTIES  LABELS "GTest;SlowTest" TIMEOUT "480" _BACKTRACE_TRIPLES "/home/pamella/Documentos/softwares/gromacs-2022.1/src/testutils/TestMacros.cmake;297;add_test;/home/pamella/Documentos/softwares/gromacs-2022.1/src/gromacs/gmxpreprocess/tests/CMakeLists.txt;75;gmx_register_gtest_test;/home/pamella/Documentos/softwares/gromacs-2022.1/src/gromacs/gmxpreprocess/tests/CMakeLists.txt;0;")

@@ -1,0 +1,164 @@
+.\" Man page generated from reStructuredText.
+.
+.
+.nr rst2man-indent-level 0
+.
+.de1 rstReportMargin
+\\$1 \\n[an-margin]
+level \\n[rst2man-indent-level]
+level margin: \\n[rst2man-indent\\n[rst2man-indent-level]]
+-
+\\n[rst2man-indent0]
+\\n[rst2man-indent1]
+\\n[rst2man-indent2]
+..
+.de1 INDENT
+.\" .rstReportMargin pre:
+. RS \\$1
+. nr rst2man-indent\\n[rst2man-indent-level] \\n[an-margin]
+. nr rst2man-indent-level +1
+.\" .rstReportMargin post:
+..
+.de UNINDENT
+. RE
+.\" indent \\n[an-margin]
+.\" old: \\n[rst2man-indent\\n[rst2man-indent-level]]
+.nr rst2man-indent-level -1
+.\" new: \\n[rst2man-indent\\n[rst2man-indent-level]]
+.in \\n[rst2man-indent\\n[rst2man-indent-level]]u
+..
+.TH "GMX-COVAR" "1" "Apr 22, 2022" "2022.1" "GROMACS"
+.SH NAME
+gmx-covar \- Calculate and diagonalize the covariance matrix
+.SH SYNOPSIS
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+gmx covar [\fB\-f\fP \fI[<.xtc/.trr/...>]\fP] [\fB\-s\fP \fI[<.tpr/.gro/...>]\fP] [\fB\-n\fP \fI[<.ndx>]\fP]
+          [\fB\-o\fP \fI[<.xvg>]\fP] [\fB\-v\fP \fI[<.trr/.cpt/...>]\fP]
+          [\fB\-av\fP \fI[<.gro/.g96/...>]\fP] [\fB\-l\fP \fI[<.log>]\fP] [\fB\-ascii\fP \fI[<.dat>]\fP]
+          [\fB\-xpm\fP \fI[<.xpm>]\fP] [\fB\-xpma\fP \fI[<.xpm>]\fP] [\fB\-b\fP \fI<time>\fP] [\fB\-e\fP \fI<time>\fP]
+          [\fB\-dt\fP \fI<time>\fP] [\fB\-tu\fP \fI<enum>\fP] [\fB\-xvg\fP \fI<enum>\fP] [\fB\-[no]fit\fP]
+          [\fB\-[no]ref\fP] [\fB\-[no]mwa\fP] [\fB\-last\fP \fI<int>\fP] [\fB\-[no]pbc\fP]
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.SH DESCRIPTION
+.sp
+\fBgmx covar\fP calculates and diagonalizes the (mass\-weighted)
+covariance matrix.
+All structures are fitted to the structure in the structure file.
+When this is not a run input file periodicity will not be taken into
+account. When the fit and analysis groups are identical and the analysis
+is non mass\-weighted, the fit will also be non mass\-weighted.
+.sp
+The eigenvectors are written to a trajectory file (\fB\-v\fP).
+When the same atoms are used for the fit and the covariance analysis,
+the reference structure for the fit is written first with t=\-1.
+The average (or reference when \fB\-ref\fP is used) structure is
+written with t=0, the eigenvectors
+are written as frames with the eigenvector number and eigenvalue
+as step number and timestamp, respectively.
+.sp
+The eigenvectors can be analyzed with gmx anaeig\&.
+.sp
+Option \fB\-ascii\fP writes the whole covariance matrix to
+an ASCII file. The order of the elements is: x1x1, x1y1, x1z1, x1x2, ...
+.sp
+Option \fB\-xpm\fP writes the whole covariance matrix to an \&.xpm file.
+.sp
+Option \fB\-xpma\fP writes the atomic covariance matrix to an \&.xpm file,
+i.e. for each atom pair the sum of the xx, yy and zz covariances is
+written.
+.sp
+Note that the diagonalization of a matrix requires memory and time
+that will increase at least as fast as than the square of the number
+of atoms involved. It is easy to run out of memory, in which
+case this tool will probably exit with a \(aqSegmentation fault\(aq. You
+should consider carefully whether a reduced set of atoms will meet
+your needs for lower costs.
+.SH OPTIONS
+.sp
+Options to specify input files:
+.INDENT 0.0
+.TP
+.B \fB\-f\fP [<.xtc/.trr/...>] (traj.xtc)
+Trajectory: xtc trr cpt gro g96 pdb tng
+.TP
+.B \fB\-s\fP [<.tpr/.gro/...>] (topol.tpr)
+Structure+mass(db): tpr gro g96 pdb brk ent
+.TP
+.B \fB\-n\fP [<.ndx>] (index.ndx) (Optional)
+Index file
+.UNINDENT
+.sp
+Options to specify output files:
+.INDENT 0.0
+.TP
+.B \fB\-o\fP [<.xvg>] (eigenval.xvg)
+xvgr/xmgr file
+.TP
+.B \fB\-v\fP [<.trr/.cpt/...>] (eigenvec.trr)
+Full precision trajectory: trr cpt tng
+.TP
+.B \fB\-av\fP [<.gro/.g96/...>] (average.pdb)
+Structure file: gro g96 pdb brk ent esp
+.TP
+.B \fB\-l\fP [<.log>] (covar.log)
+Log file
+.TP
+.B \fB\-ascii\fP [<.dat>] (covar.dat) (Optional)
+Generic data file
+.TP
+.B \fB\-xpm\fP [<.xpm>] (covar.xpm) (Optional)
+X PixMap compatible matrix file
+.TP
+.B \fB\-xpma\fP [<.xpm>] (covara.xpm) (Optional)
+X PixMap compatible matrix file
+.UNINDENT
+.sp
+Other options:
+.INDENT 0.0
+.TP
+.B \fB\-b\fP <time> (0)
+Time of first frame to read from trajectory (default unit ps)
+.TP
+.B \fB\-e\fP <time> (0)
+Time of last frame to read from trajectory (default unit ps)
+.TP
+.B \fB\-dt\fP <time> (0)
+Only use frame when t MOD dt = first time (default unit ps)
+.TP
+.B \fB\-tu\fP <enum> (ps)
+Unit for time values: fs, ps, ns, us, ms, s
+.TP
+.B \fB\-xvg\fP <enum> (xmgrace)
+xvg plot formatting: xmgrace, xmgr, none
+.TP
+.B \fB\-[no]fit\fP  (yes)
+Fit to a reference structure
+.TP
+.B \fB\-[no]ref\fP  (no)
+Use the deviation from the conformation in the structure file instead of from the average
+.TP
+.B \fB\-[no]mwa\fP  (no)
+Mass\-weighted covariance analysis
+.TP
+.B \fB\-last\fP <int> (\-1)
+Last eigenvector to write away (\-1 is till the last)
+.TP
+.B \fB\-[no]pbc\fP  (yes)
+Apply corrections for periodic boundary conditions
+.UNINDENT
+.SH SEE ALSO
+.sp
+\fBgmx(1)\fP
+.sp
+More information about GROMACS is available at <\fI\%http://www.gromacs.org/\fP>.
+.SH COPYRIGHT
+2022, GROMACS development team
+.\" Generated by docutils manpage writer.
+.

@@ -1,0 +1,2 @@
+/usr/bin/ar qc ../../../../lib/libonlinehelp-test-shared.a CMakeFiles/onlinehelp-test-shared.dir/mock_helptopic.cpp.o CMakeFiles/onlinehelp-test-shared.dir/__/__/__/testutils/unittest_main.cpp.o
+/usr/bin/ranlib ../../../../lib/libonlinehelp-test-shared.a

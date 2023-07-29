@@ -1,0 +1,182 @@
+.\" Man page generated from reStructuredText.
+.
+.
+.nr rst2man-indent-level 0
+.
+.de1 rstReportMargin
+\\$1 \\n[an-margin]
+level \\n[rst2man-indent-level]
+level margin: \\n[rst2man-indent\\n[rst2man-indent-level]]
+-
+\\n[rst2man-indent0]
+\\n[rst2man-indent1]
+\\n[rst2man-indent2]
+..
+.de1 INDENT
+.\" .rstReportMargin pre:
+. RS \\$1
+. nr rst2man-indent\\n[rst2man-indent-level] \\n[an-margin]
+. nr rst2man-indent-level +1
+.\" .rstReportMargin post:
+..
+.de UNINDENT
+. RE
+.\" indent \\n[an-margin]
+.\" old: \\n[rst2man-indent\\n[rst2man-indent-level]]
+.nr rst2man-indent-level -1
+.\" new: \\n[rst2man-indent\\n[rst2man-indent-level]]
+.in \\n[rst2man-indent\\n[rst2man-indent-level]]u
+..
+.TH "GMX-ANGLE" "1" "Apr 22, 2022" "2022.1" "GROMACS"
+.SH NAME
+gmx-angle \- Calculate distributions and correlations for angles and dihedrals
+.SH SYNOPSIS
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+gmx angle [\fB\-f\fP \fI[<.xtc/.trr/...>]\fP] [\fB\-n\fP \fI[<.ndx>]\fP] [\fB\-od\fP \fI[<.xvg>]\fP]
+          [\fB\-ov\fP \fI[<.xvg>]\fP] [\fB\-of\fP \fI[<.xvg>]\fP] [\fB\-ot\fP \fI[<.xvg>]\fP] [\fB\-oh\fP \fI[<.xvg>]\fP]
+          [\fB\-oc\fP \fI[<.xvg>]\fP] [\fB\-or\fP \fI[<.trr>]\fP] [\fB\-b\fP \fI<time>\fP] [\fB\-e\fP \fI<time>\fP]
+          [\fB\-dt\fP \fI<time>\fP] [\fB\-[no]w\fP] [\fB\-xvg\fP \fI<enum>\fP] [\fB\-type\fP \fI<enum>\fP]
+          [\fB\-[no]all\fP] [\fB\-binwidth\fP \fI<real>\fP] [\fB\-[no]periodic\fP]
+          [\fB\-[no]chandler\fP] [\fB\-[no]avercorr\fP] [\fB\-acflen\fP \fI<int>\fP]
+          [\fB\-[no]normalize\fP] [\fB\-P\fP \fI<enum>\fP] [\fB\-fitfn\fP \fI<enum>\fP]
+          [\fB\-beginfit\fP \fI<real>\fP] [\fB\-endfit\fP \fI<real>\fP]
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.SH DESCRIPTION
+.sp
+\fBgmx angle\fP computes the angle distribution for a number of angles
+or dihedrals.
+.sp
+With option \fB\-ov\fP, you can plot the average angle of
+a group of angles as a function of time. With the \fB\-all\fP option,
+the first graph is the average and the rest are the individual angles.
+.sp
+With the \fB\-of\fP option, \fBgmx angle\fP also calculates the fraction of trans
+dihedrals (only for dihedrals) as function of time, but this is
+probably only fun for a select few.
+.sp
+With option \fB\-oc\fP, a dihedral correlation function is calculated.
+.sp
+It should be noted that the index file must contain
+atom triplets for angles or atom quadruplets for dihedrals.
+If this is not the case, the program will crash.
+.sp
+With option \fB\-or\fP, a trajectory file is dumped containing cos and
+sin of selected dihedral angles, which subsequently can be used as
+input for a principal components analysis using gmx covar\&.
+.sp
+Option \fB\-ot\fP plots when transitions occur between
+dihedral rotamers of multiplicity 3 and \fB\-oh\fP
+records a histogram of the times between such transitions,
+assuming the input trajectory frames are equally spaced in time.
+.SH OPTIONS
+.sp
+Options to specify input files:
+.INDENT 0.0
+.TP
+.B \fB\-f\fP [<.xtc/.trr/...>] (traj.xtc)
+Trajectory: xtc trr cpt gro g96 pdb tng
+.TP
+.B \fB\-n\fP [<.ndx>] (angle.ndx)
+Index file
+.UNINDENT
+.sp
+Options to specify output files:
+.INDENT 0.0
+.TP
+.B \fB\-od\fP [<.xvg>] (angdist.xvg)
+xvgr/xmgr file
+.TP
+.B \fB\-ov\fP [<.xvg>] (angaver.xvg) (Optional)
+xvgr/xmgr file
+.TP
+.B \fB\-of\fP [<.xvg>] (dihfrac.xvg) (Optional)
+xvgr/xmgr file
+.TP
+.B \fB\-ot\fP [<.xvg>] (dihtrans.xvg) (Optional)
+xvgr/xmgr file
+.TP
+.B \fB\-oh\fP [<.xvg>] (trhisto.xvg) (Optional)
+xvgr/xmgr file
+.TP
+.B \fB\-oc\fP [<.xvg>] (dihcorr.xvg) (Optional)
+xvgr/xmgr file
+.TP
+.B \fB\-or\fP [<.trr>] (traj.trr) (Optional)
+Trajectory in portable xdr format
+.UNINDENT
+.sp
+Other options:
+.INDENT 0.0
+.TP
+.B \fB\-b\fP <time> (0)
+Time of first frame to read from trajectory (default unit ps)
+.TP
+.B \fB\-e\fP <time> (0)
+Time of last frame to read from trajectory (default unit ps)
+.TP
+.B \fB\-dt\fP <time> (0)
+Only use frame when t MOD dt = first time (default unit ps)
+.TP
+.B \fB\-[no]w\fP  (no)
+View output \&.xvg, \&.xpm, \&.eps and \&.pdb files
+.TP
+.B \fB\-xvg\fP <enum> (xmgrace)
+xvg plot formatting: xmgrace, xmgr, none
+.TP
+.B \fB\-type\fP <enum> (angle)
+Type of angle to analyse: angle, dihedral, improper, ryckaert\-bellemans
+.TP
+.B \fB\-[no]all\fP  (no)
+Plot all angles separately in the averages file, in the order of appearance in the index file.
+.TP
+.B \fB\-binwidth\fP <real> (1)
+binwidth (degrees) for calculating the distribution
+.TP
+.B \fB\-[no]periodic\fP  (yes)
+Print dihedral angles modulo 360 degrees
+.TP
+.B \fB\-[no]chandler\fP  (no)
+Use Chandler correlation function (N[trans] = 1, N[gauche] = 0) rather than cosine correlation function. Trans is defined as phi < \-60 or phi > 60.
+.TP
+.B \fB\-[no]avercorr\fP  (no)
+Average the correlation functions for the individual angles/dihedrals
+.TP
+.B \fB\-acflen\fP <int> (\-1)
+Length of the ACF, default is half the number of frames
+.TP
+.B \fB\-[no]normalize\fP  (yes)
+Normalize ACF
+.TP
+.B \fB\-P\fP <enum> (0)
+Order of Legendre polynomial for ACF (0 indicates none): 0, 1, 2, 3
+.TP
+.B \fB\-fitfn\fP <enum> (none)
+Fit function: none, exp, aexp, exp_exp, exp5, exp7, exp9
+.TP
+.B \fB\-beginfit\fP <real> (0)
+Time where to begin the exponential fit of the correlation function
+.TP
+.B \fB\-endfit\fP <real> (\-1)
+Time where to end the exponential fit of the correlation function, \-1 is until the end
+.UNINDENT
+.SH KNOWN ISSUES
+.INDENT 0.0
+.IP \(bu 2
+Counting transitions only works for dihedrals with multiplicity 3
+.UNINDENT
+.SH SEE ALSO
+.sp
+\fBgmx(1)\fP
+.sp
+More information about GROMACS is available at <\fI\%http://www.gromacs.org/\fP>.
+.SH COPYRIGHT
+2022, GROMACS development team
+.\" Generated by docutils manpage writer.
+.

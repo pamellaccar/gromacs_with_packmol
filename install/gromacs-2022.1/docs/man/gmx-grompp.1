@@ -1,0 +1,246 @@
+.\" Man page generated from reStructuredText.
+.
+.
+.nr rst2man-indent-level 0
+.
+.de1 rstReportMargin
+\\$1 \\n[an-margin]
+level \\n[rst2man-indent-level]
+level margin: \\n[rst2man-indent\\n[rst2man-indent-level]]
+-
+\\n[rst2man-indent0]
+\\n[rst2man-indent1]
+\\n[rst2man-indent2]
+..
+.de1 INDENT
+.\" .rstReportMargin pre:
+. RS \\$1
+. nr rst2man-indent\\n[rst2man-indent-level] \\n[an-margin]
+. nr rst2man-indent-level +1
+.\" .rstReportMargin post:
+..
+.de UNINDENT
+. RE
+.\" indent \\n[an-margin]
+.\" old: \\n[rst2man-indent\\n[rst2man-indent-level]]
+.nr rst2man-indent-level -1
+.\" new: \\n[rst2man-indent\\n[rst2man-indent-level]]
+.in \\n[rst2man-indent\\n[rst2man-indent-level]]u
+..
+.TH "GMX-GROMPP" "1" "Apr 22, 2022" "2022.1" "GROMACS"
+.SH NAME
+gmx-grompp \- Make a run input file
+.SH SYNOPSIS
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+gmx grompp [\fB\-f\fP \fI[<.mdp>]\fP] [\fB\-c\fP \fI[<.gro/.g96/...>]\fP] [\fB\-r\fP \fI[<.gro/.g96/...>]\fP]
+           [\fB\-rb\fP \fI[<.gro/.g96/...>]\fP] [\fB\-n\fP \fI[<.ndx>]\fP] [\fB\-p\fP \fI[<.top>]\fP]
+           [\fB\-t\fP \fI[<.trr/.cpt/...>]\fP] [\fB\-e\fP \fI[<.edr>]\fP] [\fB\-qmi\fP \fI[<.inp>]\fP]
+           [\fB\-ref\fP \fI[<.trr/.cpt/...>]\fP] [\fB\-po\fP \fI[<.mdp>]\fP] [\fB\-pp\fP \fI[<.top>]\fP]
+           [\fB\-o\fP \fI[<.tpr>]\fP] [\fB\-imd\fP \fI[<.gro>]\fP] [\fB\-[no]v\fP] [\fB\-time\fP \fI<real>\fP]
+           [\fB\-[no]rmvsbds\fP] [\fB\-maxwarn\fP \fI<int>\fP] [\fB\-[no]zero\fP] [\fB\-[no]renum\fP]
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.SH DESCRIPTION
+.sp
+\fBgmx grompp\fP (the gromacs preprocessor)
+reads a molecular topology file, checks the validity of the
+file, expands the topology from a molecular description to an atomic
+description. The topology file contains information about
+molecule types and the number of molecules, the preprocessor
+copies each molecule as needed.
+There is no limitation on the number of molecule types.
+Bonds and bond\-angles can be converted into constraints, separately
+for hydrogens and heavy atoms.
+Then a coordinate file is read and velocities can be generated
+from a Maxwellian distribution if requested.
+\fBgmx grompp\fP also reads parameters for gmx mdrun
+(eg. number of MD steps, time step, cut\-off).
+Eventually a binary file is produced that can serve as the sole input
+file for the MD program.
+.sp
+\fBgmx grompp\fP uses the atom names from the topology file. The atom names
+in the coordinate file (option \fB\-c\fP) are only read to generate
+warnings when they do not match the atom names in the topology.
+Note that the atom names are irrelevant for the simulation as
+only the atom types are used for generating interaction parameters.
+.sp
+\fBgmx grompp\fP uses a built\-in preprocessor to resolve includes, macros,
+etc. The preprocessor supports the following keywords:
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+#ifdef VARIABLE
+#ifndef VARIABLE
+#else
+#endif
+#define VARIABLE
+#undef VARIABLE
+#include "filename"
+#include <filename>
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.sp
+The functioning of these statements in your topology may be modulated by
+using the following two flags in your \&.mdp file:
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+define = \-DVARIABLE1 \-DVARIABLE2
+include = \-I/home/john/doe
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.sp
+For further information a C\-programming textbook may help you out.
+Specifying the \fB\-pp\fP flag will get the pre\-processed
+topology file written out so that you can verify its contents.
+.sp
+When using position restraints, a file with restraint coordinates
+must be supplied with \fB\-r\fP (can be the same file as supplied
+for \fB\-c\fP). For free energy calculations, separate reference
+coordinates for the B topology can be supplied with \fB\-rb\fP,
+otherwise they will be equal to those of the A topology.
+.sp
+Starting coordinates can be read from trajectory with \fB\-t\fP\&.
+The last frame with coordinates and velocities will be read,
+unless the \fB\-time\fP option is used. Only if this information
+is absent will the coordinates in the \fB\-c\fP file be used.
+Note that these velocities will not be used when \fBgen_vel = yes\fP
+in your \&.mdp file. An energy file can be supplied with
+\fB\-e\fP to read Nose\-Hoover and/or Parrinello\-Rahman coupling
+variables.
+.sp
+\fBgmx grompp\fP can be used to restart simulations (preserving
+continuity) by supplying just a checkpoint file with \fB\-t\fP\&.
+However, for simply changing the number of run steps to extend
+a run, using gmx convert\-tpr is more convenient than \fBgmx grompp\fP\&.
+You then supply the old checkpoint file directly to gmx mdrun
+with \fB\-cpi\fP\&. If you wish to change the ensemble or things
+like output frequency, then supplying the checkpoint file to
+\fBgmx grompp\fP with \fB\-t\fP along with a new \&.mdp file
+with \fB\-f\fP is the recommended procedure. Actually preserving
+the ensemble (if possible) still requires passing the checkpoint
+file to gmx mdrun \fB\-cpi\fP\&.
+.sp
+By default, all bonded interactions which have constant energy due to
+virtual site constructions will be removed. If this constant energy is
+not zero, this will result in a shift in the total energy. All bonded
+interactions can be kept by turning off \fB\-rmvsbds\fP\&. Additionally,
+all constraints for distances which will be constant anyway because
+of virtual site constructions will be removed. If any constraints remain
+which involve virtual sites, a fatal error will result.
+.sp
+To verify your run input file, please take note of all warnings
+on the screen, and correct where necessary. Do also look at the contents
+of the \fBmdout.mdp\fP file; this contains comment lines, as well as
+the input that \fBgmx grompp\fP has read. If in doubt, you can start \fBgmx grompp\fP
+with the \fB\-debug\fP option which will give you more information
+in a file called \fBgrompp.log\fP (along with real debug info). You
+can see the contents of the run input file with the gmx dump
+program. gmx check can be used to compare the contents of two
+run input files.
+.sp
+The \fB\-maxwarn\fP option can be used to override warnings printed
+by \fBgmx grompp\fP that otherwise halt output. In some cases, warnings are
+harmless, but usually they are not. The user is advised to carefully
+interpret the output messages before attempting to bypass them with
+this option.
+.SH OPTIONS
+.sp
+Options to specify input files:
+.INDENT 0.0
+.TP
+.B \fB\-f\fP [<.mdp>] (grompp.mdp)
+grompp input file with MD parameters
+.TP
+.B \fB\-c\fP [<.gro/.g96/...>] (conf.gro)
+Structure file: gro g96 pdb brk ent esp tpr
+.TP
+.B \fB\-r\fP [<.gro/.g96/...>] (restraint.gro) (Optional)
+Structure file: gro g96 pdb brk ent esp tpr
+.TP
+.B \fB\-rb\fP [<.gro/.g96/...>] (restraint.gro) (Optional)
+Structure file: gro g96 pdb brk ent esp tpr
+.TP
+.B \fB\-n\fP [<.ndx>] (index.ndx) (Optional)
+Index file
+.TP
+.B \fB\-p\fP [<.top>] (topol.top)
+Topology file
+.TP
+.B \fB\-t\fP [<.trr/.cpt/...>] (traj.trr) (Optional)
+Full precision trajectory: trr cpt tng
+.TP
+.B \fB\-e\fP [<.edr>] (ener.edr) (Optional)
+Energy file
+.TP
+.B \fB\-qmi\fP [<.inp>] (topol\-qmmm.inp) (Optional)
+Input file for QM program
+.UNINDENT
+.sp
+Options to specify input/output files:
+.INDENT 0.0
+.TP
+.B \fB\-ref\fP [<.trr/.cpt/...>] (rotref.trr) (Optional)
+Full precision trajectory: trr cpt tng
+.UNINDENT
+.sp
+Options to specify output files:
+.INDENT 0.0
+.TP
+.B \fB\-po\fP [<.mdp>] (mdout.mdp)
+grompp input file with MD parameters
+.TP
+.B \fB\-pp\fP [<.top>] (processed.top) (Optional)
+Topology file
+.TP
+.B \fB\-o\fP [<.tpr>] (topol.tpr)
+Portable xdr run input file
+.TP
+.B \fB\-imd\fP [<.gro>] (imdgroup.gro) (Optional)
+Coordinate file in Gromos\-87 format
+.UNINDENT
+.sp
+Other options:
+.INDENT 0.0
+.TP
+.B \fB\-[no]v\fP  (no)
+Be loud and noisy
+.TP
+.B \fB\-time\fP <real> (\-1)
+Take frame at or first after this time.
+.TP
+.B \fB\-[no]rmvsbds\fP  (yes)
+Remove constant bonded interactions with virtual sites
+.TP
+.B \fB\-maxwarn\fP <int> (0)
+Number of allowed warnings during input processing. Not for normal use and may generate unstable systems
+.TP
+.B \fB\-[no]zero\fP  (no)
+Set parameters for bonded interactions without defaults to zero instead of generating an error
+.TP
+.B \fB\-[no]renum\fP  (yes)
+Renumber atomtypes and minimize number of atomtypes
+.UNINDENT
+.SH SEE ALSO
+.sp
+\fBgmx(1)\fP
+.sp
+More information about GROMACS is available at <\fI\%http://www.gromacs.org/\fP>.
+.SH COPYRIGHT
+2022, GROMACS development team
+.\" Generated by docutils manpage writer.
+.

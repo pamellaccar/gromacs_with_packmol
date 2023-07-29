@@ -1,0 +1,6 @@
+#!/bin/bash
+# Entry point script for Docker containers.
+# Additional arguments are passed along to pytest.
+# See README.md and the gmxapi/ci-<option> Docker images.
+
+pytest $HOME/sample_restraint/tests $@

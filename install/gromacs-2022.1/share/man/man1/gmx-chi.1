@@ -1,0 +1,287 @@
+.\" Man page generated from reStructuredText.
+.
+.
+.nr rst2man-indent-level 0
+.
+.de1 rstReportMargin
+\\$1 \\n[an-margin]
+level \\n[rst2man-indent-level]
+level margin: \\n[rst2man-indent\\n[rst2man-indent-level]]
+-
+\\n[rst2man-indent0]
+\\n[rst2man-indent1]
+\\n[rst2man-indent2]
+..
+.de1 INDENT
+.\" .rstReportMargin pre:
+. RS \\$1
+. nr rst2man-indent\\n[rst2man-indent-level] \\n[an-margin]
+. nr rst2man-indent-level +1
+.\" .rstReportMargin post:
+..
+.de UNINDENT
+. RE
+.\" indent \\n[an-margin]
+.\" old: \\n[rst2man-indent\\n[rst2man-indent-level]]
+.nr rst2man-indent-level -1
+.\" new: \\n[rst2man-indent\\n[rst2man-indent-level]]
+.in \\n[rst2man-indent\\n[rst2man-indent-level]]u
+..
+.TH "GMX-CHI" "1" "Apr 22, 2022" "2022.1" "GROMACS"
+.SH NAME
+gmx-chi \- Calculate everything you want to know about chi and other dihedrals
+.SH SYNOPSIS
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+gmx chi [\fB\-s\fP \fI[<.gro/.g96/...>]\fP] [\fB\-f\fP \fI[<.xtc/.trr/...>]\fP] [\fB\-ss\fP \fI[<.dat>]\fP]
+        [\fB\-o\fP \fI[<.xvg>]\fP] [\fB\-p\fP \fI[<.pdb>]\fP] [\fB\-jc\fP \fI[<.xvg>]\fP] [\fB\-corr\fP \fI[<.xvg>]\fP]
+        [\fB\-g\fP \fI[<.log>]\fP] [\fB\-ot\fP \fI[<.xvg>]\fP] [\fB\-oh\fP \fI[<.xvg>]\fP] [\fB\-rt\fP \fI[<.xvg>]\fP]
+        [\fB\-cp\fP \fI[<.xvg>]\fP] [\fB\-b\fP \fI<time>\fP] [\fB\-e\fP \fI<time>\fP] [\fB\-dt\fP \fI<time>\fP] [\fB\-[no]w\fP]
+        [\fB\-xvg\fP \fI<enum>\fP] [\fB\-r0\fP \fI<int>\fP] [\fB\-[no]phi\fP] [\fB\-[no]psi\fP] [\fB\-[no]omega\fP]
+        [\fB\-[no]rama\fP] [\fB\-[no]viol\fP] [\fB\-[no]periodic\fP] [\fB\-[no]all\fP] [\fB\-[no]rad\fP]
+        [\fB\-[no]shift\fP] [\fB\-binwidth\fP \fI<int>\fP] [\fB\-core_rotamer\fP \fI<real>\fP]
+        [\fB\-maxchi\fP \fI<enum>\fP] [\fB\-[no]normhisto\fP] [\fB\-[no]ramomega\fP]
+        [\fB\-bfact\fP \fI<real>\fP] [\fB\-[no]chi_prod\fP] [\fB\-[no]HChi\fP] [\fB\-bmax\fP \fI<real>\fP]
+        [\fB\-acflen\fP \fI<int>\fP] [\fB\-[no]normalize\fP] [\fB\-P\fP \fI<enum>\fP] [\fB\-fitfn\fP \fI<enum>\fP]
+        [\fB\-beginfit\fP \fI<real>\fP] [\fB\-endfit\fP \fI<real>\fP]
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.SH DESCRIPTION
+.sp
+\fBgmx chi\fP computes phi, psi, omega,
+and chi dihedrals for all your
+amino acid backbone and sidechains.
+It can compute dihedral angle as a function of time, and as
+histogram distributions.
+The distributions \fB(histo\-(dihedral)(RESIDUE).xvg\fP) are cumulative over all
+residues of each type.
+.sp
+If option \fB\-corr\fP is given, the program will
+calculate dihedral autocorrelation functions. The function used
+is C(t) = <cos(chi(tau))
+cos(chi(tau+t))>. The use of cosines
+rather than angles themselves, resolves the problem of periodicity.
+(Van der Spoel & Berendsen (1997), Biophys. J. 72, 2032\-2041).
+Separate files for each dihedral of each residue
+\fB(corr(dihedral)(RESIDUE)(nresnr).xvg\fP) are output, as well as a
+file containing the information for all residues (argument of \fB\-corr\fP).
+.sp
+With option \fB\-all\fP, the angles themselves as a function of time for
+each residue are printed to separate files \fB(dihedral)(RESIDUE)(nresnr).xvg\fP\&.
+These can be in radians or degrees.
+.sp
+A log file (argument \fB\-g\fP) is also written. This contains
+.INDENT 0.0
+.INDENT 3.5
+.INDENT 0.0
+.IP \(bu 2
+information about the number of residues of each type.
+.IP \(bu 2
+The NMR ^3J coupling constants from the Karplus equation.
+.IP \(bu 2
+a table for each residue of the number of transitions between
+rotamers per nanosecond,  and the order parameter S^2 of each dihedral.
+.IP \(bu 2
+a table for each residue of the rotamer occupancy.
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.sp
+All rotamers are taken as 3\-fold, except for omega and chi dihedrals
+to planar groups (i.e. chi_2 of aromatics, Asp and Asn;
+chi_3 of Glu
+and Gln; and chi_4 of Arg), which are 2\-fold. "rotamer 0" means
+that the dihedral was not in the core region of each rotamer.
+The width of the core region can be set with \fB\-core_rotamer\fP
+.sp
+The S^2 order parameters are also output to an \&.xvg file
+(argument \fB\-o\fP ) and optionally as a \&.pdb file with
+the S^2 values as B\-factor (argument \fB\-p\fP).
+The total number of rotamer transitions per timestep
+(argument \fB\-ot\fP), the number of transitions per rotamer
+(argument \fB\-rt\fP), and the ^3J couplings (argument \fB\-jc\fP),
+can also be written to \&.xvg files. Note that the analysis
+of rotamer transitions assumes that the supplied trajectory frames
+are equally spaced in time.
+.sp
+If \fB\-chi_prod\fP is set (and \fB\-maxchi\fP > 0), cumulative rotamers, e.g.
+1+9(chi_1\-1)+3(chi_2\-1)+
+(chi_3\-1) (if the residue has three 3\-fold
+dihedrals and \fB\-maxchi\fP >= 3)
+are calculated. As before, if any dihedral is not in the core region,
+the rotamer is taken to be 0. The occupancies of these cumulative
+rotamers (starting with rotamer 0) are written to the file
+that is the argument of \fB\-cp\fP, and if the \fB\-all\fP flag
+is given, the rotamers as functions of time
+are written to \fBchiproduct(RESIDUE)(nresnr).xvg\fP
+and their occupancies to \fBhisto\-chiproduct(RESIDUE)(nresnr).xvg\fP\&.
+.sp
+The option \fB\-r\fP generates a contour plot of the average omega angle
+as a function of the phi and psi angles, that is, in a Ramachandran
+plot the average omega angle is plotted using color coding.
+.SH OPTIONS
+.sp
+Options to specify input files:
+.INDENT 0.0
+.TP
+.B \fB\-s\fP [<.gro/.g96/...>] (conf.gro)
+Structure file: gro g96 pdb brk ent esp tpr
+.TP
+.B \fB\-f\fP [<.xtc/.trr/...>] (traj.xtc)
+Trajectory: xtc trr cpt gro g96 pdb tng
+.TP
+.B \fB\-ss\fP [<.dat>] (ssdump.dat) (Optional)
+Generic data file
+.UNINDENT
+.sp
+Options to specify output files:
+.INDENT 0.0
+.TP
+.B \fB\-o\fP [<.xvg>] (order.xvg)
+xvgr/xmgr file
+.TP
+.B \fB\-p\fP [<.pdb>] (order.pdb) (Optional)
+Protein data bank file
+.TP
+.B \fB\-jc\fP [<.xvg>] (Jcoupling.xvg)
+xvgr/xmgr file
+.TP
+.B \fB\-corr\fP [<.xvg>] (dihcorr.xvg) (Optional)
+xvgr/xmgr file
+.TP
+.B \fB\-g\fP [<.log>] (chi.log)
+Log file
+.TP
+.B \fB\-ot\fP [<.xvg>] (dihtrans.xvg) (Optional)
+xvgr/xmgr file
+.TP
+.B \fB\-oh\fP [<.xvg>] (trhisto.xvg) (Optional)
+xvgr/xmgr file
+.TP
+.B \fB\-rt\fP [<.xvg>] (restrans.xvg) (Optional)
+xvgr/xmgr file
+.TP
+.B \fB\-cp\fP [<.xvg>] (chiprodhisto.xvg) (Optional)
+xvgr/xmgr file
+.UNINDENT
+.sp
+Other options:
+.INDENT 0.0
+.TP
+.B \fB\-b\fP <time> (0)
+Time of first frame to read from trajectory (default unit ps)
+.TP
+.B \fB\-e\fP <time> (0)
+Time of last frame to read from trajectory (default unit ps)
+.TP
+.B \fB\-dt\fP <time> (0)
+Only use frame when t MOD dt = first time (default unit ps)
+.TP
+.B \fB\-[no]w\fP  (no)
+View output \&.xvg, \&.xpm, \&.eps and \&.pdb files
+.TP
+.B \fB\-xvg\fP <enum> (xmgrace)
+xvg plot formatting: xmgrace, xmgr, none
+.TP
+.B \fB\-r0\fP <int> (1)
+starting residue
+.TP
+.B \fB\-[no]phi\fP  (no)
+Output for phi dihedral angles
+.TP
+.B \fB\-[no]psi\fP  (no)
+Output for psi dihedral angles
+.TP
+.B \fB\-[no]omega\fP  (no)
+Output for omega dihedrals (peptide bonds)
+.TP
+.B \fB\-[no]rama\fP  (no)
+Generate phi/psi and chi_1/chi_2 Ramachandran plots
+.TP
+.B \fB\-[no]viol\fP  (no)
+Write a file that gives 0 or 1 for violated Ramachandran angles
+.TP
+.B \fB\-[no]periodic\fP  (yes)
+Print dihedral angles modulo 360 degrees
+.TP
+.B \fB\-[no]all\fP  (no)
+Output separate files for every dihedral.
+.TP
+.B \fB\-[no]rad\fP  (no)
+in angle vs time files, use radians rather than degrees.
+.TP
+.B \fB\-[no]shift\fP  (no)
+Compute chemical shifts from phi/psi angles
+.TP
+.B \fB\-binwidth\fP <int> (1)
+bin width for histograms (degrees)
+.TP
+.B \fB\-core_rotamer\fP <real> (0.5)
+only the central \fB\-core_rotamer\fP*(360/multiplicity) belongs to each rotamer (the rest is assigned to rotamer 0)
+.TP
+.B \fB\-maxchi\fP <enum> (0)
+calculate first ndih chi dihedrals: 0, 1, 2, 3, 4, 5, 6
+.TP
+.B \fB\-[no]normhisto\fP  (yes)
+Normalize histograms
+.TP
+.B \fB\-[no]ramomega\fP  (no)
+compute average omega as a function of phi/psi and plot it in an \&.xpm plot
+.TP
+.B \fB\-bfact\fP <real> (\-1)
+B\-factor value for \&.pdb file for atoms with no calculated dihedral order parameter
+.TP
+.B \fB\-[no]chi_prod\fP  (no)
+compute a single cumulative rotamer for each residue
+.TP
+.B \fB\-[no]HChi\fP  (no)
+Include dihedrals to sidechain hydrogens
+.TP
+.B \fB\-bmax\fP <real> (0)
+Maximum B\-factor on any of the atoms that make up a dihedral, for the dihedral angle to be considere in the statistics. Applies to database work where a number of X\-Ray structures is analyzed. \fB\-bmax\fP <= 0 means no limit.
+.TP
+.B \fB\-acflen\fP <int> (\-1)
+Length of the ACF, default is half the number of frames
+.TP
+.B \fB\-[no]normalize\fP  (yes)
+Normalize ACF
+.TP
+.B \fB\-P\fP <enum> (0)
+Order of Legendre polynomial for ACF (0 indicates none): 0, 1, 2, 3
+.TP
+.B \fB\-fitfn\fP <enum> (none)
+Fit function: none, exp, aexp, exp_exp, exp5, exp7, exp9
+.TP
+.B \fB\-beginfit\fP <real> (0)
+Time where to begin the exponential fit of the correlation function
+.TP
+.B \fB\-endfit\fP <real> (\-1)
+Time where to end the exponential fit of the correlation function, \-1 is until the end
+.UNINDENT
+.SH KNOWN ISSUES
+.INDENT 0.0
+.IP \(bu 2
+Produces MANY output files (up to about 4 times the number of residues in the protein, twice that if autocorrelation functions are calculated). Typically several hundred files are output.
+.IP \(bu 2
+phi and psi dihedrals are calculated in a non\-standard way, using H\-N\-CA\-C for phi instead of C(\-)\-N\-CA\-C, and N\-CA\-C\-O for psi instead of N\-CA\-C\-N(+). This causes (usually small) discrepancies with the output of other tools like gmx rama\&.
+.IP \(bu 2
+\fB\-r0\fP option does not work properly
+.IP \(bu 2
+Rotamers with multiplicity 2 are printed in \fBchi.log\fP as if they had
+.IP \(bu 2
+multiplicity 3, with the 3rd (g(+)) always having probability 0
+.UNINDENT
+.SH SEE ALSO
+.sp
+\fBgmx(1)\fP
+.sp
+More information about GROMACS is available at <\fI\%http://www.gromacs.org/\fP>.
+.SH COPYRIGHT
+2022, GROMACS development team
+.\" Generated by docutils manpage writer.
+.

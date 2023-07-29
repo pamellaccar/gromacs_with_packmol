@@ -1,0 +1,154 @@
+.\" Man page generated from reStructuredText.
+.
+.
+.nr rst2man-indent-level 0
+.
+.de1 rstReportMargin
+\\$1 \\n[an-margin]
+level \\n[rst2man-indent-level]
+level margin: \\n[rst2man-indent\\n[rst2man-indent-level]]
+-
+\\n[rst2man-indent0]
+\\n[rst2man-indent1]
+\\n[rst2man-indent2]
+..
+.de1 INDENT
+.\" .rstReportMargin pre:
+. RS \\$1
+. nr rst2man-indent\\n[rst2man-indent-level] \\n[an-margin]
+. nr rst2man-indent-level +1
+.\" .rstReportMargin post:
+..
+.de UNINDENT
+. RE
+.\" indent \\n[an-margin]
+.\" old: \\n[rst2man-indent\\n[rst2man-indent-level]]
+.nr rst2man-indent-level -1
+.\" new: \\n[rst2man-indent\\n[rst2man-indent-level]]
+.in \\n[rst2man-indent\\n[rst2man-indent-level]]u
+..
+.TH "GMX-FREEVOLUME" "1" "Apr 22, 2022" "2022.1" "GROMACS"
+.SH NAME
+gmx-freevolume \- Calculate free volume
+.SH SYNOPSIS
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+gmx freevolume [\fB\-f\fP \fI[<.xtc/.trr/...>]\fP] [\fB\-s\fP \fI[<.tpr/.gro/...>]\fP]
+             [\fB\-n\fP \fI[<.ndx>]\fP] [\fB\-o\fP \fI[<.xvg>]\fP] [\fB\-b\fP \fI<time>\fP] [\fB\-e\fP \fI<time>\fP]
+             [\fB\-dt\fP \fI<time>\fP] [\fB\-tu\fP \fI<enum>\fP] [\fB\-fgroup\fP \fI<selection>\fP]
+             [\fB\-xvg\fP \fI<enum>\fP] [\fB\-[no]rmpbc\fP] [\fB\-sf\fP \fI<file>\fP]
+             [\fB\-selrpos\fP \fI<enum>\fP] [\fB\-select\fP \fI<selection>\fP] [\fB\-radius\fP \fI<real>\fP]
+             [\fB\-seed\fP \fI<int>\fP] [\fB\-ninsert\fP \fI<int>\fP]
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.SH DESCRIPTION
+.sp
+\fBgmx freevolume\fP calculates the free volume in a box as
+a function of time. The free volume is
+plotted as a fraction of the total volume.
+The program tries to insert a probe with a given radius,
+into the simulations box and if the distance between the
+probe and any atom is less than the sums of the
+van der Waals radii of both atoms, the position is
+considered to be occupied, i.e. non\-free. By using a
+probe radius of 0, the true free volume is computed.
+By using a larger radius, e.g. 0.14 nm, roughly corresponding
+to a water molecule, the free volume for a hypothetical
+particle with that size will be produced.
+Note however, that since atoms are treated as hard\-spheres
+these number are very approximate, and typically only
+relative changes are meaningful, for instance by doing a
+series of simulations at different temperature.
+.sp
+The group specified by the selection is considered to
+delineate non\-free volume.
+The number of insertions per unit of volume is important
+to get a converged result. About 1000/nm^3 yields an overall
+standard deviation that is determined by the fluctuations in
+the trajectory rather than by the fluctuations due to the
+random numbers.
+.sp
+The results are critically dependent on the van der Waals radii;
+we recommend to use the values due to Bondi (1964).
+.sp
+The Fractional Free Volume (FFV) that some authors like to use
+is given by 1 \- 1.3*(1\-Free Volume). This value is printed on
+the terminal.
+.SH OPTIONS
+.sp
+Options to specify input files:
+.INDENT 0.0
+.TP
+.B \fB\-f\fP [<.xtc/.trr/...>] (traj.xtc) (Optional)
+Input trajectory or single configuration: xtc trr cpt gro g96 pdb tng
+.TP
+.B \fB\-s\fP [<.tpr/.gro/...>] (topol.tpr) (Optional)
+Input structure: tpr gro g96 pdb brk ent
+.TP
+.B \fB\-n\fP [<.ndx>] (index.ndx) (Optional)
+Extra index groups
+.UNINDENT
+.sp
+Options to specify output files:
+.INDENT 0.0
+.TP
+.B \fB\-o\fP [<.xvg>] (freevolume.xvg) (Optional)
+Computed free volume
+.UNINDENT
+.sp
+Other options:
+.INDENT 0.0
+.TP
+.B \fB\-b\fP <time> (0)
+First frame (ps) to read from trajectory
+.TP
+.B \fB\-e\fP <time> (0)
+Last frame (ps) to read from trajectory
+.TP
+.B \fB\-dt\fP <time> (0)
+Only use frame if t MOD dt == first time (ps)
+.TP
+.B \fB\-tu\fP <enum> (ps)
+Unit for time values: fs, ps, ns, us, ms, s
+.TP
+.B \fB\-fgroup\fP <selection>
+Atoms stored in the trajectory file (if not set, assume first N atoms)
+.TP
+.B \fB\-xvg\fP <enum> (xmgrace)
+Plot formatting: xmgrace, xmgr, none
+.TP
+.B \fB\-[no]rmpbc\fP  (yes)
+Make molecules whole for each frame
+.TP
+.B \fB\-sf\fP <file>
+Provide selections from files
+.TP
+.B \fB\-selrpos\fP <enum> (atom)
+Selection reference positions: atom, res_com, res_cog, mol_com, mol_cog, whole_res_com, whole_res_cog, whole_mol_com, whole_mol_cog, part_res_com, part_res_cog, part_mol_com, part_mol_cog, dyn_res_com, dyn_res_cog, dyn_mol_com, dyn_mol_cog
+.TP
+.B \fB\-select\fP <selection>
+Atoms that are considered as part of the excluded volume
+.TP
+.B \fB\-radius\fP <real> (0)
+Radius of the probe to be inserted (nm, 0 yields the true free volume)
+.TP
+.B \fB\-seed\fP <int> (0)
+Seed for random number generator (0 means generate).
+.TP
+.B \fB\-ninsert\fP <int> (1000)
+Number of probe insertions per cubic nm to try for each frame in the trajectory.
+.UNINDENT
+.SH SEE ALSO
+.sp
+\fBgmx(1)\fP
+.sp
+More information about GROMACS is available at <\fI\%http://www.gromacs.org/\fP>.
+.SH COPYRIGHT
+2022, GROMACS development team
+.\" Generated by docutils manpage writer.
+.

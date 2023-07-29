@@ -1,0 +1,200 @@
+.\" Man page generated from reStructuredText.
+.
+.
+.nr rst2man-indent-level 0
+.
+.de1 rstReportMargin
+\\$1 \\n[an-margin]
+level \\n[rst2man-indent-level]
+level margin: \\n[rst2man-indent\\n[rst2man-indent-level]]
+-
+\\n[rst2man-indent0]
+\\n[rst2man-indent1]
+\\n[rst2man-indent2]
+..
+.de1 INDENT
+.\" .rstReportMargin pre:
+. RS \\$1
+. nr rst2man-indent\\n[rst2man-indent-level] \\n[an-margin]
+. nr rst2man-indent-level +1
+.\" .rstReportMargin post:
+..
+.de UNINDENT
+. RE
+.\" indent \\n[an-margin]
+.\" old: \\n[rst2man-indent\\n[rst2man-indent-level]]
+.nr rst2man-indent-level -1
+.\" new: \\n[rst2man-indent\\n[rst2man-indent-level]]
+.in \\n[rst2man-indent\\n[rst2man-indent-level]]u
+..
+.TH "GMX-RDF" "1" "Apr 22, 2022" "2022.1" "GROMACS"
+.SH NAME
+gmx-rdf \- Calculate radial distribution functions
+.SH SYNOPSIS
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+gmx rdf [\fB\-f\fP \fI[<.xtc/.trr/...>]\fP] [\fB\-s\fP \fI[<.tpr/.gro/...>]\fP] [\fB\-n\fP \fI[<.ndx>]\fP]
+        [\fB\-o\fP \fI[<.xvg>]\fP] [\fB\-cn\fP \fI[<.xvg>]\fP] [\fB\-b\fP \fI<time>\fP] [\fB\-e\fP \fI<time>\fP]
+        [\fB\-dt\fP \fI<time>\fP] [\fB\-tu\fP \fI<enum>\fP] [\fB\-fgroup\fP \fI<selection>\fP] [\fB\-xvg\fP \fI<enum>\fP]
+        [\fB\-[no]rmpbc\fP] [\fB\-[no]pbc\fP] [\fB\-sf\fP \fI<file>\fP] [\fB\-selrpos\fP \fI<enum>\fP]
+        [\fB\-seltype\fP \fI<enum>\fP] [\fB\-bin\fP \fI<real>\fP] [\fB\-norm\fP \fI<enum>\fP] [\fB\-[no]xy\fP]
+        [\fB\-[no]excl\fP] [\fB\-cut\fP \fI<real>\fP] [\fB\-rmax\fP \fI<real>\fP] [\fB\-surf\fP \fI<enum>\fP]
+        [\fB\-ref\fP \fI<selection>\fP] [\fB\-sel\fP \fI<selection>\fP]
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.SH DESCRIPTION
+.sp
+\fBgmx rdf\fP calculates radial distribution functions from one
+reference set of position (set with \fB\-ref\fP) to one or more
+sets of positions (set with \fB\-sel\fP).  To compute the RDF with
+respect to the closest position in a set in \fB\-ref\fP instead, use
+\fB\-surf\fP: if set, then \fB\-ref\fP is partitioned into sets
+based on the value of \fB\-surf\fP, and the closest position in each
+set is used. To compute the RDF around axes parallel to the
+\fIz\fP\-axis, i.e., only in the \fIx\fP\-\fIy\fP plane, use
+\fB\-xy\fP\&.
+.sp
+To set the bin width and maximum distance to use in the RDF, use
+\fB\-bin\fP and \fB\-rmax\fP, respectively. The latter can be
+used to limit the computational cost if the RDF is not of interest
+up to the default (half of the box size with PBC, three times the
+box size without PBC).
+.sp
+To use exclusions from the topology (\fB\-s\fP), set \fB\-excl\fP
+and ensure that both \fB\-ref\fP and \fB\-sel\fP only select atoms.
+A rougher alternative to exclude intra\-molecular peaks is to set
+\fB\-cut\fP to a non\-zero value to clear the RDF at small
+distances.
+.sp
+The RDFs are normalized by 1) average number of positions in
+\fB\-ref\fP (the number of groups with \fB\-surf\fP), 2) volume
+of the bin, and 3) average particle density of \fB\-sel\fP positions
+for that selection. To change the normalization, use \fB\-norm\fP:
+.INDENT 0.0
+.IP \(bu 2
+\fBrdf\fP: Use all factors for normalization.
+This produces a normal RDF.
+.IP \(bu 2
+\fBnumber_density\fP: Use the first two factors.
+This produces a number density as a function of distance.
+.IP \(bu 2
+\fBnone\fP: Use only the first factor.
+In this case, the RDF is only scaled with the bin width to make
+the integral of the curve represent the number of pairs within a
+range.
+.UNINDENT
+.sp
+Note that exclusions do not affect the normalization: even if
+\fB\-excl\fP is set, or \fB\-ref\fP and
+\fB\-sel\fP contain the same selection, the normalization factor
+is still N*M, not N*(M\-excluded).
+.sp
+For \fB\-surf\fP, the selection provided to \fB\-ref\fP must
+select atoms, i.e., centers of mass are not supported. Further,
+\fB\-nonorm\fP is implied, as the bins have irregular shapes and
+the volume of a bin is not easily computable.
+.sp
+Option \fB\-cn\fP produces the cumulative number RDF,
+i.e. the average number of particles within a distance r.
+.SH OPTIONS
+.sp
+Options to specify input files:
+.INDENT 0.0
+.TP
+.B \fB\-f\fP [<.xtc/.trr/...>] (traj.xtc) (Optional)
+Input trajectory or single configuration: xtc trr cpt gro g96 pdb tng
+.TP
+.B \fB\-s\fP [<.tpr/.gro/...>] (topol.tpr) (Optional)
+Input structure: tpr gro g96 pdb brk ent
+.TP
+.B \fB\-n\fP [<.ndx>] (index.ndx) (Optional)
+Extra index groups
+.UNINDENT
+.sp
+Options to specify output files:
+.INDENT 0.0
+.TP
+.B \fB\-o\fP [<.xvg>] (rdf.xvg)
+Computed RDFs
+.TP
+.B \fB\-cn\fP [<.xvg>] (rdf_cn.xvg) (Optional)
+Cumulative RDFs
+.UNINDENT
+.sp
+Other options:
+.INDENT 0.0
+.TP
+.B \fB\-b\fP <time> (0)
+First frame (ps) to read from trajectory
+.TP
+.B \fB\-e\fP <time> (0)
+Last frame (ps) to read from trajectory
+.TP
+.B \fB\-dt\fP <time> (0)
+Only use frame if t MOD dt == first time (ps)
+.TP
+.B \fB\-tu\fP <enum> (ps)
+Unit for time values: fs, ps, ns, us, ms, s
+.TP
+.B \fB\-fgroup\fP <selection>
+Atoms stored in the trajectory file (if not set, assume first N atoms)
+.TP
+.B \fB\-xvg\fP <enum> (xmgrace)
+Plot formatting: xmgrace, xmgr, none
+.TP
+.B \fB\-[no]rmpbc\fP  (yes)
+Make molecules whole for each frame
+.TP
+.B \fB\-[no]pbc\fP  (yes)
+Use periodic boundary conditions for distance calculation
+.TP
+.B \fB\-sf\fP <file>
+Provide selections from files
+.TP
+.B \fB\-selrpos\fP <enum> (atom)
+Selection reference positions: atom, res_com, res_cog, mol_com, mol_cog, whole_res_com, whole_res_cog, whole_mol_com, whole_mol_cog, part_res_com, part_res_cog, part_mol_com, part_mol_cog, dyn_res_com, dyn_res_cog, dyn_mol_com, dyn_mol_cog
+.TP
+.B \fB\-seltype\fP <enum> (atom)
+Default selection output positions: atom, res_com, res_cog, mol_com, mol_cog, whole_res_com, whole_res_cog, whole_mol_com, whole_mol_cog, part_res_com, part_res_cog, part_mol_com, part_mol_cog, dyn_res_com, dyn_res_cog, dyn_mol_com, dyn_mol_cog
+.TP
+.B \fB\-bin\fP <real> (0.002)
+Bin width (nm)
+.TP
+.B \fB\-norm\fP <enum> (rdf)
+Normalization: rdf, number_density, none
+.TP
+.B \fB\-[no]xy\fP  (no)
+Use only the x and y components of the distance
+.TP
+.B \fB\-[no]excl\fP  (no)
+Use exclusions from topology
+.TP
+.B \fB\-cut\fP <real> (0)
+Shortest distance (nm) to be considered
+.TP
+.B \fB\-rmax\fP <real> (0)
+Largest distance (nm) to calculate
+.TP
+.B \fB\-surf\fP <enum> (no)
+RDF with respect to the surface of the reference: no, mol, res
+.TP
+.B \fB\-ref\fP <selection>
+Reference selection for RDF computation
+.TP
+.B \fB\-sel\fP <selection>
+Selections to compute RDFs for from the reference
+.UNINDENT
+.SH SEE ALSO
+.sp
+\fBgmx(1)\fP
+.sp
+More information about GROMACS is available at <\fI\%http://www.gromacs.org/\fP>.
+.SH COPYRIGHT
+2022, GROMACS development team
+.\" Generated by docutils manpage writer.
+.

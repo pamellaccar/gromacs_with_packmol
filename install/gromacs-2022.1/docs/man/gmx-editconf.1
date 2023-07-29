@@ -1,0 +1,274 @@
+.\" Man page generated from reStructuredText.
+.
+.
+.nr rst2man-indent-level 0
+.
+.de1 rstReportMargin
+\\$1 \\n[an-margin]
+level \\n[rst2man-indent-level]
+level margin: \\n[rst2man-indent\\n[rst2man-indent-level]]
+-
+\\n[rst2man-indent0]
+\\n[rst2man-indent1]
+\\n[rst2man-indent2]
+..
+.de1 INDENT
+.\" .rstReportMargin pre:
+. RS \\$1
+. nr rst2man-indent\\n[rst2man-indent-level] \\n[an-margin]
+. nr rst2man-indent-level +1
+.\" .rstReportMargin post:
+..
+.de UNINDENT
+. RE
+.\" indent \\n[an-margin]
+.\" old: \\n[rst2man-indent\\n[rst2man-indent-level]]
+.nr rst2man-indent-level -1
+.\" new: \\n[rst2man-indent\\n[rst2man-indent-level]]
+.in \\n[rst2man-indent\\n[rst2man-indent-level]]u
+..
+.TH "GMX-EDITCONF" "1" "Apr 22, 2022" "2022.1" "GROMACS"
+.SH NAME
+gmx-editconf \- Convert and manipulates structure files
+.SH SYNOPSIS
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+gmx editconf [\fB\-f\fP \fI[<.gro/.g96/...>]\fP] [\fB\-n\fP \fI[<.ndx>]\fP] [\fB\-bf\fP \fI[<.dat>]\fP]
+             [\fB\-o\fP \fI[<.gro/.g96/...>]\fP] [\fB\-mead\fP \fI[<.pqr>]\fP] [\fB\-[no]w\fP]
+             [\fB\-[no]ndef\fP] [\fB\-bt\fP \fI<enum>\fP] [\fB\-box\fP \fI<vector>\fP]
+             [\fB\-angles\fP \fI<vector>\fP] [\fB\-d\fP \fI<real>\fP] [\fB\-[no]c\fP]
+             [\fB\-center\fP \fI<vector>\fP] [\fB\-aligncenter\fP \fI<vector>\fP]
+             [\fB\-align\fP \fI<vector>\fP] [\fB\-translate\fP \fI<vector>\fP]
+             [\fB\-rotate\fP \fI<vector>\fP] [\fB\-[no]princ\fP] [\fB\-scale\fP \fI<vector>\fP]
+             [\fB\-density\fP \fI<real>\fP] [\fB\-[no]pbc\fP] [\fB\-resnr\fP \fI<int>\fP] [\fB\-[no]grasp\fP]
+             [\fB\-rvdw\fP \fI<real>\fP] [\fB\-[no]sig56\fP] [\fB\-[no]vdwread\fP] [\fB\-[no]atom\fP]
+             [\fB\-[no]legend\fP] [\fB\-label\fP \fI<string>\fP] [\fB\-[no]conect\fP]
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.SH DESCRIPTION
+.sp
+\fBgmx editconf\fP converts generic structure format to \&.gro, \fB\&.g96\fP
+or \&.pdb\&.
+.sp
+The box can be modified with options \fB\-box\fP, \fB\-d\fP and
+\fB\-angles\fP\&. Both \fB\-box\fP and \fB\-d\fP
+will center the system in the box, unless \fB\-noc\fP is used.
+The \fB\-center\fP option can be used to shift the geometric center
+of the system from the default of (x/2, y/2, z/2) implied by \fB\-c\fP
+to some other value.
+.sp
+Option \fB\-bt\fP determines the box type: \fBtriclinic\fP is a
+triclinic box, \fBcubic\fP is a rectangular box with all sides equal
+\fBdodecahedron\fP represents a rhombic dodecahedron and
+\fBoctahedron\fP is a truncated octahedron.
+The last two are special cases of a triclinic box.
+The length of the three box vectors of the truncated octahedron is the
+shortest distance between two opposite hexagons.
+Relative to a cubic box with some periodic image distance, the volume of a
+dodecahedron with this same periodic distance is 0.71 times that of the cube,
+and that of a truncated octahedron is 0.77 times.
+.sp
+Option \fB\-box\fP requires only
+one value for a cubic, rhombic dodecahedral, or truncated octahedral box.
+.sp
+With \fB\-d\fP and a \fBtriclinic\fP box the size of the system in the \fIx\fP\-,
+\fIy\fP\-,
+and \fIz\fP\-directions is used. With \fB\-d\fP and \fBcubic\fP,
+\fBdodecahedron\fP or \fBoctahedron\fP boxes, the dimensions are set
+to the diameter of the system (largest distance between atoms) plus twice
+the specified distance.
+.sp
+Option \fB\-angles\fP is only meaningful with option \fB\-box\fP and
+a triclinic box and cannot be used with option \fB\-d\fP\&.
+.sp
+When \fB\-n\fP or \fB\-ndef\fP is set, a group
+can be selected for calculating the size and the geometric center,
+otherwise the whole system is used.
+.sp
+\fB\-rotate\fP rotates the coordinates and velocities.
+.sp
+\fB\-princ\fP aligns the principal axes of the system along the
+coordinate axes, with the longest axis aligned with the \fIx\fP\-axis.
+This may allow you to decrease the box volume,
+but beware that molecules can rotate significantly in a nanosecond.
+.sp
+Scaling is applied before any of the other operations are
+performed. Boxes and coordinates can be scaled to give a certain density (option
+\fB\-density\fP). Note that this may be inaccurate in case a \&.gro
+file is given as input. A special feature of the scaling option is that when the
+factor \-1 is given in one dimension, one obtains a mirror image,
+mirrored in one of the planes. When one uses \-1 in three dimensions,
+a point\-mirror image is obtained.
+.sp
+Groups are selected after all operations have been applied.
+.sp
+Periodicity can be removed in a crude manner.
+It is important that the box vectors at the bottom of your input file
+are correct when the periodicity is to be removed.
+.sp
+When writing \&.pdb files, B\-factors can be
+added with the \fB\-bf\fP option. B\-factors are read
+from a file with with following format: first line states number of
+entries in the file, next lines state an index
+followed by a B\-factor. The B\-factors will be attached per residue
+unless the number of B\-factors is larger than the number of the residues or unless the
+\fB\-atom\fP option is set. Obviously, any type of numeric data can
+be added instead of B\-factors. \fB\-legend\fP will produce
+a row of CA atoms with B\-factors ranging from the minimum to the
+maximum value found, effectively making a legend for viewing.
+.sp
+With the option \fB\-mead\fP a special \&.pdb (.pqr)
+file for the MEAD electrostatics
+program (Poisson\-Boltzmann solver) can be made. A further prerequisite
+is that the input file is a run input file.
+The B\-factor field is then filled with the Van der Waals radius
+of the atoms while the occupancy field will hold the charge.
+.sp
+The option \fB\-grasp\fP is similar, but it puts the charges in the B\-factor
+and the radius in the occupancy.
+.sp
+Option \fB\-align\fP allows alignment
+of the principal axis of a specified group against the given vector,
+with an optional center of rotation specified by \fB\-aligncenter\fP\&.
+.sp
+Finally, with option \fB\-label\fP, \fBeditconf\fP can add a chain identifier
+to a \&.pdb file, which can be useful for analysis with e.g. Rasmol.
+.sp
+To convert a truncated octrahedron file produced by a package which uses
+a cubic box with the corners cut off (such as GROMOS), use:
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+gmx editconf \-f in \-rotate 0 45 35.264 \-bt o \-box veclen \-o out
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.sp
+where \fBveclen\fP is the size of the cubic box times sqrt(3)/2.
+.SH OPTIONS
+.sp
+Options to specify input files:
+.INDENT 0.0
+.TP
+.B \fB\-f\fP [<.gro/.g96/...>] (conf.gro)
+Structure file: gro g96 pdb brk ent esp tpr
+.TP
+.B \fB\-n\fP [<.ndx>] (index.ndx) (Optional)
+Index file
+.TP
+.B \fB\-bf\fP [<.dat>] (bfact.dat) (Optional)
+Generic data file
+.UNINDENT
+.sp
+Options to specify output files:
+.INDENT 0.0
+.TP
+.B \fB\-o\fP [<.gro/.g96/...>] (out.gro) (Optional)
+Structure file: gro g96 pdb brk ent esp
+.TP
+.B \fB\-mead\fP [<.pqr>] (mead.pqr) (Optional)
+Coordinate file for MEAD
+.UNINDENT
+.sp
+Other options:
+.INDENT 0.0
+.TP
+.B \fB\-[no]w\fP  (no)
+View output \&.xvg, \&.xpm, \&.eps and \&.pdb files
+.TP
+.B \fB\-[no]ndef\fP  (no)
+Choose output from default index groups
+.TP
+.B \fB\-bt\fP <enum> (triclinic)
+Box type for \fB\-box\fP and \fB\-d\fP: triclinic, cubic, dodecahedron, octahedron
+.TP
+.B \fB\-box\fP <vector> (0 0 0)
+Box vector lengths (a,b,c)
+.TP
+.B \fB\-angles\fP <vector> (90 90 90)
+Angles between the box vectors (bc,ac,ab)
+.TP
+.B \fB\-d\fP <real> (0)
+Distance between the solute and the box
+.TP
+.B \fB\-[no]c\fP  (no)
+Center molecule in box (implied by \fB\-box\fP and \fB\-d\fP)
+.TP
+.B \fB\-center\fP <vector> (0 0 0)
+Shift the geometrical center to (x,y,z)
+.TP
+.B \fB\-aligncenter\fP <vector> (0 0 0)
+Center of rotation for alignment
+.TP
+.B \fB\-align\fP <vector> (0 0 0)
+Align to target vector
+.TP
+.B \fB\-translate\fP <vector> (0 0 0)
+Translation
+.TP
+.B \fB\-rotate\fP <vector> (0 0 0)
+Rotation around the X, Y and Z axes in degrees
+.TP
+.B \fB\-[no]princ\fP  (no)
+Orient molecule(s) along their principal axes
+.TP
+.B \fB\-scale\fP <vector> (1 1 1)
+Scaling factor
+.TP
+.B \fB\-density\fP <real> (1000)
+Density (g/L) of the output box achieved by scaling
+.TP
+.B \fB\-[no]pbc\fP  (no)
+Remove the periodicity (make molecule whole again)
+.TP
+.B \fB\-resnr\fP <int> (\-1)
+Renumber residues starting from resnr
+.TP
+.B \fB\-[no]grasp\fP  (no)
+Store the charge of the atom in the B\-factor field and the radius of the atom in the occupancy field
+.TP
+.B \fB\-rvdw\fP <real> (0.12)
+Default Van der Waals radius (in nm) if one can not be found in the database or if no parameters are present in the topology file
+.TP
+.B \fB\-[no]sig56\fP  (no)
+Use rmin/2 (minimum in the Van der Waals potential) rather than sigma/2
+.TP
+.B \fB\-[no]vdwread\fP  (no)
+Read the Van der Waals radii from the file \fBvdwradii.dat\fP rather than computing the radii based on the force field
+.TP
+.B \fB\-[no]atom\fP  (no)
+Force B\-factor attachment per atom
+.TP
+.B \fB\-[no]legend\fP  (no)
+Make B\-factor legend
+.TP
+.B \fB\-label\fP <string> (A)
+Add chain label for all residues
+.TP
+.B \fB\-[no]conect\fP  (no)
+Add CONECT records to a \&.pdb file when written. Can only be done when a topology is present
+.UNINDENT
+.SH KNOWN ISSUES
+.INDENT 0.0
+.IP \(bu 2
+For complex molecules, the periodicity removal routine may break down,
+.IP \(bu 2
+in that case you can use gmx trjconv\&.
+.UNINDENT
+.SH SEE ALSO
+.sp
+\fBgmx(1)\fP
+.sp
+More information about GROMACS is available at <\fI\%http://www.gromacs.org/\fP>.
+.SH COPYRIGHT
+2022, GROMACS development team
+.\" Generated by docutils manpage writer.
+.

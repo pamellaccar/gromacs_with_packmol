@@ -1,0 +1,182 @@
+.\" Man page generated from reStructuredText.
+.
+.
+.nr rst2man-indent-level 0
+.
+.de1 rstReportMargin
+\\$1 \\n[an-margin]
+level \\n[rst2man-indent-level]
+level margin: \\n[rst2man-indent\\n[rst2man-indent-level]]
+-
+\\n[rst2man-indent0]
+\\n[rst2man-indent1]
+\\n[rst2man-indent2]
+..
+.de1 INDENT
+.\" .rstReportMargin pre:
+. RS \\$1
+. nr rst2man-indent\\n[rst2man-indent-level] \\n[an-margin]
+. nr rst2man-indent-level +1
+.\" .rstReportMargin post:
+..
+.de UNINDENT
+. RE
+.\" indent \\n[an-margin]
+.\" old: \\n[rst2man-indent\\n[rst2man-indent-level]]
+.nr rst2man-indent-level -1
+.\" new: \\n[rst2man-indent\\n[rst2man-indent-level]]
+.in \\n[rst2man-indent\\n[rst2man-indent-level]]u
+..
+.TH "GMX-ENEMAT" "1" "Apr 22, 2022" "2022.1" "GROMACS"
+.SH NAME
+gmx-enemat \- Extract an energy matrix from an energy file
+.SH SYNOPSIS
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+gmx enemat [\fB\-f\fP \fI[<.edr>]\fP] [\fB\-groups\fP \fI[<.dat>]\fP] [\fB\-eref\fP \fI[<.dat>]\fP]
+           [\fB\-emat\fP \fI[<.xpm>]\fP] [\fB\-etot\fP \fI[<.xvg>]\fP] [\fB\-b\fP \fI<time>\fP] [\fB\-e\fP \fI<time>\fP]
+           [\fB\-dt\fP \fI<time>\fP] [\fB\-[no]w\fP] [\fB\-xvg\fP \fI<enum>\fP] [\fB\-[no]sum\fP]
+           [\fB\-skip\fP \fI<int>\fP] [\fB\-[no]mean\fP] [\fB\-nlevels\fP \fI<int>\fP] [\fB\-max\fP \fI<real>\fP]
+           [\fB\-min\fP \fI<real>\fP] [\fB\-[no]coulsr\fP] [\fB\-[no]coul14\fP] [\fB\-[no]ljsr\fP]
+           [\fB\-[no]lj14\fP] [\fB\-[no]bhamsr\fP] [\fB\-[no]free\fP] [\fB\-temp\fP \fI<real>\fP]
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.SH DESCRIPTION
+.sp
+\fBgmx enemat\fP extracts an energy matrix from the energy file (\fB\-f\fP).
+With \fB\-groups\fP a file must be supplied with on each
+line a group of atoms to be used. For these groups matrix of
+interaction energies will be extracted from the energy file
+by looking for energy groups with names corresponding to pairs
+of groups of atoms, e.g. if your \fB\-groups\fP file contains:
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+2
+Protein
+SOL
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.sp
+then energy groups with names like \(aqCoul\-SR:Protein\-SOL\(aq and
+\(aqLJ:Protein\-SOL\(aq are expected in the energy file (although
+\fBgmx enemat\fP is most useful if many groups are analyzed
+simultaneously). Matrices for different energy types are written
+out separately, as controlled by the
+\fB\-[no]coul\fP, \fB\-[no]coulr\fP, \fB\-[no]coul14\fP,
+\fB\-[no]lj\fP, \fB\-[no]lj14\fP,
+\fB\-[no]bham\fP and \fB\-[no]free\fP options.
+Finally, the total interaction energy energy per group can be
+calculated (\fB\-etot\fP).
+.sp
+An approximation of the free energy can be calculated using:
+E_free = E_0 + kT
+log(<exp((E\-E_0)/kT)>), where
+\(aq<>\(aq
+stands for time\-average. A file with reference free energies
+can be supplied to calculate the free energy difference
+with some reference state. Group names (e.g. residue names)
+in the reference file should correspond to the group names
+as used in the \fB\-groups\fP file, but a appended number
+(e.g. residue number) in the \fB\-groups\fP will be ignored
+in the comparison.
+.SH OPTIONS
+.sp
+Options to specify input files:
+.INDENT 0.0
+.TP
+.B \fB\-f\fP [<.edr>] (ener.edr) (Optional)
+Energy file
+.TP
+.B \fB\-groups\fP [<.dat>] (groups.dat)
+Generic data file
+.TP
+.B \fB\-eref\fP [<.dat>] (eref.dat) (Optional)
+Generic data file
+.UNINDENT
+.sp
+Options to specify output files:
+.INDENT 0.0
+.TP
+.B \fB\-emat\fP [<.xpm>] (emat.xpm)
+X PixMap compatible matrix file
+.TP
+.B \fB\-etot\fP [<.xvg>] (energy.xvg)
+xvgr/xmgr file
+.UNINDENT
+.sp
+Other options:
+.INDENT 0.0
+.TP
+.B \fB\-b\fP <time> (0)
+Time of first frame to read from trajectory (default unit ps)
+.TP
+.B \fB\-e\fP <time> (0)
+Time of last frame to read from trajectory (default unit ps)
+.TP
+.B \fB\-dt\fP <time> (0)
+Only use frame when t MOD dt = first time (default unit ps)
+.TP
+.B \fB\-[no]w\fP  (no)
+View output \&.xvg, \&.xpm, \&.eps and \&.pdb files
+.TP
+.B \fB\-xvg\fP <enum> (xmgrace)
+xvg plot formatting: xmgrace, xmgr, none
+.TP
+.B \fB\-[no]sum\fP  (no)
+Sum the energy terms selected rather than display them all
+.TP
+.B \fB\-skip\fP <int> (0)
+Skip number of frames between data points
+.TP
+.B \fB\-[no]mean\fP  (yes)
+with \fB\-groups\fP extracts matrix of mean energies instead of matrix for each timestep
+.TP
+.B \fB\-nlevels\fP <int> (20)
+number of levels for matrix colors
+.TP
+.B \fB\-max\fP <real> (1e+20)
+max value for energies
+.TP
+.B \fB\-min\fP <real> (\-1e+20)
+min value for energies
+.TP
+.B \fB\-[no]coulsr\fP  (yes)
+extract Coulomb SR energies
+.TP
+.B \fB\-[no]coul14\fP  (no)
+extract Coulomb 1\-4 energies
+.TP
+.B \fB\-[no]ljsr\fP  (yes)
+extract Lennard\-Jones SR energies
+.TP
+.B \fB\-[no]lj14\fP  (no)
+extract Lennard\-Jones 1\-4 energies
+.TP
+.B \fB\-[no]bhamsr\fP  (no)
+extract Buckingham SR energies
+.TP
+.B \fB\-[no]free\fP  (yes)
+calculate free energy
+.TP
+.B \fB\-temp\fP <real> (300)
+reference temperature for free energy calculation
+.UNINDENT
+.SH SEE ALSO
+.sp
+\fBgmx(1)\fP
+.sp
+More information about GROMACS is available at <\fI\%http://www.gromacs.org/\fP>.
+.SH COPYRIGHT
+2022, GROMACS development team
+.\" Generated by docutils manpage writer.
+.

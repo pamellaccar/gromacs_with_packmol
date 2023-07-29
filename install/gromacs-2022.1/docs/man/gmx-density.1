@@ -1,0 +1,188 @@
+.\" Man page generated from reStructuredText.
+.
+.
+.nr rst2man-indent-level 0
+.
+.de1 rstReportMargin
+\\$1 \\n[an-margin]
+level \\n[rst2man-indent-level]
+level margin: \\n[rst2man-indent\\n[rst2man-indent-level]]
+-
+\\n[rst2man-indent0]
+\\n[rst2man-indent1]
+\\n[rst2man-indent2]
+..
+.de1 INDENT
+.\" .rstReportMargin pre:
+. RS \\$1
+. nr rst2man-indent\\n[rst2man-indent-level] \\n[an-margin]
+. nr rst2man-indent-level +1
+.\" .rstReportMargin post:
+..
+.de UNINDENT
+. RE
+.\" indent \\n[an-margin]
+.\" old: \\n[rst2man-indent\\n[rst2man-indent-level]]
+.nr rst2man-indent-level -1
+.\" new: \\n[rst2man-indent\\n[rst2man-indent-level]]
+.in \\n[rst2man-indent\\n[rst2man-indent-level]]u
+..
+.TH "GMX-DENSITY" "1" "Apr 22, 2022" "2022.1" "GROMACS"
+.SH NAME
+gmx-density \- Calculate the density of the system
+.SH SYNOPSIS
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+gmx density [\fB\-f\fP \fI[<.xtc/.trr/...>]\fP] [\fB\-n\fP \fI[<.ndx>]\fP] [\fB\-s\fP \fI[<.tpr>]\fP]
+            [\fB\-ei\fP \fI[<.dat>]\fP] [\fB\-o\fP \fI[<.xvg>]\fP] [\fB\-b\fP \fI<time>\fP] [\fB\-e\fP \fI<time>\fP]
+            [\fB\-dt\fP \fI<time>\fP] [\fB\-[no]w\fP] [\fB\-xvg\fP \fI<enum>\fP] [\fB\-d\fP \fI<string>\fP]
+            [\fB\-sl\fP \fI<int>\fP] [\fB\-dens\fP \fI<enum>\fP] [\fB\-ng\fP \fI<int>\fP] [\fB\-[no]center\fP]
+            [\fB\-[no]symm\fP]
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.SH DESCRIPTION
+.sp
+\fBgmx density\fP computes partial densities across the box, using an index file.
+.sp
+For the total density of NPT simulations, use gmx energy instead.
+.sp
+Option \fB\-center\fP performs the histogram binning relative to the center
+of an arbitrary group, in absolute box coordinates. If you are calculating
+profiles along the Z axis box dimension bZ, output would be from \-bZ/2 to
+bZ/2 if you center based on the entire system.
+Note that this behaviour has changed in GROMACS 5.0; earlier versions
+merely performed a static binning in (0,bZ) and shifted the output. Now
+we compute the center for each frame and bin in (\-bZ/2,bZ/2).
+.sp
+Option \fB\-symm\fP symmetrizes the output around the center. This will
+automatically turn on \fB\-center\fP too.
+The binning is now always performed in relative coordinates to account
+for changing box dimensions with pressure coupling, with the output
+scaled to the average box dimension along the output axis.
+.sp
+Densities are in kg/m^3, and number densities or electron densities can also be
+calculated. For electron densities, a file describing the number of
+electrons for each type of atom should be provided using \fB\-ei\fP\&.
+It should look like:
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+2
+atomname = nrelectrons
+atomname = nrelectrons
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.sp
+The first line contains the number of lines to read from the file.
+There should be one line for each unique atom name in your system.
+The number of electrons for each atom is modified by its atomic
+partial charge.
+.sp
+IMPORTANT CONSIDERATIONS FOR BILAYERS
+.sp
+One of the most common usage scenarios is to calculate the density of various
+groups across a lipid bilayer, typically with the z axis being the normal
+direction. For short simulations, small systems, and fixed box sizes this
+will work fine, but for the more general case lipid bilayers can be complicated.
+The first problem that while both proteins and lipids have low volume
+compressibility, lipids have quite high area compressiblity. This means the
+shape of the box (thickness and area/lipid) will fluctuate substantially even
+for a fully relaxed system. Since GROMACS places the box between the origin
+and positive coordinates, this in turn means that a bilayer centered in the
+box will move a bit up/down due to these fluctuations, and smear out your
+profile. The easiest way to fix this (if you want pressure coupling) is
+to use the \fB\-center\fP option that calculates the density profile with
+respect to the center of the box. Note that you can still center on the
+bilayer part even if you have a complex non\-symmetric system with a bilayer
+and, say, membrane proteins \- then our output will simply have more values
+on one side of the (center) origin reference.
+.sp
+Finally, large bilayers that are not subject to a surface tension will exhibit
+undulatory fluctuations, where there are \(aqwaves\(aq forming in the system.
+This is a fundamental property of the biological system, and if you are
+comparing against experiments you likely want to include the undulation
+smearing effect.
+.SH OPTIONS
+.sp
+Options to specify input files:
+.INDENT 0.0
+.TP
+.B \fB\-f\fP [<.xtc/.trr/...>] (traj.xtc)
+Trajectory: xtc trr cpt gro g96 pdb tng
+.TP
+.B \fB\-n\fP [<.ndx>] (index.ndx) (Optional)
+Index file
+.TP
+.B \fB\-s\fP [<.tpr>] (topol.tpr)
+Portable xdr run input file
+.TP
+.B \fB\-ei\fP [<.dat>] (electrons.dat) (Optional)
+Generic data file
+.UNINDENT
+.sp
+Options to specify output files:
+.INDENT 0.0
+.TP
+.B \fB\-o\fP [<.xvg>] (density.xvg)
+xvgr/xmgr file
+.UNINDENT
+.sp
+Other options:
+.INDENT 0.0
+.TP
+.B \fB\-b\fP <time> (0)
+Time of first frame to read from trajectory (default unit ps)
+.TP
+.B \fB\-e\fP <time> (0)
+Time of last frame to read from trajectory (default unit ps)
+.TP
+.B \fB\-dt\fP <time> (0)
+Only use frame when t MOD dt = first time (default unit ps)
+.TP
+.B \fB\-[no]w\fP  (no)
+View output \&.xvg, \&.xpm, \&.eps and \&.pdb files
+.TP
+.B \fB\-xvg\fP <enum> (xmgrace)
+xvg plot formatting: xmgrace, xmgr, none
+.TP
+.B \fB\-d\fP <string> (Z)
+Take the normal on the membrane in direction X, Y or Z.
+.TP
+.B \fB\-sl\fP <int> (50)
+Divide the box in this number of slices.
+.TP
+.B \fB\-dens\fP <enum> (mass)
+Density: mass, number, charge, electron
+.TP
+.B \fB\-ng\fP <int> (1)
+Number of groups of which to compute densities.
+.TP
+.B \fB\-[no]center\fP  (no)
+Perform the binning relative to the center of the (changing) box. Useful for bilayers.
+.TP
+.B \fB\-[no]symm\fP  (no)
+Symmetrize the density along the axis, with respect to the center. Useful for bilayers.
+.UNINDENT
+.SH KNOWN ISSUES
+.INDENT 0.0
+.IP \(bu 2
+When calculating electron densities, atomnames are used instead of types. This is bad.
+.UNINDENT
+.SH SEE ALSO
+.sp
+\fBgmx(1)\fP
+.sp
+More information about GROMACS is available at <\fI\%http://www.gromacs.org/\fP>.
+.SH COPYRIGHT
+2022, GROMACS development team
+.\" Generated by docutils manpage writer.
+.

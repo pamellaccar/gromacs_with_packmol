@@ -1,0 +1,11 @@
+prefix=/home/pamella/Documentos/softwares/gromacs-2022.1
+exec_prefix=${prefix}
+libdir=${prefix}/lib
+includedir=${prefix}/include
+
+Name: muparser
+Description: Mathematical expressions parser library
+Version: 2.3.2
+Requires:
+Libs: -L${libdir} -lmuparser
+Cflags: -I${includedir}

@@ -1,0 +1,139 @@
+#!/bin/bash
+#
+# This file is part of the GROMACS molecular simulation package.
+#
+# Copyright 2013- The GROMACS Authors
+# and the project initiators Erik Lindahl, Berk Hess and David van der Spoel.
+# Consult the AUTHORS/COPYING files and https://www.gromacs.org for details.
+#
+# GROMACS is free software; you can redistribute it and/or
+# modify it under the terms of the GNU Lesser General Public License
+# as published by the Free Software Foundation; either version 2.1
+# of the License, or (at your option) any later version.
+#
+# GROMACS is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# Lesser General Public License for more details.
+#
+# You should have received a copy of the GNU Lesser General Public
+# License along with GROMACS; if not, see
+# https://www.gnu.org/licenses, or write to the Free Software Foundation,
+# Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA.
+#
+# If you want to redistribute modifications to GROMACS, please
+# consider that scientific software is very special. Version
+# control is crucial - bugs must be traceable. We will be happy to
+# consider code for inclusion in the official distribution, but
+# derived work must not be called official GROMACS. Details are found
+# in the README & COPYING files - if they are missing, get the
+# official version at https://www.gromacs.org.
+#
+# To help us fund GROMACS development, we humbly ask that you cite
+# the research papers on the package. Check out https://www.gromacs.org.
+
+# This script is intended as a pre-commit hook that optionally runs all
+# changes through some formatting check.  Currently, it runs clang-format and
+# checks copyright headers.
+#
+# It needs to be copied as .git/hooks/pre-commit and configured with
+#   git config hooks.clangformatpath /path/to/clang-format-7
+#   git config hooks.clangformatmode check
+#   git config hooks.copyrightmode update
+#
+# To disable the hook temporarily for a commit, set NO_FORMAT_CHECK environment
+# variable.  For example,
+#   NO_FORMAT_CHECK=1 git commit -a
+# You can also run git commit --no-verify, but that also disables other hooks.
+#
+# See docs/dev-manual/code-formatting.rst for more details.
+
+if [ ! -z "$NO_FORMAT_CHECK" ]
+then
+    exit 0
+fi
+
+if git rev-parse --verify HEAD >/dev/null 2>&1
+then
+    against=HEAD
+else
+    # Initial commit: diff against an empty tree object
+    against=4b825dc642cb6eb9a060e54bf8d69288fbee4904
+fi
+
+# Redirect output to stderr.
+exec 1>&2
+
+clangtidy_mode=`git config hooks.clangtidymode`
+clangformat_mode=`git config hooks.clangformatmode`
+copyright_mode=`git config hooks.copyrightmode`
+if [ -z "$clangtidy_mode" ]
+then
+    clangtidy_mode=off
+fi
+if [ -z "$clangformat_mode" ]
+then
+    clangformat_mode=off
+fi
+if [ -z "$copyright_mode" ]
+then
+    copyright_mode=off
+fi
+
+if [[ -f admin/clang-tidy.sh && \
+      ( "$clangtidy_mode" != "off" ) ]]
+then
+    runclangtidy_path=`git config hooks.runclangtidypath`
+    if [ -z "$runclangtidy_path" ]
+    then
+        echo "Please set the path to run-clang-tidy using 'git config hooks.runclangtidypath'."
+        echo "Note that you should use clang-tidy-11 to get the same checking as in CI."
+        exit 1
+    fi
+    export RUN_CLANG_TIDY="$runclangtidy_path"
+    admin/clang-tidy.sh check-index --rev=$against \
+        --tidy="$clangtidy_mode"
+    stat=$?
+    if [ $stat -eq 1 ] ; then
+        exit 1
+    elif [ $stat -ne 0 ] ; then
+        echo "Source code checking with clang-tidy failed"
+        exit 1
+    fi
+fi
+
+if [[ -f admin/clang-format.sh && \
+      ( "$clangformat_mode" != "off" ) ]]
+then
+    clangformat_path=`git config hooks.clangformatpath`
+    if [ -z "$clangformat_path" ]
+    then
+        echo "Please set the path to clang-format using 'git config hooks.clangformatpath /path/to/clang-format'."
+        echo "See https://manual.gromacs.org/current/dev-manual/code-formatting.html#gmx-clang-format"
+        exit 1
+    fi
+    export CLANG_FORMAT="$clangformat_path"
+    admin/clang-format.sh check-index --rev=$against \
+        --format="$clangformat_mode"
+    stat=$?
+    if [ $stat -eq 1 ] ; then
+        exit 1
+    elif [ $stat -ne 0 ] ; then
+        echo "Source code formatting check with clang-format failed"
+        exit 1
+    fi
+fi
+
+if [[ -f admin/copyright.sh && \
+      ( "$copyright_mode" != "off" ) ]]
+then
+    admin/copyright.sh check-index --rev=$against \
+        --copyright="$copyright_mode"
+    stat=$?
+    if [ $stat -eq 1 ] ; then
+        exit 1
+    elif [ $stat -ne 0 ] ; then
+        echo "Copyright information check failed"
+        exit 1
+    fi
+fi

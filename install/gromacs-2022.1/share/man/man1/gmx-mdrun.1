@@ -1,0 +1,430 @@
+.\" Man page generated from reStructuredText.
+.
+.
+.nr rst2man-indent-level 0
+.
+.de1 rstReportMargin
+\\$1 \\n[an-margin]
+level \\n[rst2man-indent-level]
+level margin: \\n[rst2man-indent\\n[rst2man-indent-level]]
+-
+\\n[rst2man-indent0]
+\\n[rst2man-indent1]
+\\n[rst2man-indent2]
+..
+.de1 INDENT
+.\" .rstReportMargin pre:
+. RS \\$1
+. nr rst2man-indent\\n[rst2man-indent-level] \\n[an-margin]
+. nr rst2man-indent-level +1
+.\" .rstReportMargin post:
+..
+.de UNINDENT
+. RE
+.\" indent \\n[an-margin]
+.\" old: \\n[rst2man-indent\\n[rst2man-indent-level]]
+.nr rst2man-indent-level -1
+.\" new: \\n[rst2man-indent\\n[rst2man-indent-level]]
+.in \\n[rst2man-indent\\n[rst2man-indent-level]]u
+..
+.TH "GMX-MDRUN" "1" "Apr 22, 2022" "2022.1" "GROMACS"
+.SH NAME
+gmx-mdrun \- Perform a simulation, do a normal mode analysis or an energy minimization
+.SH SYNOPSIS
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+gmx mdrun [\fB\-s\fP \fI[<.tpr>]\fP] [\fB\-cpi\fP \fI[<.cpt>]\fP] [\fB\-table\fP \fI[<.xvg>]\fP]
+          [\fB\-tablep\fP \fI[<.xvg>]\fP] [\fB\-tableb\fP \fI[<.xvg> [...]]\fP]
+          [\fB\-rerun\fP \fI[<.xtc/.trr/...>]\fP] [\fB\-ei\fP \fI[<.edi>]\fP]
+          [\fB\-multidir\fP \fI[<dir> [...]]\fP] [\fB\-awh\fP \fI[<.xvg>]\fP]
+          [\fB\-membed\fP \fI[<.dat>]\fP] [\fB\-mp\fP \fI[<.top>]\fP] [\fB\-mn\fP \fI[<.ndx>]\fP]
+          [\fB\-o\fP \fI[<.trr/.cpt/...>]\fP] [\fB\-x\fP \fI[<.xtc/.tng>]\fP] [\fB\-cpo\fP \fI[<.cpt>]\fP]
+          [\fB\-c\fP \fI[<.gro/.g96/...>]\fP] [\fB\-e\fP \fI[<.edr>]\fP] [\fB\-g\fP \fI[<.log>]\fP]
+          [\fB\-dhdl\fP \fI[<.xvg>]\fP] [\fB\-field\fP \fI[<.xvg>]\fP] [\fB\-tpi\fP \fI[<.xvg>]\fP]
+          [\fB\-tpid\fP \fI[<.xvg>]\fP] [\fB\-eo\fP \fI[<.xvg>]\fP] [\fB\-px\fP \fI[<.xvg>]\fP]
+          [\fB\-pf\fP \fI[<.xvg>]\fP] [\fB\-ro\fP \fI[<.xvg>]\fP] [\fB\-ra\fP \fI[<.log>]\fP] [\fB\-rs\fP \fI[<.log>]\fP]
+          [\fB\-rt\fP \fI[<.log>]\fP] [\fB\-mtx\fP \fI[<.mtx>]\fP] [\fB\-if\fP \fI[<.xvg>]\fP]
+          [\fB\-swap\fP \fI[<.xvg>]\fP] [\fB\-deffnm\fP \fI<string>\fP] [\fB\-xvg\fP \fI<enum>\fP]
+          [\fB\-dd\fP \fI<vector>\fP] [\fB\-ddorder\fP \fI<enum>\fP] [\fB\-npme\fP \fI<int>\fP] [\fB\-nt\fP \fI<int>\fP]
+          [\fB\-ntmpi\fP \fI<int>\fP] [\fB\-ntomp\fP \fI<int>\fP] [\fB\-ntomp_pme\fP \fI<int>\fP]
+          [\fB\-pin\fP \fI<enum>\fP] [\fB\-pinoffset\fP \fI<int>\fP] [\fB\-pinstride\fP \fI<int>\fP]
+          [\fB\-gpu_id\fP \fI<string>\fP] [\fB\-gputasks\fP \fI<string>\fP] [\fB\-[no]ddcheck\fP]
+          [\fB\-rdd\fP \fI<real>\fP] [\fB\-rcon\fP \fI<real>\fP] [\fB\-dlb\fP \fI<enum>\fP] [\fB\-dds\fP \fI<real>\fP]
+          [\fB\-nb\fP \fI<enum>\fP] [\fB\-nstlist\fP \fI<int>\fP] [\fB\-[no]tunepme\fP] [\fB\-pme\fP \fI<enum>\fP]
+          [\fB\-pmefft\fP \fI<enum>\fP] [\fB\-bonded\fP \fI<enum>\fP] [\fB\-update\fP \fI<enum>\fP] [\fB\-[no]v\fP]
+          [\fB\-pforce\fP \fI<real>\fP] [\fB\-[no]reprod\fP] [\fB\-cpt\fP \fI<real>\fP] [\fB\-[no]cpnum\fP]
+          [\fB\-[no]append\fP] [\fB\-nsteps\fP \fI<int>\fP] [\fB\-maxh\fP \fI<real>\fP]
+          [\fB\-replex\fP \fI<int>\fP] [\fB\-nex\fP \fI<int>\fP] [\fB\-reseed\fP \fI<int>\fP]
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.SH DESCRIPTION
+.sp
+\fBgmx mdrun\fP is the main computational chemistry engine
+within GROMACS. Obviously, it performs Molecular Dynamics simulations,
+but it can also perform Stochastic Dynamics, Energy Minimization,
+test particle insertion or (re)calculation of energies.
+Normal mode analysis is another option. In this case \fBmdrun\fP
+builds a Hessian matrix from single conformation.
+For usual Normal Modes\-like calculations, make sure that
+the structure provided is properly energy\-minimized.
+The generated matrix can be diagonalized by gmx nmeig\&.
+.sp
+The \fBmdrun\fP program reads the run input file (\fB\-s\fP)
+and distributes the topology over ranks if needed.
+\fBmdrun\fP produces at least four output files.
+A single log file (\fB\-g\fP) is written.
+The trajectory file (\fB\-o\fP), contains coordinates, velocities and
+optionally forces.
+The structure file (\fB\-c\fP) contains the coordinates and
+velocities of the last step.
+The energy file (\fB\-e\fP) contains energies, the temperature,
+pressure, etc, a lot of these things are also printed in the log file.
+Optionally coordinates can be written to a compressed trajectory file
+(\fB\-x\fP).
+.sp
+The option \fB\-dhdl\fP is only used when free energy calculation is
+turned on.
+.sp
+Running mdrun efficiently in parallel is a complex topic,
+many aspects of which are covered in the online User Guide. You
+should look there for practical advice on using many of the options
+available in mdrun.
+.sp
+ED (essential dynamics) sampling and/or additional flooding potentials
+are switched on by using the \fB\-ei\fP flag followed by an \&.edi
+file. The \&.edi file can be produced with the \fBmake_edi\fP tool
+or by using options in the essdyn menu of the WHAT IF program.
+\fBmdrun\fP produces a \&.xvg output file that
+contains projections of positions, velocities and forces onto selected
+eigenvectors.
+.sp
+When user\-defined potential functions have been selected in the
+\&.mdp file the \fB\-table\fP option is used to pass \fBmdrun\fP
+a formatted table with potential functions. The file is read from
+either the current directory or from the \fBGMXLIB\fP directory.
+A number of pre\-formatted tables are presented in the \fBGMXLIB\fP dir,
+for 6\-8, 6\-9, 6\-10, 6\-11, 6\-12 Lennard\-Jones potentials with
+normal Coulomb.
+When pair interactions are present, a separate table for pair interaction
+functions is read using the \fB\-tablep\fP option.
+.sp
+When tabulated bonded functions are present in the topology,
+interaction functions are read using the \fB\-tableb\fP option.
+For each different tabulated interaction type used, a table file name must
+be given. For the topology to work, a file name given here must match a
+character sequence before the file extension. That sequence is: an underscore,
+then a \(aqb\(aq for bonds, an \(aqa\(aq for angles or a \(aqd\(aq for dihedrals,
+and finally the matching table number index used in the topology. Note that,
+these options are deprecated, and in future will be available via grompp.
+.sp
+The options \fB\-px\fP and \fB\-pf\fP are used for writing pull COM
+coordinates and forces when pulling is selected
+in the \&.mdp file.
+.sp
+The option \fB\-membed\fP does what used to be g_membed, i.e. embed
+a protein into a membrane. This module requires a number of settings
+that are provided in a data file that is the argument of this option.
+For more details in membrane embedding, see the documentation in the
+user guide. The options \fB\-mn\fP and \fB\-mp\fP are used to provide
+the index and topology files used for the embedding.
+.sp
+The option \fB\-pforce\fP is useful when you suspect a simulation
+crashes due to too large forces. With this option coordinates and
+forces of atoms with a force larger than a certain value will
+be printed to stderr. It will also terminate the run when non\-finite
+forces are present.
+.sp
+Checkpoints containing the complete state of the system are written
+at regular intervals (option \fB\-cpt\fP) to the file \fB\-cpo\fP,
+unless option \fB\-cpt\fP is set to \-1.
+The previous checkpoint is backed up to \fBstate_prev.cpt\fP to
+make sure that a recent state of the system is always available,
+even when the simulation is terminated while writing a checkpoint.
+With \fB\-cpnum\fP all checkpoint files are kept and appended
+with the step number.
+A simulation can be continued by reading the full state from file
+with option \fB\-cpi\fP\&. This option is intelligent in the way that
+if no checkpoint file is found, GROMACS just assumes a normal run and
+starts from the first step of the \&.tpr file. By default the output
+will be appending to the existing output files. The checkpoint file
+contains checksums of all output files, such that you will never
+loose data when some output files are modified, corrupt or removed.
+There are three scenarios with \fB\-cpi\fP:
+.sp
+\fB*\fP no files with matching names are present: new output files are written
+.sp
+\fB*\fP all files are present with names and checksums matching those stored
+in the checkpoint file: files are appended
+.sp
+\fB*\fP otherwise no files are modified and a fatal error is generated
+.sp
+With \fB\-noappend\fP new output files are opened and the simulation
+part number is added to all output file names.
+Note that in all cases the checkpoint file itself is not renamed
+and will be overwritten, unless its name does not match
+the \fB\-cpo\fP option.
+.sp
+With checkpointing the output is appended to previously written
+output files, unless \fB\-noappend\fP is used or none of the previous
+output files are present (except for the checkpoint file).
+The integrity of the files to be appended is verified using checksums
+which are stored in the checkpoint file. This ensures that output can
+not be mixed up or corrupted due to file appending. When only some
+of the previous output files are present, a fatal error is generated
+and no old output files are modified and no new output files are opened.
+The result with appending will be the same as from a single run.
+The contents will be binary identical, unless you use a different number
+of ranks or dynamic load balancing or the FFT library uses optimizations
+through timing.
+.sp
+With option \fB\-maxh\fP a simulation is terminated and a checkpoint
+file is written at the first neighbor search step where the run time
+exceeds \fB\-maxh\fP*0.99 hours. This option is particularly useful in
+combination with setting \fBnsteps\fP to \-1 either in the mdp or using the
+similarly named command line option (although the latter is deprecated).
+This results in an infinite run,
+terminated only when the time limit set by \fB\-maxh\fP is reached (if any)
+or upon receiving a signal.
+.sp
+Interactive molecular dynamics (IMD) can be activated by using at least one
+of the three IMD switches: The \fB\-imdterm\fP switch allows one to terminate
+the simulation from the molecular viewer (e.g. VMD). With \fB\-imdwait\fP,
+\fBmdrun\fP pauses whenever no IMD client is connected. Pulling from the
+IMD remote can be turned on by \fB\-imdpull\fP\&.
+The port \fBmdrun\fP listens to can be altered by \fB\-imdport\fP\&.The
+file pointed to by \fB\-if\fP contains atom indices and forces if IMD
+pulling is used.
+.SH OPTIONS
+.sp
+Options to specify input files:
+.INDENT 0.0
+.TP
+.B \fB\-s\fP [<.tpr>] (topol.tpr)
+Portable xdr run input file
+.TP
+.B \fB\-cpi\fP [<.cpt>] (state.cpt) (Optional)
+Checkpoint file
+.TP
+.B \fB\-table\fP [<.xvg>] (table.xvg) (Optional)
+xvgr/xmgr file
+.TP
+.B \fB\-tablep\fP [<.xvg>] (tablep.xvg) (Optional)
+xvgr/xmgr file
+.TP
+.B \fB\-tableb\fP [<.xvg> [...]] (table.xvg) (Optional)
+xvgr/xmgr file
+.TP
+.B \fB\-rerun\fP [<.xtc/.trr/...>] (rerun.xtc) (Optional)
+Trajectory: xtc trr cpt gro g96 pdb tng
+.TP
+.B \fB\-ei\fP [<.edi>] (sam.edi) (Optional)
+ED sampling input
+.TP
+.B \fB\-multidir\fP [<dir> [...]] (rundir) (Optional)
+Run directory
+.TP
+.B \fB\-awh\fP [<.xvg>] (awhinit.xvg) (Optional)
+xvgr/xmgr file
+.TP
+.B \fB\-membed\fP [<.dat>] (membed.dat) (Optional)
+Generic data file
+.TP
+.B \fB\-mp\fP [<.top>] (membed.top) (Optional)
+Topology file
+.TP
+.B \fB\-mn\fP [<.ndx>] (membed.ndx) (Optional)
+Index file
+.UNINDENT
+.sp
+Options to specify output files:
+.INDENT 0.0
+.TP
+.B \fB\-o\fP [<.trr/.cpt/...>] (traj.trr)
+Full precision trajectory: trr cpt tng
+.TP
+.B \fB\-x\fP [<.xtc/.tng>] (traj_comp.xtc) (Optional)
+Compressed trajectory (tng format or portable xdr format)
+.TP
+.B \fB\-cpo\fP [<.cpt>] (state.cpt) (Optional)
+Checkpoint file
+.TP
+.B \fB\-c\fP [<.gro/.g96/...>] (confout.gro)
+Structure file: gro g96 pdb brk ent esp
+.TP
+.B \fB\-e\fP [<.edr>] (ener.edr)
+Energy file
+.TP
+.B \fB\-g\fP [<.log>] (md.log)
+Log file
+.TP
+.B \fB\-dhdl\fP [<.xvg>] (dhdl.xvg) (Optional)
+xvgr/xmgr file
+.TP
+.B \fB\-field\fP [<.xvg>] (field.xvg) (Optional)
+xvgr/xmgr file
+.TP
+.B \fB\-tpi\fP [<.xvg>] (tpi.xvg) (Optional)
+xvgr/xmgr file
+.TP
+.B \fB\-tpid\fP [<.xvg>] (tpidist.xvg) (Optional)
+xvgr/xmgr file
+.TP
+.B \fB\-eo\fP [<.xvg>] (edsam.xvg) (Optional)
+xvgr/xmgr file
+.TP
+.B \fB\-px\fP [<.xvg>] (pullx.xvg) (Optional)
+xvgr/xmgr file
+.TP
+.B \fB\-pf\fP [<.xvg>] (pullf.xvg) (Optional)
+xvgr/xmgr file
+.TP
+.B \fB\-ro\fP [<.xvg>] (rotation.xvg) (Optional)
+xvgr/xmgr file
+.TP
+.B \fB\-ra\fP [<.log>] (rotangles.log) (Optional)
+Log file
+.TP
+.B \fB\-rs\fP [<.log>] (rotslabs.log) (Optional)
+Log file
+.TP
+.B \fB\-rt\fP [<.log>] (rottorque.log) (Optional)
+Log file
+.TP
+.B \fB\-mtx\fP [<.mtx>] (nm.mtx) (Optional)
+Hessian matrix
+.TP
+.B \fB\-if\fP [<.xvg>] (imdforces.xvg) (Optional)
+xvgr/xmgr file
+.TP
+.B \fB\-swap\fP [<.xvg>] (swapions.xvg) (Optional)
+xvgr/xmgr file
+.UNINDENT
+.sp
+Other options:
+.INDENT 0.0
+.TP
+.B \fB\-deffnm\fP <string>
+Set the default filename for all file options
+.TP
+.B \fB\-xvg\fP <enum> (xmgrace)
+xvg plot formatting: xmgrace, xmgr, none
+.TP
+.B \fB\-dd\fP <vector> (0 0 0)
+Domain decomposition grid, 0 is optimize
+.TP
+.B \fB\-ddorder\fP <enum> (interleave)
+DD rank order: interleave, pp_pme, cartesian
+.TP
+.B \fB\-npme\fP <int> (\-1)
+Number of separate ranks to be used for PME, \-1 is guess
+.TP
+.B \fB\-nt\fP <int> (0)
+Total number of threads to start (0 is guess)
+.TP
+.B \fB\-ntmpi\fP <int> (0)
+Number of thread\-MPI ranks to start (0 is guess)
+.TP
+.B \fB\-ntomp\fP <int> (0)
+Number of OpenMP threads per MPI rank to start (0 is guess)
+.TP
+.B \fB\-ntomp_pme\fP <int> (0)
+Number of OpenMP threads per MPI rank to start (0 is \-ntomp)
+.TP
+.B \fB\-pin\fP <enum> (auto)
+Whether mdrun should try to set thread affinities: auto, on, off
+.TP
+.B \fB\-pinoffset\fP <int> (0)
+The lowest logical core number to which mdrun should pin the first thread
+.TP
+.B \fB\-pinstride\fP <int> (0)
+Pinning distance in logical cores for threads, use 0 to minimize the number of threads per physical core
+.TP
+.B \fB\-gpu_id\fP <string>
+List of unique GPU device IDs available to use
+.TP
+.B \fB\-gputasks\fP <string>
+List of GPU device IDs, mapping each PP task on each node to a device
+.TP
+.B \fB\-[no]ddcheck\fP  (yes)
+Check for all bonded interactions with DD
+.TP
+.B \fB\-rdd\fP <real> (0)
+The maximum distance for bonded interactions with DD (nm), 0 is determine from initial coordinates
+.TP
+.B \fB\-rcon\fP <real> (0)
+Maximum distance for P\-LINCS (nm), 0 is estimate
+.TP
+.B \fB\-dlb\fP <enum> (auto)
+Dynamic load balancing (with DD): auto, no, yes
+.TP
+.B \fB\-dds\fP <real> (0.8)
+Fraction in (0,1) by whose reciprocal the initial DD cell size will be increased in order to provide a margin in which dynamic load balancing can act while preserving the minimum cell size.
+.TP
+.B \fB\-nb\fP <enum> (auto)
+Calculate non\-bonded interactions on: auto, cpu, gpu
+.TP
+.B \fB\-nstlist\fP <int> (0)
+Set nstlist when using a Verlet buffer tolerance (0 is guess)
+.TP
+.B \fB\-[no]tunepme\fP  (yes)
+Optimize PME load between PP/PME ranks or GPU/CPU
+.TP
+.B \fB\-pme\fP <enum> (auto)
+Perform PME calculations on: auto, cpu, gpu
+.TP
+.B \fB\-pmefft\fP <enum> (auto)
+Perform PME FFT calculations on: auto, cpu, gpu
+.TP
+.B \fB\-bonded\fP <enum> (auto)
+Perform bonded calculations on: auto, cpu, gpu
+.TP
+.B \fB\-update\fP <enum> (auto)
+Perform update and constraints on: auto, cpu, gpu
+.TP
+.B \fB\-[no]v\fP  (no)
+Be loud and noisy
+.TP
+.B \fB\-pforce\fP <real> (\-1)
+Print all forces larger than this (kJ/mol nm)
+.TP
+.B \fB\-[no]reprod\fP  (no)
+Try to avoid optimizations that affect binary reproducibility
+.TP
+.B \fB\-cpt\fP <real> (15)
+Checkpoint interval (minutes)
+.TP
+.B \fB\-[no]cpnum\fP  (no)
+Keep and number checkpoint files
+.TP
+.B \fB\-[no]append\fP  (yes)
+Append to previous output files when continuing from checkpoint instead of adding the simulation part number to all file names
+.TP
+.B \fB\-nsteps\fP <int> (\-2)
+Run this number of steps (\-1 means infinite, \-2 means use mdp option, smaller is invalid)
+.TP
+.B \fB\-maxh\fP <real> (\-1)
+Terminate after 0.99 times this time (hours)
+.TP
+.B \fB\-replex\fP <int> (0)
+Attempt replica exchange periodically with this period (steps)
+.TP
+.B \fB\-nex\fP <int> (0)
+Number of random exchanges to carry out each exchange interval (N^3 is one suggestion).  \-nex zero or not specified gives neighbor replica exchange.
+.TP
+.B \fB\-reseed\fP <int> (\-1)
+Seed for replica exchange, \-1 is generate a seed
+.UNINDENT
+.SH SEE ALSO
+.sp
+\fBgmx(1)\fP
+.sp
+More information about GROMACS is available at <\fI\%http://www.gromacs.org/\fP>.
+.SH COPYRIGHT
+2022, GROMACS development team
+.\" Generated by docutils manpage writer.
+.

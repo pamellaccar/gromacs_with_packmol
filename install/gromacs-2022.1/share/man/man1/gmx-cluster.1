@@ -1,0 +1,298 @@
+.\" Man page generated from reStructuredText.
+.
+.
+.nr rst2man-indent-level 0
+.
+.de1 rstReportMargin
+\\$1 \\n[an-margin]
+level \\n[rst2man-indent-level]
+level margin: \\n[rst2man-indent\\n[rst2man-indent-level]]
+-
+\\n[rst2man-indent0]
+\\n[rst2man-indent1]
+\\n[rst2man-indent2]
+..
+.de1 INDENT
+.\" .rstReportMargin pre:
+. RS \\$1
+. nr rst2man-indent\\n[rst2man-indent-level] \\n[an-margin]
+. nr rst2man-indent-level +1
+.\" .rstReportMargin post:
+..
+.de UNINDENT
+. RE
+.\" indent \\n[an-margin]
+.\" old: \\n[rst2man-indent\\n[rst2man-indent-level]]
+.nr rst2man-indent-level -1
+.\" new: \\n[rst2man-indent\\n[rst2man-indent-level]]
+.in \\n[rst2man-indent\\n[rst2man-indent-level]]u
+..
+.TH "GMX-CLUSTER" "1" "Apr 22, 2022" "2022.1" "GROMACS"
+.SH NAME
+gmx-cluster \- Cluster structures
+.SH SYNOPSIS
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+gmx cluster [\fB\-f\fP \fI[<.xtc/.trr/...>]\fP] [\fB\-s\fP \fI[<.tpr/.gro/...>]\fP] [\fB\-n\fP \fI[<.ndx>]\fP]
+            [\fB\-dm\fP \fI[<.xpm>]\fP] [\fB\-om\fP \fI[<.xpm>]\fP] [\fB\-o\fP \fI[<.xpm>]\fP] [\fB\-g\fP \fI[<.log>]\fP]
+            [\fB\-dist\fP \fI[<.xvg>]\fP] [\fB\-ev\fP \fI[<.xvg>]\fP] [\fB\-conv\fP \fI[<.xvg>]\fP]
+            [\fB\-sz\fP \fI[<.xvg>]\fP] [\fB\-tr\fP \fI[<.xpm>]\fP] [\fB\-ntr\fP \fI[<.xvg>]\fP]
+            [\fB\-clid\fP \fI[<.xvg>]\fP] [\fB\-cl\fP \fI[<.xtc/.trr/...>]\fP]
+            [\fB\-clndx\fP \fI[<.ndx>]\fP] [\fB\-b\fP \fI<time>\fP] [\fB\-e\fP \fI<time>\fP] [\fB\-dt\fP \fI<time>\fP]
+            [\fB\-tu\fP \fI<enum>\fP] [\fB\-[no]w\fP] [\fB\-xvg\fP \fI<enum>\fP] [\fB\-[no]dista\fP]
+            [\fB\-nlevels\fP \fI<int>\fP] [\fB\-cutoff\fP \fI<real>\fP] [\fB\-[no]fit\fP]
+            [\fB\-max\fP \fI<real>\fP] [\fB\-skip\fP \fI<int>\fP] [\fB\-[no]av\fP] [\fB\-wcl\fP \fI<int>\fP]
+            [\fB\-nst\fP \fI<int>\fP] [\fB\-rmsmin\fP \fI<real>\fP] [\fB\-method\fP \fI<enum>\fP]
+            [\fB\-minstruct\fP \fI<int>\fP] [\fB\-[no]binary\fP] [\fB\-M\fP \fI<int>\fP] [\fB\-P\fP \fI<int>\fP]
+            [\fB\-seed\fP \fI<int>\fP] [\fB\-niter\fP \fI<int>\fP] [\fB\-nrandom\fP \fI<int>\fP]
+            [\fB\-kT\fP \fI<real>\fP] [\fB\-[no]pbc\fP]
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.SH DESCRIPTION
+.sp
+\fBgmx cluster\fP can cluster structures using several different methods.
+Distances between structures can be determined from a trajectory
+or read from an \&.xpm matrix file with the \fB\-dm\fP option.
+RMS deviation after fitting or RMS deviation of atom\-pair distances
+can be used to define the distance between structures.
+.sp
+single linkage: add a structure to a cluster when its distance to any
+element of the cluster is less than \fBcutoff\fP\&.
+.sp
+Jarvis Patrick: add a structure to a cluster when this structure
+and a structure in the cluster have each other as neighbors and
+they have a least \fBP\fP neighbors in common. The neighbors
+of a structure are the M closest structures or all structures within
+\fBcutoff\fP\&.
+.sp
+Monte Carlo: reorder the RMSD matrix using Monte Carlo such that
+the order of the frames is using the smallest possible increments.
+With this it is possible to make a smooth animation going from one
+structure to another with the largest possible (e.g.) RMSD between
+them, however the intermediate steps should be as small as possible.
+Applications could be to visualize a potential of mean force
+ensemble of simulations or a pulling simulation. Obviously the user
+has to prepare the trajectory well (e.g. by not superimposing frames).
+The final result can be inspect visually by looking at the matrix
+\&.xpm file, which should vary smoothly from bottom to top.
+.sp
+diagonalization: diagonalize the RMSD matrix.
+.sp
+gromos: use algorithm as described in Daura \fIet al.\fP
+(\fIAngew. Chem. Int. Ed.\fP \fB1999\fP, \fI38\fP, pp 236\-240).
+Count number of neighbors using cut\-off, take structure with
+largest number of neighbors with all its neighbors as cluster
+and eliminate it from the pool of clusters. Repeat for remaining
+structures in pool.
+.sp
+When the clustering algorithm assigns each structure to exactly one
+cluster (single linkage, Jarvis Patrick and gromos) and a trajectory
+file is supplied, the structure with
+the smallest average distance to the others or the average structure
+or all structures for each cluster will be written to a trajectory
+file. When writing all structures, separate numbered files are made
+for each cluster.
+.sp
+Two output files are always written:
+.INDENT 0.0
+.INDENT 3.5
+.INDENT 0.0
+.IP \(bu 2
+\fB\-o\fP writes the RMSD values in the upper left half of the matrix
+and a graphical depiction of the clusters in the lower right half
+When \fB\-minstruct\fP = 1 the graphical depiction is black
+when two structures are in the same cluster.
+When \fB\-minstruct\fP > 1 different colors will be used for each
+cluster.
+.IP \(bu 2
+\fB\-g\fP writes information on the options used and a detailed list
+of all clusters and their members.
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.sp
+Additionally, a number of optional output files can be written:
+.INDENT 0.0
+.INDENT 3.5
+.INDENT 0.0
+.IP \(bu 2
+\fB\-dist\fP writes the RMSD distribution.
+.IP \(bu 2
+\fB\-ev\fP writes the eigenvectors of the RMSD matrix
+diagonalization.
+.IP \(bu 2
+\fB\-sz\fP writes the cluster sizes.
+.IP \(bu 2
+\fB\-tr\fP writes a matrix of the number transitions between
+cluster pairs.
+.IP \(bu 2
+\fB\-ntr\fP writes the total number of transitions to or from
+each cluster.
+.IP \(bu 2
+\fB\-clid\fP writes the cluster number as a function of time.
+.IP \(bu 2
+\fB\-clndx\fP writes the frame numbers corresponding to the clusters to the
+specified index file to be read into trjconv.
+.IP \(bu 2
+\fB\-cl\fP writes average (with option \fB\-av\fP) or central
+structure of each cluster or writes numbered files with cluster members
+for a selected set of clusters (with option \fB\-wcl\fP, depends on
+\fB\-nst\fP and \fB\-rmsmin\fP). The center of a cluster is the
+structure with the smallest average RMSD from all other structures
+of the cluster.
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.SH OPTIONS
+.sp
+Options to specify input files:
+.INDENT 0.0
+.TP
+.B \fB\-f\fP [<.xtc/.trr/...>] (traj.xtc) (Optional)
+Trajectory: xtc trr cpt gro g96 pdb tng
+.TP
+.B \fB\-s\fP [<.tpr/.gro/...>] (topol.tpr)
+Structure+mass(db): tpr gro g96 pdb brk ent
+.TP
+.B \fB\-n\fP [<.ndx>] (index.ndx) (Optional)
+Index file
+.TP
+.B \fB\-dm\fP [<.xpm>] (rmsd.xpm) (Optional)
+X PixMap compatible matrix file
+.UNINDENT
+.sp
+Options to specify output files:
+.INDENT 0.0
+.TP
+.B \fB\-om\fP [<.xpm>] (rmsd\-raw.xpm)
+X PixMap compatible matrix file
+.TP
+.B \fB\-o\fP [<.xpm>] (rmsd\-clust.xpm)
+X PixMap compatible matrix file
+.TP
+.B \fB\-g\fP [<.log>] (cluster.log)
+Log file
+.TP
+.B \fB\-dist\fP [<.xvg>] (rmsd\-dist.xvg) (Optional)
+xvgr/xmgr file
+.TP
+.B \fB\-ev\fP [<.xvg>] (rmsd\-eig.xvg) (Optional)
+xvgr/xmgr file
+.TP
+.B \fB\-conv\fP [<.xvg>] (mc\-conv.xvg) (Optional)
+xvgr/xmgr file
+.TP
+.B \fB\-sz\fP [<.xvg>] (clust\-size.xvg) (Optional)
+xvgr/xmgr file
+.TP
+.B \fB\-tr\fP [<.xpm>] (clust\-trans.xpm) (Optional)
+X PixMap compatible matrix file
+.TP
+.B \fB\-ntr\fP [<.xvg>] (clust\-trans.xvg) (Optional)
+xvgr/xmgr file
+.TP
+.B \fB\-clid\fP [<.xvg>] (clust\-id.xvg) (Optional)
+xvgr/xmgr file
+.TP
+.B \fB\-cl\fP [<.xtc/.trr/...>] (clusters.pdb) (Optional)
+Trajectory: xtc trr cpt gro g96 pdb tng
+.TP
+.B \fB\-clndx\fP [<.ndx>] (clusters.ndx) (Optional)
+Index file
+.UNINDENT
+.sp
+Other options:
+.INDENT 0.0
+.TP
+.B \fB\-b\fP <time> (0)
+Time of first frame to read from trajectory (default unit ps)
+.TP
+.B \fB\-e\fP <time> (0)
+Time of last frame to read from trajectory (default unit ps)
+.TP
+.B \fB\-dt\fP <time> (0)
+Only use frame when t MOD dt = first time (default unit ps)
+.TP
+.B \fB\-tu\fP <enum> (ps)
+Unit for time values: fs, ps, ns, us, ms, s
+.TP
+.B \fB\-[no]w\fP  (no)
+View output \&.xvg, \&.xpm, \&.eps and \&.pdb files
+.TP
+.B \fB\-xvg\fP <enum> (xmgrace)
+xvg plot formatting: xmgrace, xmgr, none
+.TP
+.B \fB\-[no]dista\fP  (no)
+Use RMSD of distances instead of RMS deviation
+.TP
+.B \fB\-nlevels\fP <int> (40)
+Discretize RMSD matrix in this number of levels
+.TP
+.B \fB\-cutoff\fP <real> (0.1)
+RMSD cut\-off (nm) for two structures to be neighbor
+.TP
+.B \fB\-[no]fit\fP  (yes)
+Use least squares fitting before RMSD calculation
+.TP
+.B \fB\-max\fP <real> (\-1)
+Maximum level in RMSD matrix
+.TP
+.B \fB\-skip\fP <int> (1)
+Only analyze every nr\-th frame
+.TP
+.B \fB\-[no]av\fP  (no)
+Write average instead of middle structure for each cluster
+.TP
+.B \fB\-wcl\fP <int> (0)
+Write the structures for this number of clusters to numbered files
+.TP
+.B \fB\-nst\fP <int> (1)
+Only write all structures if more than this number of structures per cluster
+.TP
+.B \fB\-rmsmin\fP <real> (0)
+minimum rms difference with rest of cluster for writing structures
+.TP
+.B \fB\-method\fP <enum> (linkage)
+Method for cluster determination: linkage, jarvis\-patrick, monte\-carlo, diagonalization, gromos
+.TP
+.B \fB\-minstruct\fP <int> (1)
+Minimum number of structures in cluster for coloring in the \&.xpm file
+.TP
+.B \fB\-[no]binary\fP  (no)
+Treat the RMSD matrix as consisting of 0 and 1, where the cut\-off is given by \fB\-cutoff\fP
+.TP
+.B \fB\-M\fP <int> (10)
+Number of nearest neighbors considered for Jarvis\-Patrick algorithm, 0 is use cutoff
+.TP
+.B \fB\-P\fP <int> (3)
+Number of identical nearest neighbors required to form a cluster
+.TP
+.B \fB\-seed\fP <int> (0)
+Random number seed for Monte Carlo clustering algorithm (0 means generate)
+.TP
+.B \fB\-niter\fP <int> (10000)
+Number of iterations for MC
+.TP
+.B \fB\-nrandom\fP <int> (0)
+The first iterations for MC may be done complete random, to shuffle the frames
+.TP
+.B \fB\-kT\fP <real> (0.001)
+Boltzmann weighting factor for Monte Carlo optimization (zero turns off uphill steps)
+.TP
+.B \fB\-[no]pbc\fP  (yes)
+PBC check
+.UNINDENT
+.SH SEE ALSO
+.sp
+\fBgmx(1)\fP
+.sp
+More information about GROMACS is available at <\fI\%http://www.gromacs.org/\fP>.
+.SH COPYRIGHT
+2022, GROMACS development team
+.\" Generated by docutils manpage writer.
+.

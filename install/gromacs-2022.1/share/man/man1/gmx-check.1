@@ -1,0 +1,156 @@
+.\" Man page generated from reStructuredText.
+.
+.
+.nr rst2man-indent-level 0
+.
+.de1 rstReportMargin
+\\$1 \\n[an-margin]
+level \\n[rst2man-indent-level]
+level margin: \\n[rst2man-indent\\n[rst2man-indent-level]]
+-
+\\n[rst2man-indent0]
+\\n[rst2man-indent1]
+\\n[rst2man-indent2]
+..
+.de1 INDENT
+.\" .rstReportMargin pre:
+. RS \\$1
+. nr rst2man-indent\\n[rst2man-indent-level] \\n[an-margin]
+. nr rst2man-indent-level +1
+.\" .rstReportMargin post:
+..
+.de UNINDENT
+. RE
+.\" indent \\n[an-margin]
+.\" old: \\n[rst2man-indent\\n[rst2man-indent-level]]
+.nr rst2man-indent-level -1
+.\" new: \\n[rst2man-indent\\n[rst2man-indent-level]]
+.in \\n[rst2man-indent\\n[rst2man-indent-level]]u
+..
+.TH "GMX-CHECK" "1" "Apr 22, 2022" "2022.1" "GROMACS"
+.SH NAME
+gmx-check \- Check and compare files
+.SH SYNOPSIS
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+gmx check [\fB\-f\fP \fI[<.xtc/.trr/...>]\fP] [\fB\-f2\fP \fI[<.xtc/.trr/...>]\fP] [\fB\-s1\fP \fI[<.tpr>]\fP]
+          [\fB\-s2\fP \fI[<.tpr>]\fP] [\fB\-c\fP \fI[<.tpr/.gro/...>]\fP] [\fB\-e\fP \fI[<.edr>]\fP]
+          [\fB\-e2\fP \fI[<.edr>]\fP] [\fB\-n\fP \fI[<.ndx>]\fP] [\fB\-m\fP \fI[<.tex>]\fP] [\fB\-vdwfac\fP \fI<real>\fP]
+          [\fB\-bonlo\fP \fI<real>\fP] [\fB\-bonhi\fP \fI<real>\fP] [\fB\-[no]rmsd\fP] [\fB\-tol\fP \fI<real>\fP]
+          [\fB\-abstol\fP \fI<real>\fP] [\fB\-[no]ab\fP] [\fB\-lastener\fP \fI<string>\fP]
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.SH DESCRIPTION
+.sp
+\fBgmx check\fP reads a trajectory (\&.tng, \&.trr or
+\&.xtc), an energy file (\&.edr)
+or an index file (\&.ndx)
+and prints out useful information about them.
+.sp
+Option \fB\-c\fP checks for presence of coordinates,
+velocities and box in the file, for close contacts (smaller than
+\fB\-vdwfac\fP and not bonded, i.e. not between \fB\-bonlo\fP
+and \fB\-bonhi\fP, all relative to the sum of both Van der Waals
+radii) and atoms outside the box (these may occur often and are
+no problem). If velocities are present, an estimated temperature
+will be calculated from them.
+.sp
+If an index file, is given its contents will be summarized.
+.sp
+If both a trajectory and a \&.tpr file are given (with \fB\-s1\fP)
+the program will check whether the bond lengths defined in the tpr
+file are indeed correct in the trajectory. If not you may have
+non\-matching files due to e.g. deshuffling or due to problems with
+virtual sites. With these flags, \fBgmx check\fP provides a quick check for
+such problems.
+.sp
+The program can compare two run input (\&.tpr)
+files
+when both \fB\-s1\fP and \fB\-s2\fP are supplied. When comparing
+run input files this way, the default relative tolerance is reduced
+to 0.000001 and the absolute tolerance set to zero to find any differences
+not due to minor compiler optimization differences, although you can
+of course still set any other tolerances through the options.
+Similarly a pair of trajectory files can be compared (using the \fB\-f2\fP
+option), or a pair of energy files (using the \fB\-e2\fP option).
+.sp
+For free energy simulations the A and B state topology from one
+run input file can be compared with options \fB\-s1\fP and \fB\-ab\fP\&.
+.SH OPTIONS
+.sp
+Options to specify input files:
+.INDENT 0.0
+.TP
+.B \fB\-f\fP [<.xtc/.trr/...>] (traj.xtc) (Optional)
+Trajectory: xtc trr cpt gro g96 pdb tng
+.TP
+.B \fB\-f2\fP [<.xtc/.trr/...>] (traj.xtc) (Optional)
+Trajectory: xtc trr cpt gro g96 pdb tng
+.TP
+.B \fB\-s1\fP [<.tpr>] (top1.tpr) (Optional)
+Portable xdr run input file
+.TP
+.B \fB\-s2\fP [<.tpr>] (top2.tpr) (Optional)
+Portable xdr run input file
+.TP
+.B \fB\-c\fP [<.tpr/.gro/...>] (topol.tpr) (Optional)
+Structure+mass(db): tpr gro g96 pdb brk ent
+.TP
+.B \fB\-e\fP [<.edr>] (ener.edr) (Optional)
+Energy file
+.TP
+.B \fB\-e2\fP [<.edr>] (ener2.edr) (Optional)
+Energy file
+.TP
+.B \fB\-n\fP [<.ndx>] (index.ndx) (Optional)
+Index file
+.UNINDENT
+.sp
+Options to specify output files:
+.INDENT 0.0
+.TP
+.B \fB\-m\fP [<.tex>] (doc.tex) (Optional)
+LaTeX file
+.UNINDENT
+.sp
+Other options:
+.INDENT 0.0
+.TP
+.B \fB\-vdwfac\fP <real> (0.8)
+Fraction of sum of VdW radii used as warning cutoff
+.TP
+.B \fB\-bonlo\fP <real> (0.4)
+Min. fract. of sum of VdW radii for bonded atoms
+.TP
+.B \fB\-bonhi\fP <real> (0.7)
+Max. fract. of sum of VdW radii for bonded atoms
+.TP
+.B \fB\-[no]rmsd\fP  (no)
+Print RMSD for x, v and f
+.TP
+.B \fB\-tol\fP <real> (0.001)
+Relative tolerance for comparing real values defined as 2*(a\-b)/(|a|+|b|)
+.TP
+.B \fB\-abstol\fP <real> (0.001)
+Absolute tolerance, useful when sums are close to zero.
+.TP
+.B \fB\-[no]ab\fP  (no)
+Compare the A and B topology from one file
+.TP
+.B \fB\-lastener\fP <string>
+Last energy term to compare (if not given all are tested). It makes sense to go up until the Pressure.
+.UNINDENT
+.SH SEE ALSO
+.sp
+\fBgmx(1)\fP
+.sp
+More information about GROMACS is available at <\fI\%http://www.gromacs.org/\fP>.
+.SH COPYRIGHT
+2022, GROMACS development team
+.\" Generated by docutils manpage writer.
+.

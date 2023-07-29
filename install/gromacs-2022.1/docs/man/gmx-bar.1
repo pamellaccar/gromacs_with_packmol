@@ -1,0 +1,234 @@
+.\" Man page generated from reStructuredText.
+.
+.
+.nr rst2man-indent-level 0
+.
+.de1 rstReportMargin
+\\$1 \\n[an-margin]
+level \\n[rst2man-indent-level]
+level margin: \\n[rst2man-indent\\n[rst2man-indent-level]]
+-
+\\n[rst2man-indent0]
+\\n[rst2man-indent1]
+\\n[rst2man-indent2]
+..
+.de1 INDENT
+.\" .rstReportMargin pre:
+. RS \\$1
+. nr rst2man-indent\\n[rst2man-indent-level] \\n[an-margin]
+. nr rst2man-indent-level +1
+.\" .rstReportMargin post:
+..
+.de UNINDENT
+. RE
+.\" indent \\n[an-margin]
+.\" old: \\n[rst2man-indent\\n[rst2man-indent-level]]
+.nr rst2man-indent-level -1
+.\" new: \\n[rst2man-indent\\n[rst2man-indent-level]]
+.in \\n[rst2man-indent\\n[rst2man-indent-level]]u
+..
+.TH "GMX-BAR" "1" "Apr 22, 2022" "2022.1" "GROMACS"
+.SH NAME
+gmx-bar \- Calculate free energy difference estimates through Bennett's acceptance ratio
+.SH SYNOPSIS
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+gmx bar [\fB\-f\fP \fI[<.xvg> [...]]\fP] [\fB\-g\fP \fI[<.edr> [...]]\fP] [\fB\-o\fP \fI[<.xvg>]\fP]
+        [\fB\-oi\fP \fI[<.xvg>]\fP] [\fB\-oh\fP \fI[<.xvg>]\fP] [\fB\-[no]w\fP] [\fB\-xvg\fP \fI<enum>\fP]
+        [\fB\-b\fP \fI<real>\fP] [\fB\-e\fP \fI<real>\fP] [\fB\-temp\fP \fI<real>\fP] [\fB\-prec\fP \fI<int>\fP]
+        [\fB\-nbmin\fP \fI<int>\fP] [\fB\-nbmax\fP \fI<int>\fP] [\fB\-nbin\fP \fI<int>\fP] [\fB\-[no]extp\fP]
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.SH DESCRIPTION
+.sp
+\fBgmx bar\fP calculates free energy difference estimates through
+Bennett\(aqs acceptance ratio method (BAR). It also automatically
+adds series of individual free energies obtained with BAR into
+a combined free energy estimate.
+.sp
+Every individual BAR free energy difference relies on two
+simulations at different states: say state A and state B, as
+controlled by a parameter, lambda (see the \&.mdp parameter
+\fBinit_lambda\fP). The BAR method calculates a ratio of weighted
+average of the Hamiltonian difference of state B given state A and
+vice versa.
+The energy differences to the other state must be calculated
+explicitly during the simulation. This can be done with
+the \&.mdp option \fBforeign_lambda\fP\&.
+.sp
+Input option \fB\-f\fP expects multiple \fBdhdl.xvg\fP files.
+Two types of input files are supported:
+.INDENT 0.0
+.INDENT 3.5
+.INDENT 0.0
+.IP \(bu 2
+Files with more than one \fIy\fP\-value.
+The files should have columns
+with dH/dlambda and Deltalambda.
+The lambda values are inferred
+from the legends: lambda of the simulation from the legend of
+dH/dlambda and the foreign lambda values from the
+legends of Delta H
+.IP \(bu 2
+Files with only one \fIy\fP\-value. Using the
+\fB\-extp\fP option for these files, it is assumed
+that the \fIy\fP\-value is dH/dlambda and that the
+Hamiltonian depends linearly on lambda.
+The lambda value of the simulation is inferred from the
+subtitle (if present), otherwise from a number in the subdirectory
+in the file name.
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.sp
+The lambda of the simulation is parsed from
+\fBdhdl.xvg\fP file\(aqs legend containing the string \(aqdH\(aq, the
+foreign lambda values from the legend containing the
+capitalized letters \(aqD\(aq and \(aqH\(aq. The temperature is parsed from
+the legend line containing \(aqT =\(aq.
+.sp
+The input option \fB\-g\fP expects multiple \&.edr files.
+These can contain either lists of energy differences (see the
+\&.mdp option \fBseparate_dhdl_file\fP), or a series of
+histograms (see the \&.mdp options \fBdh_hist_size\fP and
+\fBdh_hist_spacing\fP).
+The temperature and lambda
+values are automatically deduced from the \fBener.edr\fP file.
+.sp
+In addition to the \&.mdp option \fBforeign_lambda\fP,
+the energy difference can also be extrapolated from the
+dH/dlambda values. This is done with the\(ga\(ga\-extp\(ga\(ga
+option, which assumes that the system\(aqs Hamiltonian depends linearly
+on lambda, which is not normally the case.
+.sp
+The free energy estimates are determined using BAR with bisection,
+with the precision of the output set with \fB\-prec\fP\&.
+An error estimate taking into account time correlations
+is made by splitting the data into blocks and determining
+the free energy differences over those blocks and assuming
+the blocks are independent.
+The final error estimate is determined from the average variance
+over 5 blocks. A range of block numbers for error estimation can
+be provided with the options \fB\-nbmin\fP and \fB\-nbmax\fP\&.
+.sp
+\fBgmx bar\fP tries to aggregate samples with the same \(aqnative\(aq and
+\(aqforeign\(aq lambda values, but always assumes independent
+samples. \fBNote\fP that when aggregating energy
+differences/derivatives with different sampling intervals, this is
+almost certainly not correct. Usually subsequent energies are
+correlated and different time intervals mean different degrees
+of correlation between samples.
+.sp
+The results are split in two parts: the last part contains the final
+results in kJ/mol, together with the error estimate for each part
+and the total. The first part contains detailed free energy
+difference estimates and phase space overlap measures in units of
+kT (together with their computed error estimate). The printed
+values are:
+.INDENT 0.0
+.INDENT 3.5
+.INDENT 0.0
+.IP \(bu 2
+lam_A: the lambda values for point A.
+.IP \(bu 2
+lam_B: the lambda values for point B.
+.IP \(bu 2
+DG: the free energy estimate.
+.IP \(bu 2
+s_A: an estimate of the relative entropy of B in A.
+.IP \(bu 2
+s_B: an estimate of the relative entropy of A in B.
+.IP \(bu 2
+stdev: an estimate expected per\-sample standard deviation.
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.sp
+The relative entropy of both states in each other\(aqs ensemble can be
+interpreted as a measure of phase space overlap:
+the relative entropy s_A of the work samples of lambda_B in the
+ensemble of lambda_A (and vice versa for s_B), is a
+measure of the \(aqdistance\(aq between Boltzmann distributions of
+the two states, that goes to zero for identical distributions. See
+Wu & Kofke, J. Chem. Phys. 123 084109 (2005) for more information.
+.sp
+The estimate of the expected per\-sample standard deviation, as given
+in Bennett\(aqs original BAR paper: Bennett, J. Comp. Phys. 22, p 245 (1976).
+Eq. 10 therein gives an estimate of the quality of sampling (not directly
+of the actual statistical error, because it assumes independent samples).
+.sp
+To get a visual estimate of the phase space overlap, use the
+\fB\-oh\fP option to write series of histograms, together with the
+\fB\-nbin\fP option.
+.SH OPTIONS
+.sp
+Options to specify input files:
+.INDENT 0.0
+.TP
+.B \fB\-f\fP [<.xvg> [...]] (dhdl.xvg) (Optional)
+xvgr/xmgr file
+.TP
+.B \fB\-g\fP [<.edr> [...]] (ener.edr) (Optional)
+Energy file
+.UNINDENT
+.sp
+Options to specify output files:
+.INDENT 0.0
+.TP
+.B \fB\-o\fP [<.xvg>] (bar.xvg) (Optional)
+xvgr/xmgr file
+.TP
+.B \fB\-oi\fP [<.xvg>] (barint.xvg) (Optional)
+xvgr/xmgr file
+.TP
+.B \fB\-oh\fP [<.xvg>] (histogram.xvg) (Optional)
+xvgr/xmgr file
+.UNINDENT
+.sp
+Other options:
+.INDENT 0.0
+.TP
+.B \fB\-[no]w\fP  (no)
+View output \&.xvg, \&.xpm, \&.eps and \&.pdb files
+.TP
+.B \fB\-xvg\fP <enum> (xmgrace)
+xvg plot formatting: xmgrace, xmgr, none
+.TP
+.B \fB\-b\fP <real> (0)
+Begin time for BAR
+.TP
+.B \fB\-e\fP <real> (\-1)
+End time for BAR
+.TP
+.B \fB\-temp\fP <real> (\-1)
+Temperature (K)
+.TP
+.B \fB\-prec\fP <int> (2)
+The number of digits after the decimal point
+.TP
+.B \fB\-nbmin\fP <int> (5)
+Minimum number of blocks for error estimation
+.TP
+.B \fB\-nbmax\fP <int> (5)
+Maximum number of blocks for error estimation
+.TP
+.B \fB\-nbin\fP <int> (100)
+Number of bins for histogram output
+.TP
+.B \fB\-[no]extp\fP  (no)
+Whether to linearly extrapolate dH/dl values to use as energies
+.UNINDENT
+.SH SEE ALSO
+.sp
+\fBgmx(1)\fP
+.sp
+More information about GROMACS is available at <\fI\%http://www.gromacs.org/\fP>.
+.SH COPYRIGHT
+2022, GROMACS development team
+.\" Generated by docutils manpage writer.
+.

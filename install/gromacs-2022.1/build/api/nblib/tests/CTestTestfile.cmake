@@ -1,0 +1,14 @@
+# CMake generated Testfile for 
+# Source directory: /home/pamella/Documentos/softwares/gromacs-2022.1/api/nblib/tests
+# Build directory: /home/pamella/Documentos/softwares/gromacs-2022.1/build/api/nblib/tests
+# 
+# This file includes the relevant testing commands required for 
+# testing this directory and lists subdirectories to be tested as well.
+add_test(NbLibSetupTests "/home/pamella/Documentos/softwares/gromacs-2022.1/build/bin/nblib-setup-test" "--gtest_output=xml:/home/pamella/Documentos/softwares/gromacs-2022.1/build/Testing/Temporary/NbLibSetupTests.xml")
+set_tests_properties(NbLibSetupTests PROPERTIES  LABELS "GTest;IntegrationTest" TIMEOUT "120" _BACKTRACE_TRIPLES "/home/pamella/Documentos/softwares/gromacs-2022.1/src/testutils/TestMacros.cmake;297;add_test;/home/pamella/Documentos/softwares/gromacs-2022.1/api/nblib/tests/CMakeLists.txt;69;gmx_register_gtest_test;/home/pamella/Documentos/softwares/gromacs-2022.1/api/nblib/tests/CMakeLists.txt;0;")
+add_test(NbLibTprTests "/home/pamella/Documentos/softwares/gromacs-2022.1/build/bin/nblib-tpr-test" "--gtest_output=xml:/home/pamella/Documentos/softwares/gromacs-2022.1/build/Testing/Temporary/NbLibTprTests.xml")
+set_tests_properties(NbLibTprTests PROPERTIES  LABELS "GTest;UnitTest" TIMEOUT "30" _BACKTRACE_TRIPLES "/home/pamella/Documentos/softwares/gromacs-2022.1/src/testutils/TestMacros.cmake;297;add_test;/home/pamella/Documentos/softwares/gromacs-2022.1/src/testutils/TestMacros.cmake;307;gmx_register_gtest_test;/home/pamella/Documentos/softwares/gromacs-2022.1/api/nblib/tests/CMakeLists.txt;74;gmx_add_unit_test;/home/pamella/Documentos/softwares/gromacs-2022.1/api/nblib/tests/CMakeLists.txt;0;")
+add_test(NbLibIntegrationTests "/home/pamella/Documentos/softwares/gromacs-2022.1/build/bin/nblib-integration-test" "--gtest_output=xml:/home/pamella/Documentos/softwares/gromacs-2022.1/build/Testing/Temporary/NbLibIntegrationTests.xml")
+set_tests_properties(NbLibIntegrationTests PROPERTIES  LABELS "GTest;IntegrationTest" TIMEOUT "120" _BACKTRACE_TRIPLES "/home/pamella/Documentos/softwares/gromacs-2022.1/src/testutils/TestMacros.cmake;297;add_test;/home/pamella/Documentos/softwares/gromacs-2022.1/api/nblib/tests/CMakeLists.txt;98;gmx_register_gtest_test;/home/pamella/Documentos/softwares/gromacs-2022.1/api/nblib/tests/CMakeLists.txt;0;")
+add_test(NbLibIntegratorTests "/home/pamella/Documentos/softwares/gromacs-2022.1/build/bin/nblib-integrator-test" "--gtest_output=xml:/home/pamella/Documentos/softwares/gromacs-2022.1/build/Testing/Temporary/NbLibIntegratorTests.xml")
+set_tests_properties(NbLibIntegratorTests PROPERTIES  LABELS "GTest;IntegrationTest" TIMEOUT "120" _BACKTRACE_TRIPLES "/home/pamella/Documentos/softwares/gromacs-2022.1/src/testutils/TestMacros.cmake;297;add_test;/home/pamella/Documentos/softwares/gromacs-2022.1/api/nblib/tests/CMakeLists.txt;112;gmx_register_gtest_test;/home/pamella/Documentos/softwares/gromacs-2022.1/api/nblib/tests/CMakeLists.txt;0;")

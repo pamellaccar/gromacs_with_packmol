@@ -1,0 +1,39 @@
+<?xml version="1.0"?>
+<?xml-stylesheet type="text/xsl" href="referencedata.xsl"?>
+<ReferenceData>
+  <String Name="Output1"><![CDATA[
+line
+
+par
+
+line2
+formatted
+]]></String>
+  <String Name="Output2"><![CDATA[
+par
+
+formatted
+]]></String>
+  <String Name="Output3"><![CDATA[
+formatted
+]]></String>
+  <String Name="Output4"><![CDATA[
+line
+
+par
+
+line2
+formatted
+debugline
+]]></String>
+  <String Name="Output5"><![CDATA[
+line
+
+par
+
+line2
+formatted
+debugline
+verbose
+]]></String>
+</ReferenceData>

@@ -1,0 +1,181 @@
+.\" Man page generated from reStructuredText.
+.
+.
+.nr rst2man-indent-level 0
+.
+.de1 rstReportMargin
+\\$1 \\n[an-margin]
+level \\n[rst2man-indent-level]
+level margin: \\n[rst2man-indent\\n[rst2man-indent-level]]
+-
+\\n[rst2man-indent0]
+\\n[rst2man-indent1]
+\\n[rst2man-indent2]
+..
+.de1 INDENT
+.\" .rstReportMargin pre:
+. RS \\$1
+. nr rst2man-indent\\n[rst2man-indent-level] \\n[an-margin]
+. nr rst2man-indent-level +1
+.\" .rstReportMargin post:
+..
+.de UNINDENT
+. RE
+.\" indent \\n[an-margin]
+.\" old: \\n[rst2man-indent\\n[rst2man-indent-level]]
+.nr rst2man-indent-level -1
+.\" new: \\n[rst2man-indent\\n[rst2man-indent-level]]
+.in \\n[rst2man-indent\\n[rst2man-indent-level]]u
+..
+.TH "GMX-TCAF" "1" "Apr 22, 2022" "2022.1" "GROMACS"
+.SH NAME
+gmx-tcaf \- Calculate viscosities of liquids
+.SH SYNOPSIS
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+gmx tcaf [\fB\-f\fP \fI[<.trr/.cpt/...>]\fP] [\fB\-s\fP \fI[<.tpr/.gro/...>]\fP] [\fB\-n\fP \fI[<.ndx>]\fP]
+         [\fB\-ot\fP \fI[<.xvg>]\fP] [\fB\-oa\fP \fI[<.xvg>]\fP] [\fB\-o\fP \fI[<.xvg>]\fP] [\fB\-of\fP \fI[<.xvg>]\fP]
+         [\fB\-oc\fP \fI[<.xvg>]\fP] [\fB\-ov\fP \fI[<.xvg>]\fP] [\fB\-b\fP \fI<time>\fP] [\fB\-e\fP \fI<time>\fP]
+         [\fB\-dt\fP \fI<time>\fP] [\fB\-[no]w\fP] [\fB\-xvg\fP \fI<enum>\fP] [\fB\-[no]mol\fP] [\fB\-[no]k34\fP]
+         [\fB\-wt\fP \fI<real>\fP] [\fB\-acflen\fP \fI<int>\fP] [\fB\-[no]normalize\fP] [\fB\-P\fP \fI<enum>\fP]
+         [\fB\-fitfn\fP \fI<enum>\fP] [\fB\-beginfit\fP \fI<real>\fP] [\fB\-endfit\fP \fI<real>\fP]
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.SH DESCRIPTION
+.sp
+\fBgmx tcaf\fP computes tranverse current autocorrelations.
+These are used to estimate the shear viscosity, eta.
+For details see: Palmer, Phys. Rev. E 49 (1994) pp 359\-366.
+.sp
+Transverse currents are calculated using the
+k\-vectors (1,0,0) and (2,0,0) each also in the \fIy\fP\- and \fIz\fP\-direction,
+(1,1,0) and (1,\-1,0) each also in the 2 other planes (these vectors
+are not independent) and (1,1,1) and the 3 other box diagonals (also
+not independent). For each k\-vector the sine and cosine are used, in
+combination with the velocity in 2 perpendicular directions. This gives
+a total of 16*2*2=64 transverse currents. One autocorrelation is
+calculated fitted for each k\-vector, which gives 16 TCAFs. Each of
+these TCAFs is fitted to f(t) = exp(\-v)(cosh(Wv) + 1/W
+sinh(Wv)),
+v = \-t/(2 tau), W = sqrt(1 \- 4 tau
+eta/rho k^2), which gives 16 values of tau
+and eta. The fit weights decay exponentially with time constant w
+(given with \fB\-wt\fP) as exp(\-t/w), and the TCAF and
+fit are calculated up to time 5*w.
+The eta values should be fitted to 1 \- a eta(k) k^2,
+from which one can estimate the shear viscosity at k=0.
+.sp
+When the box is cubic, one can use the option \fB\-oc\fP, which
+averages the TCAFs over all k\-vectors with the same length.
+This results in more accurate TCAFs.
+Both the cubic TCAFs and fits are written to \fB\-oc\fP
+The cubic eta estimates are also written to \fB\-ov\fP\&.
+.sp
+With option \fB\-mol\fP, the transverse current is determined of
+molecules instead of atoms. In this case, the index group should
+consist of molecule numbers instead of atom numbers.
+.sp
+The k\-dependent viscosities in the \fB\-ov\fP file should be
+fitted to eta(k) = eta_0 (1 \- a k^2) to obtain
+the viscosity at
+infinite wavelength.
+.sp
+\fBNote:\fP make sure you write coordinates and velocities often enough.
+The initial, non\-exponential, part of the autocorrelation function
+is very important for obtaining a good fit.
+.SH OPTIONS
+.sp
+Options to specify input files:
+.INDENT 0.0
+.TP
+.B \fB\-f\fP [<.trr/.cpt/...>] (traj.trr)
+Full precision trajectory: trr cpt tng
+.TP
+.B \fB\-s\fP [<.tpr/.gro/...>] (topol.tpr) (Optional)
+Structure+mass(db): tpr gro g96 pdb brk ent
+.TP
+.B \fB\-n\fP [<.ndx>] (index.ndx) (Optional)
+Index file
+.UNINDENT
+.sp
+Options to specify output files:
+.INDENT 0.0
+.TP
+.B \fB\-ot\fP [<.xvg>] (transcur.xvg) (Optional)
+xvgr/xmgr file
+.TP
+.B \fB\-oa\fP [<.xvg>] (tcaf_all.xvg)
+xvgr/xmgr file
+.TP
+.B \fB\-o\fP [<.xvg>] (tcaf.xvg)
+xvgr/xmgr file
+.TP
+.B \fB\-of\fP [<.xvg>] (tcaf_fit.xvg)
+xvgr/xmgr file
+.TP
+.B \fB\-oc\fP [<.xvg>] (tcaf_cub.xvg) (Optional)
+xvgr/xmgr file
+.TP
+.B \fB\-ov\fP [<.xvg>] (visc_k.xvg)
+xvgr/xmgr file
+.UNINDENT
+.sp
+Other options:
+.INDENT 0.0
+.TP
+.B \fB\-b\fP <time> (0)
+Time of first frame to read from trajectory (default unit ps)
+.TP
+.B \fB\-e\fP <time> (0)
+Time of last frame to read from trajectory (default unit ps)
+.TP
+.B \fB\-dt\fP <time> (0)
+Only use frame when t MOD dt = first time (default unit ps)
+.TP
+.B \fB\-[no]w\fP  (no)
+View output \&.xvg, \&.xpm, \&.eps and \&.pdb files
+.TP
+.B \fB\-xvg\fP <enum> (xmgrace)
+xvg plot formatting: xmgrace, xmgr, none
+.TP
+.B \fB\-[no]mol\fP  (no)
+Calculate TCAF of molecules
+.TP
+.B \fB\-[no]k34\fP  (no)
+Also use k=(3,0,0) and k=(4,0,0)
+.TP
+.B \fB\-wt\fP <real> (5)
+Exponential decay time for the TCAF fit weights
+.TP
+.B \fB\-acflen\fP <int> (\-1)
+Length of the ACF, default is half the number of frames
+.TP
+.B \fB\-[no]normalize\fP  (yes)
+Normalize ACF
+.TP
+.B \fB\-P\fP <enum> (0)
+Order of Legendre polynomial for ACF (0 indicates none): 0, 1, 2, 3
+.TP
+.B \fB\-fitfn\fP <enum> (none)
+Fit function: none, exp, aexp, exp_exp, exp5, exp7, exp9
+.TP
+.B \fB\-beginfit\fP <real> (0)
+Time where to begin the exponential fit of the correlation function
+.TP
+.B \fB\-endfit\fP <real> (\-1)
+Time where to end the exponential fit of the correlation function, \-1 is until the end
+.UNINDENT
+.SH SEE ALSO
+.sp
+\fBgmx(1)\fP
+.sp
+More information about GROMACS is available at <\fI\%http://www.gromacs.org/\fP>.
+.SH COPYRIGHT
+2022, GROMACS development team
+.\" Generated by docutils manpage writer.
+.

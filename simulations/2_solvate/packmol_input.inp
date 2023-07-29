@@ -1,0 +1,30 @@
+
+tolerance 2.0
+filetype pdb
+seed -1
+add_box_sides 1.0
+output solvated.pdb
+
+structure 2muj_H.pdb
+  number 1
+  center
+  fixed 0. 0. 0. 0. 0. 0.
+end structure
+
+structure WATER.pdb
+  number    4903
+  inside box -34.888999999999996 -24.206 -22.3645 34.888999999999996 24.206 22.3645
+end structure
+
+
+structure SODIUM.pdb
+  number       14
+  inside box -34.888999999999996 -24.206 -22.3645 34.888999999999996 24.206 22.3645
+end structure
+  
+
+structure CHLORIDE.pdb
+  number 13
+  inside box -34.888999999999996 -24.206 -22.3645 34.888999999999996 24.206 22.3645
+end structure
+  

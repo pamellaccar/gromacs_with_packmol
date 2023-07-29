@@ -1,0 +1,345 @@
+.\" Man page generated from reStructuredText.
+.
+.
+.nr rst2man-indent-level 0
+.
+.de1 rstReportMargin
+\\$1 \\n[an-margin]
+level \\n[rst2man-indent-level]
+level margin: \\n[rst2man-indent\\n[rst2man-indent-level]]
+-
+\\n[rst2man-indent0]
+\\n[rst2man-indent1]
+\\n[rst2man-indent2]
+..
+.de1 INDENT
+.\" .rstReportMargin pre:
+. RS \\$1
+. nr rst2man-indent\\n[rst2man-indent-level] \\n[an-margin]
+. nr rst2man-indent-level +1
+.\" .rstReportMargin post:
+..
+.de UNINDENT
+. RE
+.\" indent \\n[an-margin]
+.\" old: \\n[rst2man-indent\\n[rst2man-indent-level]]
+.nr rst2man-indent-level -1
+.\" new: \\n[rst2man-indent\\n[rst2man-indent-level]]
+.in \\n[rst2man-indent\\n[rst2man-indent-level]]u
+..
+.TH "GMX-TRJCONV" "1" "Apr 22, 2022" "2022.1" "GROMACS"
+.SH NAME
+gmx-trjconv \- Convert and manipulates trajectory files
+.SH SYNOPSIS
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+gmx trjconv [\fB\-f\fP \fI[<.xtc/.trr/...>]\fP] [\fB\-s\fP \fI[<.tpr/.gro/...>]\fP] [\fB\-n\fP \fI[<.ndx>]\fP]
+            [\fB\-fr\fP \fI[<.ndx>]\fP] [\fB\-sub\fP \fI[<.ndx>]\fP] [\fB\-drop\fP \fI[<.xvg>]\fP]
+            [\fB\-o\fP \fI[<.xtc/.trr/...>]\fP] [\fB\-b\fP \fI<time>\fP] [\fB\-e\fP \fI<time>\fP]
+            [\fB\-tu\fP \fI<enum>\fP] [\fB\-[no]w\fP] [\fB\-xvg\fP \fI<enum>\fP] [\fB\-skip\fP \fI<int>\fP]
+            [\fB\-dt\fP \fI<time>\fP] [\fB\-[no]round\fP] [\fB\-dump\fP \fI<time>\fP] [\fB\-t0\fP \fI<time>\fP]
+            [\fB\-timestep\fP \fI<time>\fP] [\fB\-pbc\fP \fI<enum>\fP] [\fB\-ur\fP \fI<enum>\fP]
+            [\fB\-[no]center\fP] [\fB\-boxcenter\fP \fI<enum>\fP] [\fB\-box\fP \fI<vector>\fP]
+            [\fB\-trans\fP \fI<vector>\fP] [\fB\-shift\fP \fI<vector>\fP] [\fB\-fit\fP \fI<enum>\fP]
+            [\fB\-ndec\fP \fI<int>\fP] [\fB\-[no]vel\fP] [\fB\-[no]force\fP] [\fB\-trunc\fP \fI<time>\fP]
+            [\fB\-exec\fP \fI<string>\fP] [\fB\-split\fP \fI<time>\fP] [\fB\-[no]sep\fP]
+            [\fB\-nzero\fP \fI<int>\fP] [\fB\-dropunder\fP \fI<real>\fP] [\fB\-dropover\fP \fI<real>\fP]
+            [\fB\-[no]conect\fP]
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.SH DESCRIPTION
+.sp
+\fBgmx trjconv\fP can convert trajectory files in many ways:
+.INDENT 0.0
+.IP \(bu 2
+from one format to another
+.IP \(bu 2
+select a subset of atoms
+.IP \(bu 2
+change the periodicity representation
+.IP \(bu 2
+keep multimeric molecules together
+.IP \(bu 2
+center atoms in the box
+.IP \(bu 2
+fit atoms to reference structure
+.IP \(bu 2
+reduce the number of frames
+.IP \(bu 2
+change the timestamps of the frames (\fB\-t0\fP and \fB\-timestep\fP)
+.IP \(bu 2
+select frames within a certain range of a quantity given
+in an \&.xvg file.
+.UNINDENT
+.sp
+The option to write subtrajectories (\-sub) based on the information obtained from
+cluster analysis has been removed from \fBgmx trjconv\fP and is now part of
+[gmx extract\-cluster]
+.sp
+gmx trjcat is better suited for concatenating multiple trajectory files.
+.sp
+The following formats are supported for input and output:
+\&.xtc, \&.trr, \&.gro, \fB\&.g96\fP,
+\&.pdb and \&.tng\&.
+The file formats are detected from the file extension.
+The precision of the \&.xtc output is taken from the
+input file for \&.xtc, \&.gro and \&.pdb,
+and from the \fB\-ndec\fP option for other input formats. The precision
+is always taken from \fB\-ndec\fP, when this option is set.
+All other formats have fixed precision. \&.trr
+output can be single or double precision, depending on the precision
+of the \fBgmx trjconv\fP binary.
+Note that velocities are only supported in
+\&.trr, \&.tng, \&.gro and \fB\&.g96\fP files.
+.sp
+Option \fB\-sep\fP can be used to write every frame to a separate
+\fB\&.gro, .g96\fP or \&.pdb file. By default, all frames all written to
+one file.
+\&.pdb files with all frames concatenated can be viewed with
+\fBrasmol \-nmrpdb\fP\&.
+.sp
+It is possible to select part of your trajectory and write it out
+to a new trajectory file in order to save disk space, e.g. for leaving
+out the water from a trajectory of a protein in water.
+\fBALWAYS\fP put the original trajectory on tape!
+We recommend to use the portable \&.xtc format for your analysis
+to save disk space and to have portable files. When writing \&.tng
+output the file will contain one molecule type of the correct count
+if the selection name matches the molecule name and the selected atoms
+match all atoms of that molecule. Otherwise the whole selection will
+be treated as one single molecule containing all the selected atoms.
+.sp
+There are two options for fitting the trajectory to a reference
+either for essential dynamics analysis, etc.
+The first option is just plain fitting to a reference structure
+in the structure file. The second option is a progressive fit
+in which the first timeframe is fitted to the reference structure
+in the structure file to obtain and each subsequent timeframe is
+fitted to the previously fitted structure. This way a continuous
+trajectory is generated, which might not be the case when using the
+regular fit method, e.g. when your protein undergoes large
+conformational transitions.
+.sp
+Option \fB\-pbc\fP sets the type of periodic boundary condition
+treatment:
+.INDENT 0.0
+.INDENT 3.5
+.INDENT 0.0
+.IP \(bu 2
+\fBmol\fP puts the center of mass of molecules in the box,
+and requires a run input file to be supplied with \fB\-s\fP\&.
+.IP \(bu 2
+\fBres\fP puts the center of mass of residues in the box.
+.IP \(bu 2
+\fBatom\fP puts all the atoms in the box.
+.IP \(bu 2
+\fBnojump\fP checks if atoms jump across the box and then puts
+them back. This has the effect that all molecules
+will remain whole (provided they were whole in the initial
+conformation). \fBNote\fP that this ensures a continuous trajectory but
+molecules may diffuse out of the box. The starting configuration
+for this procedure is taken from the structure file, if one is
+supplied, otherwise it is the first frame.
+.IP \(bu 2
+\fBcluster\fP clusters all the atoms in the selected index
+such that they are all closest to the center of mass of the cluster,
+which is iteratively updated. \fBNote\fP that this will only give meaningful
+results if you in fact have a cluster. Luckily that can be checked
+afterwards using a trajectory viewer. Note also that if your molecules
+are broken this will not work either.
+.IP \(bu 2
+\fBwhole\fP only makes broken molecules whole.
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.sp
+Option \fB\-ur\fP sets the unit cell representation for options
+\fBmol\fP, \fBres\fP and \fBatom\fP of \fB\-pbc\fP\&.
+All three options give different results for triclinic boxes and
+identical results for rectangular boxes.
+\fBrect\fP is the ordinary brick shape.
+\fBtric\fP is the triclinic unit cell.
+\fBcompact\fP puts all atoms at the closest distance from the center
+of the box. This can be useful for visualizing e.g. truncated octahedra
+or rhombic dodecahedra. The center for options \fBtric\fP and \fBcompact\fP
+is \fBtric\fP (see below), unless the option \fB\-boxcenter\fP
+is set differently.
+.sp
+Option \fB\-center\fP centers the system in the box. The user can
+select the group which is used to determine the geometrical center.
+Option \fB\-boxcenter\fP sets the location of the center of the box
+for options \fB\-pbc\fP and \fB\-center\fP\&. The center options are:
+\fBtric\fP: half of the sum of the box vectors,
+\fBrect\fP: half of the box diagonal,
+\fBzero\fP: zero.
+Use option \fB\-pbc mol\fP in addition to \fB\-center\fP when you
+want all molecules in the box after the centering.
+.sp
+Option \fB\-box\fP sets the size of the new box. This option only works
+for leading dimensions and is thus generally only useful for rectangular boxes.
+If you want to modify only some of the dimensions, e.g. when reading from
+a trajectory, you can use \-1 for those dimensions that should stay the same
+It is not always possible to use combinations of \fB\-pbc\fP,
+\fB\-fit\fP, \fB\-ur\fP and \fB\-center\fP to do exactly what
+you want in one call to \fBgmx trjconv\fP\&. Consider using multiple
+calls, and check out the GROMACS website for suggestions.
+.sp
+With \fB\-dt\fP, it is possible to reduce the number of
+frames in the output. This option relies on the accuracy of the times
+in your input trajectory, so if these are inaccurate use the
+\fB\-timestep\fP option to modify the time (this can be done
+simultaneously). For making smooth movies, the program gmx filter
+can reduce the number of frames while using low\-pass frequency
+filtering, this reduces aliasing of high frequency motions.
+.sp
+Using \fB\-trunc\fP \fBgmx trjconv\fP can truncate \&.trr in place, i.e.
+without copying the file. This is useful when a run has crashed
+during disk I/O (i.e. full disk), or when two contiguous
+trajectories must be concatenated without having double frames.
+.sp
+Option \fB\-dump\fP can be used to extract a frame at or near
+one specific time from your trajectory. If the frames in the trajectory are
+not in temporal order, the result is unspecified.
+.sp
+Option \fB\-drop\fP reads an \&.xvg file with times and values.
+When options \fB\-dropunder\fP and/or \fB\-dropover\fP are set,
+frames with a value below and above the value of the respective options
+will not be written.
+.SH OPTIONS
+.sp
+Options to specify input files:
+.INDENT 0.0
+.TP
+.B \fB\-f\fP [<.xtc/.trr/...>] (traj.xtc)
+Trajectory: xtc trr cpt gro g96 pdb tng
+.TP
+.B \fB\-s\fP [<.tpr/.gro/...>] (topol.tpr) (Optional)
+Structure+mass(db): tpr gro g96 pdb brk ent
+.TP
+.B \fB\-n\fP [<.ndx>] (index.ndx) (Optional)
+Index file
+.TP
+.B \fB\-fr\fP [<.ndx>] (frames.ndx) (Optional)
+Index file
+.TP
+.B \fB\-sub\fP [<.ndx>] (cluster.ndx) (Optional)
+Index file
+.TP
+.B \fB\-drop\fP [<.xvg>] (drop.xvg) (Optional)
+xvgr/xmgr file
+.UNINDENT
+.sp
+Options to specify output files:
+.INDENT 0.0
+.TP
+.B \fB\-o\fP [<.xtc/.trr/...>] (trajout.xtc)
+Trajectory: xtc trr gro g96 pdb tng
+.UNINDENT
+.sp
+Other options:
+.INDENT 0.0
+.TP
+.B \fB\-b\fP <time> (0)
+Time of first frame to read from trajectory (default unit ps)
+.TP
+.B \fB\-e\fP <time> (0)
+Time of last frame to read from trajectory (default unit ps)
+.TP
+.B \fB\-tu\fP <enum> (ps)
+Unit for time values: fs, ps, ns, us, ms, s
+.TP
+.B \fB\-[no]w\fP  (no)
+View output \&.xvg, \&.xpm, \&.eps and \&.pdb files
+.TP
+.B \fB\-xvg\fP <enum> (xmgrace)
+xvg plot formatting: xmgrace, xmgr, none
+.TP
+.B \fB\-skip\fP <int> (1)
+Only write every nr\-th frame
+.TP
+.B \fB\-dt\fP <time> (0)
+Only write frame when t MOD dt = first time (ps)
+.TP
+.B \fB\-[no]round\fP  (no)
+Round measurements to nearest picosecond
+.TP
+.B \fB\-dump\fP <time> (\-1)
+Dump frame nearest specified time (ps)
+.TP
+.B \fB\-t0\fP <time> (0)
+Starting time (ps) (default: don\(aqt change)
+.TP
+.B \fB\-timestep\fP <time> (0)
+Change time step between input frames (ps)
+.TP
+.B \fB\-pbc\fP <enum> (none)
+PBC treatment (see help text for full description): none, mol, res, atom, nojump, cluster, whole
+.TP
+.B \fB\-ur\fP <enum> (rect)
+Unit\-cell representation: rect, tric, compact
+.TP
+.B \fB\-[no]center\fP  (no)
+Center atoms in box
+.TP
+.B \fB\-boxcenter\fP <enum> (tric)
+Center for \-pbc and \-center: tric, rect, zero
+.TP
+.B \fB\-box\fP <vector> (0 0 0)
+Size for new cubic box (default: read from input)
+.TP
+.B \fB\-trans\fP <vector> (0 0 0)
+All coordinates will be translated by trans. This can advantageously be combined with \-pbc mol \-ur compact.
+.TP
+.B \fB\-shift\fP <vector> (0 0 0)
+All coordinates will be shifted by framenr*shift
+.TP
+.B \fB\-fit\fP <enum> (none)
+Fit molecule to ref structure in the structure file: none, rot+trans, rotxy+transxy, translation, transxy, progressive
+.TP
+.B \fB\-ndec\fP <int> (3)
+Number of decimal places to write to .xtc output
+.TP
+.B \fB\-[no]vel\fP  (yes)
+Read and write velocities if possible
+.TP
+.B \fB\-[no]force\fP  (no)
+Read and write forces if possible
+.TP
+.B \fB\-trunc\fP <time> (\-1)
+Truncate input trajectory file after this time (ps)
+.TP
+.B \fB\-exec\fP <string>
+Execute command for every output frame with the frame number as argument
+.TP
+.B \fB\-split\fP <time> (0)
+Start writing new file when t MOD split = first time (ps)
+.TP
+.B \fB\-[no]sep\fP  (no)
+Write each frame to a separate .gro, .g96 or .pdb file
+.TP
+.B \fB\-nzero\fP <int> (0)
+If the \-sep flag is set, use these many digits for the file numbers and prepend zeros as needed
+.TP
+.B \fB\-dropunder\fP <real> (0)
+Drop all frames below this value
+.TP
+.B \fB\-dropover\fP <real> (0)
+Drop all frames above this value
+.TP
+.B \fB\-[no]conect\fP  (no)
+Add CONECT PDB records when writing \&.pdb files. Useful for visualization of non\-standard molecules, e.g. coarse grained ones
+.UNINDENT
+.SH SEE ALSO
+.sp
+\fBgmx(1)\fP
+.sp
+More information about GROMACS is available at <\fI\%http://www.gromacs.org/\fP>.
+.SH COPYRIGHT
+2022, GROMACS development team
+.\" Generated by docutils manpage writer.
+.

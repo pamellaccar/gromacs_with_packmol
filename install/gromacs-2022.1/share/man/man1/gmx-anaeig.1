@@ -1,0 +1,254 @@
+.\" Man page generated from reStructuredText.
+.
+.
+.nr rst2man-indent-level 0
+.
+.de1 rstReportMargin
+\\$1 \\n[an-margin]
+level \\n[rst2man-indent-level]
+level margin: \\n[rst2man-indent\\n[rst2man-indent-level]]
+-
+\\n[rst2man-indent0]
+\\n[rst2man-indent1]
+\\n[rst2man-indent2]
+..
+.de1 INDENT
+.\" .rstReportMargin pre:
+. RS \\$1
+. nr rst2man-indent\\n[rst2man-indent-level] \\n[an-margin]
+. nr rst2man-indent-level +1
+.\" .rstReportMargin post:
+..
+.de UNINDENT
+. RE
+.\" indent \\n[an-margin]
+.\" old: \\n[rst2man-indent\\n[rst2man-indent-level]]
+.nr rst2man-indent-level -1
+.\" new: \\n[rst2man-indent\\n[rst2man-indent-level]]
+.in \\n[rst2man-indent\\n[rst2man-indent-level]]u
+..
+.TH "GMX-ANAEIG" "1" "Apr 22, 2022" "2022.1" "GROMACS"
+.SH NAME
+gmx-anaeig \- Analyze eigenvectors/normal modes
+.SH SYNOPSIS
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+gmx anaeig [\fB\-v\fP \fI[<.trr/.cpt/...>]\fP] [\fB\-v2\fP \fI[<.trr/.cpt/...>]\fP]
+           [\fB\-f\fP \fI[<.xtc/.trr/...>]\fP] [\fB\-s\fP \fI[<.tpr/.gro/...>]\fP]
+           [\fB\-n\fP \fI[<.ndx>]\fP] [\fB\-eig\fP \fI[<.xvg>]\fP] [\fB\-eig2\fP \fI[<.xvg>]\fP]
+           [\fB\-comp\fP \fI[<.xvg>]\fP] [\fB\-rmsf\fP \fI[<.xvg>]\fP] [\fB\-proj\fP \fI[<.xvg>]\fP]
+           [\fB\-2d\fP \fI[<.xvg>]\fP] [\fB\-3d\fP \fI[<.gro/.g96/...>]\fP]
+           [\fB\-filt\fP \fI[<.xtc/.trr/...>]\fP] [\fB\-extr\fP \fI[<.xtc/.trr/...>]\fP]
+           [\fB\-over\fP \fI[<.xvg>]\fP] [\fB\-inpr\fP \fI[<.xpm>]\fP] [\fB\-b\fP \fI<time>\fP] [\fB\-e\fP \fI<time>\fP]
+           [\fB\-dt\fP \fI<time>\fP] [\fB\-tu\fP \fI<enum>\fP] [\fB\-[no]w\fP] [\fB\-xvg\fP \fI<enum>\fP]
+           [\fB\-first\fP \fI<int>\fP] [\fB\-last\fP \fI<int>\fP] [\fB\-skip\fP \fI<int>\fP] [\fB\-max\fP \fI<real>\fP]
+           [\fB\-nframes\fP \fI<int>\fP] [\fB\-[no]split\fP] [\fB\-[no]entropy\fP]
+           [\fB\-temp\fP \fI<real>\fP] [\fB\-nevskip\fP \fI<int>\fP]
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.SH DESCRIPTION
+.sp
+\fBgmx anaeig\fP analyzes eigenvectors. The eigenvectors can be of a
+covariance matrix (gmx covar) or of a Normal Modes analysis
+(gmx nmeig).
+.sp
+When a trajectory is projected on eigenvectors, all structures are
+fitted to the structure in the eigenvector file, if present, otherwise
+to the structure in the structure file. When no run input file is
+supplied, periodicity will not be taken into account. Most analyses
+are performed on eigenvectors \fB\-first\fP to \fB\-last\fP, but when
+\fB\-first\fP is set to \-1 you will be prompted for a selection.
+.sp
+\fB\-comp\fP: plot the vector components per atom of eigenvectors
+\fB\-first\fP to \fB\-last\fP\&.
+.sp
+\fB\-rmsf\fP: plot the RMS fluctuation per atom of eigenvectors
+\fB\-first\fP to \fB\-last\fP (requires \fB\-eig\fP).
+.sp
+\fB\-proj\fP: calculate projections of a trajectory on eigenvectors
+\fB\-first\fP to \fB\-last\fP\&.
+The projections of a trajectory on the eigenvectors of its
+covariance matrix are called principal components (pc\(aqs).
+It is often useful to check the cosine content of the pc\(aqs,
+since the pc\(aqs of random diffusion are cosines with the number
+of periods equal to half the pc index.
+The cosine content of the pc\(aqs can be calculated with the program
+gmx analyze\&.
+.sp
+\fB\-2d\fP: calculate a 2d projection of a trajectory on eigenvectors
+\fB\-first\fP and \fB\-last\fP\&.
+.sp
+\fB\-3d\fP: calculate a 3d projection of a trajectory on the first
+three selected eigenvectors.
+.sp
+\fB\-filt\fP: filter the trajectory to show only the motion along
+eigenvectors \fB\-first\fP to \fB\-last\fP\&.
+.sp
+\fB\-extr\fP: calculate the two extreme projections along a trajectory
+on the average structure and interpolate \fB\-nframes\fP frames
+between them, or set your own extremes with \fB\-max\fP\&. The
+eigenvector \fB\-first\fP will be written unless \fB\-first\fP and
+\fB\-last\fP have been set explicitly, in which case all eigenvectors
+will be written to separate files. Chain identifiers will be added
+when writing a \&.pdb file with two or three structures (you
+can use \fBrasmol \-nmrpdb\fP to view such a \&.pdb file).
+.SS Overlap calculations between covariance analysis
+.sp
+\fBNote:\fP the analysis should use the same fitting structure
+.sp
+\fB\-over\fP: calculate the subspace overlap of the eigenvectors in
+file \fB\-v2\fP with eigenvectors \fB\-first\fP to \fB\-last\fP
+in file \fB\-v\fP\&.
+.sp
+\fB\-inpr\fP: calculate a matrix of inner\-products between
+eigenvectors in files \fB\-v\fP and \fB\-v2\fP\&. All eigenvectors
+of both files will be used unless \fB\-first\fP and \fB\-last\fP
+have been set explicitly.
+.sp
+When \fB\-v\fP and \fB\-v2\fP are given, a single number for the
+overlap between the covariance matrices is generated. Note that the
+eigenvalues are by default read from the timestamp field in the
+eigenvector input files, but when \fB\-eig\fP, or \fB\-eig2\fP are
+given, the corresponding eigenvalues are used instead. The formulas are:
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+        difference = sqrt(tr((sqrt(M1) \- sqrt(M2))^2))
+normalized overlap = 1 \- difference/sqrt(tr(M1) + tr(M2))
+     shape overlap = 1 \- sqrt(tr((sqrt(M1/tr(M1)) \- sqrt(M2/tr(M2)))^2))
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.sp
+where M1 and M2 are the two covariance matrices and tr is the trace
+of a matrix. The numbers are proportional to the overlap of the square
+root of the fluctuations. The normalized overlap is the most useful
+number, it is 1 for identical matrices and 0 when the sampled
+subspaces are orthogonal.
+.sp
+When the \fB\-entropy\fP flag is given an entropy estimate will be
+computed based on the Quasiharmonic approach and based on
+Schlitter\(aqs formula.
+.SH OPTIONS
+.sp
+Options to specify input files:
+.INDENT 0.0
+.TP
+.B \fB\-v\fP [<.trr/.cpt/...>] (eigenvec.trr)
+Full precision trajectory: trr cpt tng
+.TP
+.B \fB\-v2\fP [<.trr/.cpt/...>] (eigenvec2.trr) (Optional)
+Full precision trajectory: trr cpt tng
+.TP
+.B \fB\-f\fP [<.xtc/.trr/...>] (traj.xtc) (Optional)
+Trajectory: xtc trr cpt gro g96 pdb tng
+.TP
+.B \fB\-s\fP [<.tpr/.gro/...>] (topol.tpr) (Optional)
+Structure+mass(db): tpr gro g96 pdb brk ent
+.TP
+.B \fB\-n\fP [<.ndx>] (index.ndx) (Optional)
+Index file
+.TP
+.B \fB\-eig\fP [<.xvg>] (eigenval.xvg) (Optional)
+xvgr/xmgr file
+.TP
+.B \fB\-eig2\fP [<.xvg>] (eigenval2.xvg) (Optional)
+xvgr/xmgr file
+.UNINDENT
+.sp
+Options to specify output files:
+.INDENT 0.0
+.TP
+.B \fB\-comp\fP [<.xvg>] (eigcomp.xvg) (Optional)
+xvgr/xmgr file
+.TP
+.B \fB\-rmsf\fP [<.xvg>] (eigrmsf.xvg) (Optional)
+xvgr/xmgr file
+.TP
+.B \fB\-proj\fP [<.xvg>] (proj.xvg) (Optional)
+xvgr/xmgr file
+.TP
+.B \fB\-2d\fP [<.xvg>] (2dproj.xvg) (Optional)
+xvgr/xmgr file
+.TP
+.B \fB\-3d\fP [<.gro/.g96/...>] (3dproj.pdb) (Optional)
+Structure file: gro g96 pdb brk ent esp
+.TP
+.B \fB\-filt\fP [<.xtc/.trr/...>] (filtered.xtc) (Optional)
+Trajectory: xtc trr cpt gro g96 pdb tng
+.TP
+.B \fB\-extr\fP [<.xtc/.trr/...>] (extreme.pdb) (Optional)
+Trajectory: xtc trr cpt gro g96 pdb tng
+.TP
+.B \fB\-over\fP [<.xvg>] (overlap.xvg) (Optional)
+xvgr/xmgr file
+.TP
+.B \fB\-inpr\fP [<.xpm>] (inprod.xpm) (Optional)
+X PixMap compatible matrix file
+.UNINDENT
+.sp
+Other options:
+.INDENT 0.0
+.TP
+.B \fB\-b\fP <time> (0)
+Time of first frame to read from trajectory (default unit ps)
+.TP
+.B \fB\-e\fP <time> (0)
+Time of last frame to read from trajectory (default unit ps)
+.TP
+.B \fB\-dt\fP <time> (0)
+Only use frame when t MOD dt = first time (default unit ps)
+.TP
+.B \fB\-tu\fP <enum> (ps)
+Unit for time values: fs, ps, ns, us, ms, s
+.TP
+.B \fB\-[no]w\fP  (no)
+View output \&.xvg, \&.xpm, \&.eps and \&.pdb files
+.TP
+.B \fB\-xvg\fP <enum> (xmgrace)
+xvg plot formatting: xmgrace, xmgr, none
+.TP
+.B \fB\-first\fP <int> (1)
+First eigenvector for analysis (\-1 is select)
+.TP
+.B \fB\-last\fP <int> (\-1)
+Last eigenvector for analysis (\-1 is till the last)
+.TP
+.B \fB\-skip\fP <int> (1)
+Only analyse every nr\-th frame
+.TP
+.B \fB\-max\fP <real> (0)
+Maximum for projection of the eigenvector on the average structure, max=0 gives the extremes
+.TP
+.B \fB\-nframes\fP <int> (2)
+Number of frames for the extremes output
+.TP
+.B \fB\-[no]split\fP  (no)
+Split eigenvector projections where time is zero
+.TP
+.B \fB\-[no]entropy\fP  (no)
+Compute entropy according to the Quasiharmonic formula or Schlitter\(aqs method.
+.TP
+.B \fB\-temp\fP <real> (298.15)
+Temperature for entropy calculations
+.TP
+.B \fB\-nevskip\fP <int> (6)
+Number of eigenvalues to skip when computing the entropy due to the quasi harmonic approximation. When you do a rotational and/or translational fit prior to the covariance analysis, you get 3 or 6 eigenvalues that are very close to zero, and which should not be taken into account when computing the entropy.
+.UNINDENT
+.SH SEE ALSO
+.sp
+\fBgmx(1)\fP
+.sp
+More information about GROMACS is available at <\fI\%http://www.gromacs.org/\fP>.
+.SH COPYRIGHT
+2022, GROMACS development team
+.\" Generated by docutils manpage writer.
+.

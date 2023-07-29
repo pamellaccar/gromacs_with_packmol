@@ -1,0 +1,8 @@
+#!/bin/bash
+# Entry point script for Docker containers.
+# See README.md and the gmxapi/ci-<option> Docker images.
+
+set -ev
+
+mpiexec -n 2 `which python` -m mpi4py -m pytest $HOME/gmxapi/test
+mpiexec -n 2 `which python` -m mpi4py -m pytest $HOME/sample_restraint/tests

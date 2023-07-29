@@ -1,0 +1,8 @@
+#!/bin/bash
+# Entry point script for Docker containers.
+# See README.md and the gmxapi/ci-<option> Docker images.
+
+set -ev
+
+pytest $HOME/gmxapi/test
+pytest $HOME/sample_restraint/tests

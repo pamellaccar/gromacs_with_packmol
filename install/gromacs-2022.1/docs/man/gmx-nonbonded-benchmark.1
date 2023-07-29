@@ -1,0 +1,188 @@
+.\" Man page generated from reStructuredText.
+.
+.
+.nr rst2man-indent-level 0
+.
+.de1 rstReportMargin
+\\$1 \\n[an-margin]
+level \\n[rst2man-indent-level]
+level margin: \\n[rst2man-indent\\n[rst2man-indent-level]]
+-
+\\n[rst2man-indent0]
+\\n[rst2man-indent1]
+\\n[rst2man-indent2]
+..
+.de1 INDENT
+.\" .rstReportMargin pre:
+. RS \\$1
+. nr rst2man-indent\\n[rst2man-indent-level] \\n[an-margin]
+. nr rst2man-indent-level +1
+.\" .rstReportMargin post:
+..
+.de UNINDENT
+. RE
+.\" indent \\n[an-margin]
+.\" old: \\n[rst2man-indent\\n[rst2man-indent-level]]
+.nr rst2man-indent-level -1
+.\" new: \\n[rst2man-indent\\n[rst2man-indent-level]]
+.in \\n[rst2man-indent\\n[rst2man-indent-level]]u
+..
+.TH "GMX-NONBONDED-BENCHMARK" "1" "Apr 22, 2022" "2022.1" "GROMACS"
+.SH NAME
+gmx-nonbonded-benchmark \- Benchmarking tool for the non-bonded pair kernels.
+.SH SYNOPSIS
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+gmx nonbonded\-benchmark [\fB\-o\fP \fI[<.csv>]\fP] [\fB\-size\fP \fI<int>\fP] [\fB\-nt\fP \fI<int>\fP]
+             [\fB\-simd\fP \fI<enum>\fP] [\fB\-coulomb\fP \fI<enum>\fP] [\fB\-[no]table\fP]
+             [\fB\-combrule\fP \fI<enum>\fP] [\fB\-[no]halflj\fP] [\fB\-[no]energy\fP]
+             [\fB\-[no]all\fP] [\fB\-cutoff\fP \fI<real>\fP] [\fB\-iter\fP \fI<int>\fP]
+             [\fB\-warmup\fP \fI<int>\fP] [\fB\-[no]cycles\fP] [\fB\-[no]time\fP]
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.SH DESCRIPTION
+.sp
+\fBgmx nonbonded\-benchmark\fP runs benchmarks for one or more so\-called Nbnxm
+non\-bonded pair kernels. The non\-bonded pair kernels are
+the most compute intensive part of MD simulations
+and usually comprise 60 to 90 percent of the runtime.
+For this reason they are highly optimized and several different
+setups are available to compute the same physical interactions.
+In addition, there are different physical treatments of Coulomb
+interactions and optimizations for atoms without Lennard\-Jones
+interactions. There are also different physical treatments of
+Lennard\-Jones interactions, but only a plain cut\-off is supported
+in this tool, as that is by far the most common treatment.
+And finally, while force output is always necessary, energy output
+is only required at certain steps. In total there are
+12 relevant combinations of options. The combinations double to 24
+when two different SIMD setups are supported. These combinations
+can be run with a single invocation using the \fB\-all\fP option.
+The behavior of each kernel is affected by caching behavior,
+which is determined by the hardware used together with the system size
+and the cut\-off radius. The larger the number of atoms per thread,
+the more L1 cache is needed to avoid L1 cache misses.
+The cut\-off radius mainly affects the data reuse: a larger cut\-off
+results in more data reuse and makes the kernel less sensitive to cache
+misses.
+.sp
+OpenMP parallelization is used to utilize multiple hardware threads
+within a compute node. In these benchmarks there is no interaction
+between threads, apart from starting and closing a single OpenMP
+parallel region per iteration. Additionally, threads interact
+through sharing and evicting data from shared caches.
+The number of threads to use is set with the \fB\-nt\fP option.
+Thread affinity is important, especially with SMT and shared
+caches. Affinities can be set through the OpenMP library using
+the GOMP_CPU_AFFINITY environment variable.
+.sp
+The benchmark tool times one or more kernels by running them
+repeatedly for a number of iterations set by the \fB\-iter\fP
+option. An initial kernel call is done to avoid additional initial
+cache misses. Times are recording in cycles read from efficient,
+high accuracy counters in the CPU. Note that these often do not
+correspond to actual clock cycles. For each kernel, the tool
+reports the total number of cycles, cycles per iteration,
+and (total and useful) pair interactions per cycle.
+Because a cluster pair list is used instead of an atom pair list,
+interactions are also computed for some atom pairs that are beyond
+the cut\-off distance. These pairs are not useful (except for
+additional buffering, but that is not of interest here),
+only a side effect of the cluster\-pair setup. The SIMD 2xMM kernel
+has a higher useful pair ratio then the 4xM kernel due to a smaller
+cluster size, but a lower total pair throughput.
+It is best to run this, or for that matter any, benchmark
+with locked CPU clocks, as thermal throttling can significantly
+affect performance. If that is not an option, the \fB\-warmup\fP
+option can be used to run initial, untimed iterations to warm up
+the processor.
+.sp
+The most relevant regime is between 0.1 to 1 millisecond per
+iteration. Thus it is useful to run with system sizes that cover
+both ends of this regime.
+.sp
+The \fB\-simd\fP and \fB\-table\fP options select different
+implementations to compute the same physics. The choice of these
+options should ideally be optimized for the target hardware.
+Historically, we only found tabulated Ewald correction to be useful
+on 2\-wide SIMD or 4\-wide SIMD without FMA support. As all modern
+architectures are wider and support FMA, we do not use tables by
+default. The only exceptions are kernels without SIMD, which only
+support tables.
+Options \fB\-coulomb\fP, \fB\-combrule\fP and \fB\-halflj\fP
+depend on the force field and composition of the simulated system.
+The optimization of computing Lennard\-Jones interactions for only
+half of the atoms in a cluster is useful for water, which does not
+use Lennard\-Jones on hydrogen atoms in most water models.
+In the MD engine, any clusters where at most half of the atoms
+have LJ interactions will automatically use this kernel.
+And finally, the \fB\-energy\fP option selects the computation
+of energies, which are usually only needed infrequently.
+.SH OPTIONS
+.sp
+Options to specify output files:
+.INDENT 0.0
+.TP
+.B \fB\-o\fP [<.csv>] (nonbonded\-benchmark.csv) (Optional)
+Also output results in csv format
+.UNINDENT
+.sp
+Other options:
+.INDENT 0.0
+.TP
+.B \fB\-size\fP <int> (1)
+The system size is 3000 atoms times this value
+.TP
+.B \fB\-nt\fP <int> (1)
+The number of OpenMP threads to use
+.TP
+.B \fB\-simd\fP <enum> (auto)
+SIMD type, auto runs all supported SIMD setups or no SIMD when SIMD is not supported: auto, no, 4xm, 2xmm
+.TP
+.B \fB\-coulomb\fP <enum> (ewald)
+The functional form for the Coulomb interactions: ewald, reaction\-field
+.TP
+.B \fB\-[no]table\fP  (no)
+Use lookup table for Ewald correction instead of analytical
+.TP
+.B \fB\-combrule\fP <enum> (geometric)
+The LJ combination rule: geometric, lb, none
+.TP
+.B \fB\-[no]halflj\fP  (no)
+Use optimization for LJ on half of the atoms
+.TP
+.B \fB\-[no]energy\fP  (no)
+Compute energies in addition to forces
+.TP
+.B \fB\-[no]all\fP  (no)
+Run all 12 combinations of options for coulomb, halflj, combrule
+.TP
+.B \fB\-cutoff\fP <real> (1)
+Pair\-list and interaction cut\-off distance
+.TP
+.B \fB\-iter\fP <int> (100)
+The number of iterations for each kernel
+.TP
+.B \fB\-warmup\fP <int> (0)
+The number of iterations for initial warmup
+.TP
+.B \fB\-[no]cycles\fP  (no)
+Report cycles/pair instead of pairs/cycle
+.TP
+.B \fB\-[no]time\fP  (no)
+Report micro\-seconds instead of cycles
+.UNINDENT
+.SH SEE ALSO
+.sp
+\fBgmx(1)\fP
+.sp
+More information about GROMACS is available at <\fI\%http://www.gromacs.org/\fP>.
+.SH COPYRIGHT
+2022, GROMACS development team
+.\" Generated by docutils manpage writer.
+.

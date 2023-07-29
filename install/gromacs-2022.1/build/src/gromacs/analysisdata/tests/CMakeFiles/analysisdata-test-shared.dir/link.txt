@@ -1,0 +1,2 @@
+/usr/bin/ar qc ../../../../lib/libanalysisdata-test-shared.a CMakeFiles/analysisdata-test-shared.dir/datatest.cpp.o CMakeFiles/analysisdata-test-shared.dir/mock_datamodule.cpp.o CMakeFiles/analysisdata-test-shared.dir/__/__/__/testutils/unittest_main.cpp.o
+/usr/bin/ranlib ../../../../lib/libanalysisdata-test-shared.a

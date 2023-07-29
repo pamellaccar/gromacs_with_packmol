@@ -1,0 +1,249 @@
+.\" Man page generated from reStructuredText.
+.
+.
+.nr rst2man-indent-level 0
+.
+.de1 rstReportMargin
+\\$1 \\n[an-margin]
+level \\n[rst2man-indent-level]
+level margin: \\n[rst2man-indent\\n[rst2man-indent-level]]
+-
+\\n[rst2man-indent0]
+\\n[rst2man-indent1]
+\\n[rst2man-indent2]
+..
+.de1 INDENT
+.\" .rstReportMargin pre:
+. RS \\$1
+. nr rst2man-indent\\n[rst2man-indent-level] \\n[an-margin]
+. nr rst2man-indent-level +1
+.\" .rstReportMargin post:
+..
+.de UNINDENT
+. RE
+.\" indent \\n[an-margin]
+.\" old: \\n[rst2man-indent\\n[rst2man-indent-level]]
+.nr rst2man-indent-level -1
+.\" new: \\n[rst2man-indent\\n[rst2man-indent-level]]
+.in \\n[rst2man-indent\\n[rst2man-indent-level]]u
+..
+.TH "GMX-DIPOLES" "1" "Apr 22, 2022" "2022.1" "GROMACS"
+.SH NAME
+gmx-dipoles \- Compute the total dipole plus fluctuations
+.SH SYNOPSIS
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+gmx dipoles [\fB\-en\fP \fI[<.edr>]\fP] [\fB\-f\fP \fI[<.xtc/.trr/...>]\fP] [\fB\-s\fP \fI[<.tpr>]\fP]
+            [\fB\-n\fP \fI[<.ndx>]\fP] [\fB\-o\fP \fI[<.xvg>]\fP] [\fB\-eps\fP \fI[<.xvg>]\fP] [\fB\-a\fP \fI[<.xvg>]\fP]
+            [\fB\-d\fP \fI[<.xvg>]\fP] [\fB\-c\fP \fI[<.xvg>]\fP] [\fB\-g\fP \fI[<.xvg>]\fP]
+            [\fB\-adip\fP \fI[<.xvg>]\fP] [\fB\-dip3d\fP \fI[<.xvg>]\fP] [\fB\-cos\fP \fI[<.xvg>]\fP]
+            [\fB\-cmap\fP \fI[<.xpm>]\fP] [\fB\-slab\fP \fI[<.xvg>]\fP] [\fB\-b\fP \fI<time>\fP] [\fB\-e\fP \fI<time>\fP]
+            [\fB\-dt\fP \fI<time>\fP] [\fB\-[no]w\fP] [\fB\-xvg\fP \fI<enum>\fP] [\fB\-mu\fP \fI<real>\fP]
+            [\fB\-mumax\fP \fI<real>\fP] [\fB\-epsilonRF\fP \fI<real>\fP] [\fB\-skip\fP \fI<int>\fP]
+            [\fB\-temp\fP \fI<real>\fP] [\fB\-corr\fP \fI<enum>\fP] [\fB\-[no]pairs\fP] [\fB\-[no]quad\fP]
+            [\fB\-ncos\fP \fI<int>\fP] [\fB\-axis\fP \fI<string>\fP] [\fB\-sl\fP \fI<int>\fP]
+            [\fB\-gkratom\fP \fI<int>\fP] [\fB\-gkratom2\fP \fI<int>\fP] [\fB\-rcmax\fP \fI<real>\fP]
+            [\fB\-[no]phi\fP] [\fB\-nlevels\fP \fI<int>\fP] [\fB\-ndegrees\fP \fI<int>\fP]
+            [\fB\-acflen\fP \fI<int>\fP] [\fB\-[no]normalize\fP] [\fB\-P\fP \fI<enum>\fP]
+            [\fB\-fitfn\fP \fI<enum>\fP] [\fB\-beginfit\fP \fI<real>\fP] [\fB\-endfit\fP \fI<real>\fP]
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.SH DESCRIPTION
+.sp
+\fBgmx dipoles\fP computes the total dipole plus fluctuations of a simulation
+system. From this you can compute e.g. the dielectric constant for
+low\-dielectric media.
+For molecules with a net charge, the net charge is subtracted at
+center of mass of the molecule.
+.sp
+The file \fBMtot.xvg\fP contains the total dipole moment of a frame, the
+components as well as the norm of the vector.
+The file \fBaver.xvg\fP contains <|mu|^2> and
+|<mu>|^2 during the
+simulation.
+The file \fBdipdist.xvg\fP contains the distribution of dipole moments during
+the simulation
+The value of \fB\-mumax\fP is used as the highest value in the distribution graph.
+.sp
+Furthermore, the dipole autocorrelation function will be computed when
+option \fB\-corr\fP is used. The output file name is given with the \fB\-c\fP
+option.
+The correlation functions can be averaged over all molecules
+(\fBmol\fP), plotted per molecule separately (\fBmolsep\fP)
+or it can be computed over the total dipole moment of the simulation box
+(\fBtotal\fP).
+.sp
+Option \fB\-g\fP produces a plot of the distance dependent Kirkwood
+G\-factor, as well as the average cosine of the angle between the dipoles
+as a function of the distance. The plot also includes gOO and hOO
+according to Nymand & Linse, J. Chem. Phys. 112 (2000) pp 6386\-6395. In the same plot,
+we also include the energy per scale computed by taking the inner product of
+the dipoles divided by the distance to the third power.
+.sp
+EXAMPLES
+.sp
+\fBgmx dipoles \-corr mol \-P 1 \-o dip_sqr \-mu 2.273 \-mumax 5.0\fP
+.sp
+This will calculate the autocorrelation function of the molecular
+dipoles using a first order Legendre polynomial of the angle of the
+dipole vector and itself a time t later. For this calculation 1001
+frames will be used. Further, the dielectric constant will be calculated
+using an \fB\-epsilonRF\fP of infinity (default), temperature of 300 K (default) and
+an average dipole moment of the molecule of 2.273 (SPC). For the
+distribution function a maximum of 5.0 will be used.
+.SH OPTIONS
+.sp
+Options to specify input files:
+.INDENT 0.0
+.TP
+.B \fB\-en\fP [<.edr>] (ener.edr) (Optional)
+Energy file
+.TP
+.B \fB\-f\fP [<.xtc/.trr/...>] (traj.xtc)
+Trajectory: xtc trr cpt gro g96 pdb tng
+.TP
+.B \fB\-s\fP [<.tpr>] (topol.tpr)
+Portable xdr run input file
+.TP
+.B \fB\-n\fP [<.ndx>] (index.ndx) (Optional)
+Index file
+.UNINDENT
+.sp
+Options to specify output files:
+.INDENT 0.0
+.TP
+.B \fB\-o\fP [<.xvg>] (Mtot.xvg)
+xvgr/xmgr file
+.TP
+.B \fB\-eps\fP [<.xvg>] (epsilon.xvg)
+xvgr/xmgr file
+.TP
+.B \fB\-a\fP [<.xvg>] (aver.xvg)
+xvgr/xmgr file
+.TP
+.B \fB\-d\fP [<.xvg>] (dipdist.xvg)
+xvgr/xmgr file
+.TP
+.B \fB\-c\fP [<.xvg>] (dipcorr.xvg) (Optional)
+xvgr/xmgr file
+.TP
+.B \fB\-g\fP [<.xvg>] (gkr.xvg) (Optional)
+xvgr/xmgr file
+.TP
+.B \fB\-adip\fP [<.xvg>] (adip.xvg) (Optional)
+xvgr/xmgr file
+.TP
+.B \fB\-dip3d\fP [<.xvg>] (dip3d.xvg) (Optional)
+xvgr/xmgr file
+.TP
+.B \fB\-cos\fP [<.xvg>] (cosaver.xvg) (Optional)
+xvgr/xmgr file
+.TP
+.B \fB\-cmap\fP [<.xpm>] (cmap.xpm) (Optional)
+X PixMap compatible matrix file
+.TP
+.B \fB\-slab\fP [<.xvg>] (slab.xvg) (Optional)
+xvgr/xmgr file
+.UNINDENT
+.sp
+Other options:
+.INDENT 0.0
+.TP
+.B \fB\-b\fP <time> (0)
+Time of first frame to read from trajectory (default unit ps)
+.TP
+.B \fB\-e\fP <time> (0)
+Time of last frame to read from trajectory (default unit ps)
+.TP
+.B \fB\-dt\fP <time> (0)
+Only use frame when t MOD dt = first time (default unit ps)
+.TP
+.B \fB\-[no]w\fP  (no)
+View output \&.xvg, \&.xpm, \&.eps and \&.pdb files
+.TP
+.B \fB\-xvg\fP <enum> (xmgrace)
+xvg plot formatting: xmgrace, xmgr, none
+.TP
+.B \fB\-mu\fP <real> (\-1)
+dipole of a single molecule (in Debye)
+.TP
+.B \fB\-mumax\fP <real> (5)
+max dipole in Debye (for histogram)
+.TP
+.B \fB\-epsilonRF\fP <real> (0)
+epsilon of the reaction field used during the simulation, needed for dielectric constant calculation. WARNING: 0.0 means infinity (default)
+.TP
+.B \fB\-skip\fP <int> (0)
+Skip steps in the output (but not in the computations)
+.TP
+.B \fB\-temp\fP <real> (300)
+Average temperature of the simulation (needed for dielectric constant calculation)
+.TP
+.B \fB\-corr\fP <enum> (none)
+Correlation function to calculate: none, mol, molsep, total
+.TP
+.B \fB\-[no]pairs\fP  (yes)
+Calculate |cos(theta)| between all pairs of molecules. May be slow
+.TP
+.B \fB\-[no]quad\fP  (no)
+Take quadrupole into account
+.TP
+.B \fB\-ncos\fP <int> (1)
+Must be 1 or 2. Determines whether the <cos(theta)> is computed between all molecules in one group, or between molecules in two different groups. This turns on the \fB\-g\fP flag.
+.TP
+.B \fB\-axis\fP <string> (Z)
+Take the normal on the computational box in direction X, Y or Z.
+.TP
+.B \fB\-sl\fP <int> (10)
+Divide the box into this number of slices.
+.TP
+.B \fB\-gkratom\fP <int> (0)
+Use the n\-th atom of a molecule (starting from 1) to calculate the distance between molecules rather than the center of charge (when 0) in the calculation of distance dependent Kirkwood factors
+.TP
+.B \fB\-gkratom2\fP <int> (0)
+Same as previous option in case ncos = 2, i.e. dipole interaction between two groups of molecules
+.TP
+.B \fB\-rcmax\fP <real> (0)
+Maximum distance to use in the dipole orientation distribution (with ncos == 2). If zero, a criterion based on the box length will be used.
+.TP
+.B \fB\-[no]phi\fP  (no)
+Plot the \(aqtorsion angle\(aq defined as the rotation of the two dipole vectors around the distance vector between the two molecules in the \&.xpm file from the \fB\-cmap\fP option. By default the cosine of the angle between the dipoles is plotted.
+.TP
+.B \fB\-nlevels\fP <int> (20)
+Number of colors in the cmap output
+.TP
+.B \fB\-ndegrees\fP <int> (90)
+Number of divisions on the \fIy\fP\-axis in the cmap output (for 180 degrees)
+.TP
+.B \fB\-acflen\fP <int> (\-1)
+Length of the ACF, default is half the number of frames
+.TP
+.B \fB\-[no]normalize\fP  (yes)
+Normalize ACF
+.TP
+.B \fB\-P\fP <enum> (0)
+Order of Legendre polynomial for ACF (0 indicates none): 0, 1, 2, 3
+.TP
+.B \fB\-fitfn\fP <enum> (none)
+Fit function: none, exp, aexp, exp_exp, exp5, exp7, exp9
+.TP
+.B \fB\-beginfit\fP <real> (0)
+Time where to begin the exponential fit of the correlation function
+.TP
+.B \fB\-endfit\fP <real> (\-1)
+Time where to end the exponential fit of the correlation function, \-1 is until the end
+.UNINDENT
+.SH SEE ALSO
+.sp
+\fBgmx(1)\fP
+.sp
+More information about GROMACS is available at <\fI\%http://www.gromacs.org/\fP>.
+.SH COPYRIGHT
+2022, GROMACS development team
+.\" Generated by docutils manpage writer.
+.

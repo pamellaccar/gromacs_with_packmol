@@ -1,0 +1,2 @@
+/usr/bin/ar qc ../../../lib/libnblib_test_infrastructure.a CMakeFiles/nblib_test_infrastructure.dir/testsystems.cpp.o CMakeFiles/nblib_test_infrastructure.dir/__/__/__/src/testutils/unittest_main.cpp.o
+/usr/bin/ranlib ../../../lib/libnblib_test_infrastructure.a

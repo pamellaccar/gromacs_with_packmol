@@ -1,0 +1,387 @@
+.\" Man page generated from reStructuredText.
+.
+.
+.nr rst2man-indent-level 0
+.
+.de1 rstReportMargin
+\\$1 \\n[an-margin]
+level \\n[rst2man-indent-level]
+level margin: \\n[rst2man-indent\\n[rst2man-indent-level]]
+-
+\\n[rst2man-indent0]
+\\n[rst2man-indent1]
+\\n[rst2man-indent2]
+..
+.de1 INDENT
+.\" .rstReportMargin pre:
+. RS \\$1
+. nr rst2man-indent\\n[rst2man-indent-level] \\n[an-margin]
+. nr rst2man-indent-level +1
+.\" .rstReportMargin post:
+..
+.de UNINDENT
+. RE
+.\" indent \\n[an-margin]
+.\" old: \\n[rst2man-indent\\n[rst2man-indent-level]]
+.nr rst2man-indent-level -1
+.\" new: \\n[rst2man-indent\\n[rst2man-indent-level]]
+.in \\n[rst2man-indent\\n[rst2man-indent-level]]u
+..
+.TH "GMX-TUNE_PME" "1" "Apr 22, 2022" "2022.1" "GROMACS"
+.SH NAME
+gmx-tune_pme \- Time mdrun as a function of PME ranks to optimize settings
+.SH SYNOPSIS
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+gmx tune_pme [\fB\-s\fP \fI[<.tpr>]\fP] [\fB\-cpi\fP \fI[<.cpt>]\fP] [\fB\-table\fP \fI[<.xvg>]\fP]
+             [\fB\-tablep\fP \fI[<.xvg>]\fP] [\fB\-tableb\fP \fI[<.xvg>]\fP]
+             [\fB\-rerun\fP \fI[<.xtc/.trr/...>]\fP] [\fB\-ei\fP \fI[<.edi>]\fP] [\fB\-p\fP \fI[<.out>]\fP]
+             [\fB\-err\fP \fI[<.log>]\fP] [\fB\-so\fP \fI[<.tpr>]\fP] [\fB\-o\fP \fI[<.trr/.cpt/...>]\fP]
+             [\fB\-x\fP \fI[<.xtc/.tng>]\fP] [\fB\-cpo\fP \fI[<.cpt>]\fP]
+             [\fB\-c\fP \fI[<.gro/.g96/...>]\fP] [\fB\-e\fP \fI[<.edr>]\fP] [\fB\-g\fP \fI[<.log>]\fP]
+             [\fB\-dhdl\fP \fI[<.xvg>]\fP] [\fB\-field\fP \fI[<.xvg>]\fP] [\fB\-tpi\fP \fI[<.xvg>]\fP]
+             [\fB\-tpid\fP \fI[<.xvg>]\fP] [\fB\-eo\fP \fI[<.xvg>]\fP] [\fB\-px\fP \fI[<.xvg>]\fP]
+             [\fB\-pf\fP \fI[<.xvg>]\fP] [\fB\-ro\fP \fI[<.xvg>]\fP] [\fB\-ra\fP \fI[<.log>]\fP]
+             [\fB\-rs\fP \fI[<.log>]\fP] [\fB\-rt\fP \fI[<.log>]\fP] [\fB\-mtx\fP \fI[<.mtx>]\fP]
+             [\fB\-swap\fP \fI[<.xvg>]\fP] [\fB\-bo\fP \fI[<.trr/.cpt/...>]\fP] [\fB\-bx\fP \fI[<.xtc>]\fP]
+             [\fB\-bcpo\fP \fI[<.cpt>]\fP] [\fB\-bc\fP \fI[<.gro/.g96/...>]\fP] [\fB\-be\fP \fI[<.edr>]\fP]
+             [\fB\-bg\fP \fI[<.log>]\fP] [\fB\-beo\fP \fI[<.xvg>]\fP] [\fB\-bdhdl\fP \fI[<.xvg>]\fP]
+             [\fB\-bfield\fP \fI[<.xvg>]\fP] [\fB\-btpi\fP \fI[<.xvg>]\fP] [\fB\-btpid\fP \fI[<.xvg>]\fP]
+             [\fB\-bdevout\fP \fI[<.xvg>]\fP] [\fB\-brunav\fP \fI[<.xvg>]\fP] [\fB\-bpx\fP \fI[<.xvg>]\fP]
+             [\fB\-bpf\fP \fI[<.xvg>]\fP] [\fB\-bro\fP \fI[<.xvg>]\fP] [\fB\-bra\fP \fI[<.log>]\fP]
+             [\fB\-brs\fP \fI[<.log>]\fP] [\fB\-brt\fP \fI[<.log>]\fP] [\fB\-bmtx\fP \fI[<.mtx>]\fP]
+             [\fB\-bdn\fP \fI[<.ndx>]\fP] [\fB\-bswap\fP \fI[<.xvg>]\fP] [\fB\-xvg\fP \fI<enum>\fP]
+             [\fB\-mdrun\fP \fI<string>\fP] [\fB\-np\fP \fI<int>\fP] [\fB\-npstring\fP \fI<enum>\fP]
+             [\fB\-ntmpi\fP \fI<int>\fP] [\fB\-r\fP \fI<int>\fP] [\fB\-max\fP \fI<real>\fP] [\fB\-min\fP \fI<real>\fP]
+             [\fB\-npme\fP \fI<enum>\fP] [\fB\-fix\fP \fI<int>\fP] [\fB\-rmax\fP \fI<real>\fP]
+             [\fB\-rmin\fP \fI<real>\fP] [\fB\-[no]scalevdw\fP] [\fB\-ntpr\fP \fI<int>\fP]
+             [\fB\-steps\fP \fI<int>\fP] [\fB\-resetstep\fP \fI<int>\fP] [\fB\-nsteps\fP \fI<int>\fP]
+             [\fB\-[no]launch\fP] [\fB\-[no]bench\fP] [\fB\-[no]check\fP]
+             [\fB\-gpu_id\fP \fI<string>\fP] [\fB\-[no]append\fP] [\fB\-[no]cpnum\fP]
+             [\fB\-deffnm\fP \fI<string>\fP]
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.SH DESCRIPTION
+.sp
+For a given number \fB\-np\fP or \fB\-ntmpi\fP of ranks, \fBgmx tune_pme\fP systematically
+times gmx mdrun with various numbers of PME\-only ranks and determines
+which setting is fastest. It will also test whether performance can
+be enhanced by shifting load from the reciprocal to the real space
+part of the Ewald sum.
+Simply pass your \&.tpr file to \fBgmx tune_pme\fP together with other options
+for gmx mdrun as needed.
+.sp
+\fBgmx tune_pme\fP needs to call gmx mdrun and so requires that you
+specify how to call mdrun with the argument to the \fB\-mdrun\fP
+parameter. Depending how you have built GROMACS, values such as
+\(aqgmx mdrun\(aq, \(aqgmx_d mdrun\(aq, or \(aqgmx_mpi mdrun\(aq might be needed.
+.sp
+The program that runs MPI programs can be set in the environment variable
+MPIRUN (defaults to \(aqmpirun\(aq). Note that for certain MPI frameworks,
+you need to provide a machine\- or hostfile. This can also be passed
+via the MPIRUN variable, e.g.
+.sp
+\fBexport MPIRUN="/usr/local/mpirun \-machinefile hosts"\fP
+Note that in such cases it is normally necessary to compile
+and/or run \fBgmx tune_pme\fP without MPI support, so that it can call
+the MPIRUN program.
+.sp
+Before doing the actual benchmark runs, \fBgmx tune_pme\fP will do a quick
+check whether gmx mdrun works as expected with the provided parallel settings
+if the \fB\-check\fP option is activated (the default).
+Please call \fBgmx tune_pme\fP with the normal options you would pass to
+gmx mdrun and add \fB\-np\fP for the number of ranks to perform the
+tests on, or \fB\-ntmpi\fP for the number of threads. You can also add \fB\-r\fP
+to repeat each test several times to get better statistics.
+.sp
+\fBgmx tune_pme\fP can test various real space / reciprocal space workloads
+for you. With \fB\-ntpr\fP you control how many extra \&.tpr files will be
+written with enlarged cutoffs and smaller Fourier grids respectively.
+Typically, the first test (number 0) will be with the settings from the input
+\&.tpr file; the last test (number \fBntpr\fP) will have the Coulomb cutoff
+specified by \fB\-rmax\fP with a somewhat smaller PME grid at the same time.
+In this last test, the Fourier spacing is multiplied with \fBrmax\fP/rcoulomb.
+The remaining \&.tpr files will have equally\-spaced Coulomb radii (and Fourier
+spacings) between these extremes. \fBNote\fP that you can set \fB\-ntpr\fP to 1
+if you just seek the optimal number of PME\-only ranks; in that case
+your input \&.tpr file will remain unchanged.
+.sp
+For the benchmark runs, the default of 1000 time steps should suffice for most
+MD systems. The dynamic load balancing needs about 100 time steps
+to adapt to local load imbalances, therefore the time step counters
+are by default reset after 100 steps. For large systems (>1M atoms), as well as
+for a higher accuracy of the measurements, you should set \fB\-resetstep\fP to a higher
+value.
+From the \(aqDD\(aq load imbalance entries in the md.log output file you
+can tell after how many steps the load is sufficiently balanced. Example call:
+.sp
+\fBgmx tune_pme \-np 64 \-s protein.tpr \-launch\fP
+.sp
+After calling gmx mdrun several times, detailed performance information
+is available in the output file \fBperf.out\fP\&.
+\fBNote\fP that during the benchmarks, a couple of temporary files are written
+(options \fB\-b*\fP), these will be automatically deleted after each test.
+.sp
+If you want the simulation to be started automatically with the
+optimized parameters, use the command line option \fB\-launch\fP\&.
+.sp
+Basic support for GPU\-enabled \fBmdrun\fP exists. Give a string containing the IDs
+of the GPUs that you wish to use in the optimization in the \fB\-gpu_id\fP
+command\-line argument. This works exactly like \fBmdrun \-gpu_id\fP, does not imply a
+mapping,
+and merely declares the eligible set of GPU devices. \fBgmx\-tune_pme\fP will construct
+calls to
+mdrun that use this set appropriately. \fBgmx\-tune_pme\fP does not support
+\fB\-gputasks\fP\&.
+.SH OPTIONS
+.sp
+Options to specify input files:
+.INDENT 0.0
+.TP
+.B \fB\-s\fP [<.tpr>] (topol.tpr)
+Portable xdr run input file
+.TP
+.B \fB\-cpi\fP [<.cpt>] (state.cpt) (Optional)
+Checkpoint file
+.TP
+.B \fB\-table\fP [<.xvg>] (table.xvg) (Optional)
+xvgr/xmgr file
+.TP
+.B \fB\-tablep\fP [<.xvg>] (tablep.xvg) (Optional)
+xvgr/xmgr file
+.TP
+.B \fB\-tableb\fP [<.xvg>] (table.xvg) (Optional)
+xvgr/xmgr file
+.TP
+.B \fB\-rerun\fP [<.xtc/.trr/...>] (rerun.xtc) (Optional)
+Trajectory: xtc trr cpt gro g96 pdb tng
+.TP
+.B \fB\-ei\fP [<.edi>] (sam.edi) (Optional)
+ED sampling input
+.UNINDENT
+.sp
+Options to specify output files:
+.INDENT 0.0
+.TP
+.B \fB\-p\fP [<.out>] (perf.out)
+Generic output file
+.TP
+.B \fB\-err\fP [<.log>] (bencherr.log)
+Log file
+.TP
+.B \fB\-so\fP [<.tpr>] (tuned.tpr)
+Portable xdr run input file
+.TP
+.B \fB\-o\fP [<.trr/.cpt/...>] (traj.trr)
+Full precision trajectory: trr cpt tng
+.TP
+.B \fB\-x\fP [<.xtc/.tng>] (traj_comp.xtc) (Optional)
+Compressed trajectory (tng format or portable xdr format)
+.TP
+.B \fB\-cpo\fP [<.cpt>] (state.cpt) (Optional)
+Checkpoint file
+.TP
+.B \fB\-c\fP [<.gro/.g96/...>] (confout.gro)
+Structure file: gro g96 pdb brk ent esp
+.TP
+.B \fB\-e\fP [<.edr>] (ener.edr)
+Energy file
+.TP
+.B \fB\-g\fP [<.log>] (md.log)
+Log file
+.TP
+.B \fB\-dhdl\fP [<.xvg>] (dhdl.xvg) (Optional)
+xvgr/xmgr file
+.TP
+.B \fB\-field\fP [<.xvg>] (field.xvg) (Optional)
+xvgr/xmgr file
+.TP
+.B \fB\-tpi\fP [<.xvg>] (tpi.xvg) (Optional)
+xvgr/xmgr file
+.TP
+.B \fB\-tpid\fP [<.xvg>] (tpidist.xvg) (Optional)
+xvgr/xmgr file
+.TP
+.B \fB\-eo\fP [<.xvg>] (edsam.xvg) (Optional)
+xvgr/xmgr file
+.TP
+.B \fB\-px\fP [<.xvg>] (pullx.xvg) (Optional)
+xvgr/xmgr file
+.TP
+.B \fB\-pf\fP [<.xvg>] (pullf.xvg) (Optional)
+xvgr/xmgr file
+.TP
+.B \fB\-ro\fP [<.xvg>] (rotation.xvg) (Optional)
+xvgr/xmgr file
+.TP
+.B \fB\-ra\fP [<.log>] (rotangles.log) (Optional)
+Log file
+.TP
+.B \fB\-rs\fP [<.log>] (rotslabs.log) (Optional)
+Log file
+.TP
+.B \fB\-rt\fP [<.log>] (rottorque.log) (Optional)
+Log file
+.TP
+.B \fB\-mtx\fP [<.mtx>] (nm.mtx) (Optional)
+Hessian matrix
+.TP
+.B \fB\-swap\fP [<.xvg>] (swapions.xvg) (Optional)
+xvgr/xmgr file
+.TP
+.B \fB\-bo\fP [<.trr/.cpt/...>] (bench.trr)
+Full precision trajectory: trr cpt tng
+.TP
+.B \fB\-bx\fP [<.xtc>] (bench.xtc)
+Compressed trajectory (portable xdr format): xtc
+.TP
+.B \fB\-bcpo\fP [<.cpt>] (bench.cpt)
+Checkpoint file
+.TP
+.B \fB\-bc\fP [<.gro/.g96/...>] (bench.gro)
+Structure file: gro g96 pdb brk ent esp
+.TP
+.B \fB\-be\fP [<.edr>] (bench.edr)
+Energy file
+.TP
+.B \fB\-bg\fP [<.log>] (bench.log)
+Log file
+.TP
+.B \fB\-beo\fP [<.xvg>] (benchedo.xvg) (Optional)
+xvgr/xmgr file
+.TP
+.B \fB\-bdhdl\fP [<.xvg>] (benchdhdl.xvg) (Optional)
+xvgr/xmgr file
+.TP
+.B \fB\-bfield\fP [<.xvg>] (benchfld.xvg) (Optional)
+xvgr/xmgr file
+.TP
+.B \fB\-btpi\fP [<.xvg>] (benchtpi.xvg) (Optional)
+xvgr/xmgr file
+.TP
+.B \fB\-btpid\fP [<.xvg>] (benchtpid.xvg) (Optional)
+xvgr/xmgr file
+.TP
+.B \fB\-bdevout\fP [<.xvg>] (benchdev.xvg) (Optional)
+xvgr/xmgr file
+.TP
+.B \fB\-brunav\fP [<.xvg>] (benchrnav.xvg) (Optional)
+xvgr/xmgr file
+.TP
+.B \fB\-bpx\fP [<.xvg>] (benchpx.xvg) (Optional)
+xvgr/xmgr file
+.TP
+.B \fB\-bpf\fP [<.xvg>] (benchpf.xvg) (Optional)
+xvgr/xmgr file
+.TP
+.B \fB\-bro\fP [<.xvg>] (benchrot.xvg) (Optional)
+xvgr/xmgr file
+.TP
+.B \fB\-bra\fP [<.log>] (benchrota.log) (Optional)
+Log file
+.TP
+.B \fB\-brs\fP [<.log>] (benchrots.log) (Optional)
+Log file
+.TP
+.B \fB\-brt\fP [<.log>] (benchrott.log) (Optional)
+Log file
+.TP
+.B \fB\-bmtx\fP [<.mtx>] (benchn.mtx) (Optional)
+Hessian matrix
+.TP
+.B \fB\-bdn\fP [<.ndx>] (bench.ndx) (Optional)
+Index file
+.TP
+.B \fB\-bswap\fP [<.xvg>] (benchswp.xvg) (Optional)
+xvgr/xmgr file
+.UNINDENT
+.sp
+Other options:
+.INDENT 0.0
+.TP
+.B \fB\-xvg\fP <enum> (xmgrace)
+xvg plot formatting: xmgrace, xmgr, none
+.TP
+.B \fB\-mdrun\fP <string>
+Command line to run a simulation, e.g. \(aqgmx mdrun\(aq or \(aqgmx_mpi mdrun\(aq
+.TP
+.B \fB\-np\fP <int> (1)
+Number of ranks to run the tests on (must be > 2 for separate PME ranks)
+.TP
+.B \fB\-npstring\fP <enum> (np)
+Name of the \fB$MPIRUN\fP option that specifies the number of ranks to use (\(aqnp\(aq, or \(aqn\(aq; use \(aqnone\(aq if there is no such option): np, n, none
+.TP
+.B \fB\-ntmpi\fP <int> (1)
+Number of MPI\-threads to run the tests on (turns MPI & mpirun off)
+.TP
+.B \fB\-r\fP <int> (2)
+Repeat each test this often
+.TP
+.B \fB\-max\fP <real> (0.5)
+Max fraction of PME ranks to test with
+.TP
+.B \fB\-min\fP <real> (0.25)
+Min fraction of PME ranks to test with
+.TP
+.B \fB\-npme\fP <enum> (auto)
+Within \-min and \-max, benchmark all possible values for \fB\-npme\fP, or just a reasonable subset. Auto neglects \-min and \-max and chooses reasonable values around a guess for npme derived from the .tpr: auto, all, subset
+.TP
+.B \fB\-fix\fP <int> (\-2)
+If >= \-1, do not vary the number of PME\-only ranks, instead use this fixed value and only vary rcoulomb and the PME grid spacing.
+.TP
+.B \fB\-rmax\fP <real> (0)
+If >0, maximal rcoulomb for \-ntpr>1 (rcoulomb upscaling results in fourier grid downscaling)
+.TP
+.B \fB\-rmin\fP <real> (0)
+If >0, minimal rcoulomb for \-ntpr>1
+.TP
+.B \fB\-[no]scalevdw\fP  (yes)
+Scale rvdw along with rcoulomb
+.TP
+.B \fB\-ntpr\fP <int> (0)
+Number of \&.tpr files to benchmark. Create this many files with different rcoulomb scaling factors depending on \-rmin and \-rmax. If < 1, automatically choose the number of \&.tpr files to test
+.TP
+.B \fB\-steps\fP <int> (1000)
+Take timings for this many steps in the benchmark runs
+.TP
+.B \fB\-resetstep\fP <int> (1500)
+Let dlb equilibrate this many steps before timings are taken (reset cycle counters after this many steps)
+.TP
+.B \fB\-nsteps\fP <int> (\-1)
+If non\-negative, perform this many steps in the real run (overwrites nsteps from \&.tpr, add \&.cpt steps)
+.TP
+.B \fB\-[no]launch\fP  (no)
+Launch the real simulation after optimization
+.TP
+.B \fB\-[no]bench\fP  (yes)
+Run the benchmarks or just create the input \&.tpr files?
+.TP
+.B \fB\-[no]check\fP  (yes)
+Before the benchmark runs, check whether mdrun works in parallel
+.TP
+.B \fB\-gpu_id\fP <string>
+List of unique GPU device IDs that are eligible for use
+.TP
+.B \fB\-[no]append\fP  (yes)
+Append to previous output files when continuing from checkpoint instead of adding the simulation part number to all file names (for launch only)
+.TP
+.B \fB\-[no]cpnum\fP  (no)
+Keep and number checkpoint files (launch only)
+.TP
+.B \fB\-deffnm\fP <string>
+Set the default filenames (launch only)
+.UNINDENT
+.SH SEE ALSO
+.sp
+\fBgmx(1)\fP
+.sp
+More information about GROMACS is available at <\fI\%http://www.gromacs.org/\fP>.
+.SH COPYRIGHT
+2022, GROMACS development team
+.\" Generated by docutils manpage writer.
+.

@@ -1,0 +1,211 @@
+.\" Man page generated from reStructuredText.
+.
+.
+.nr rst2man-indent-level 0
+.
+.de1 rstReportMargin
+\\$1 \\n[an-margin]
+level \\n[rst2man-indent-level]
+level margin: \\n[rst2man-indent\\n[rst2man-indent-level]]
+-
+\\n[rst2man-indent0]
+\\n[rst2man-indent1]
+\\n[rst2man-indent2]
+..
+.de1 INDENT
+.\" .rstReportMargin pre:
+. RS \\$1
+. nr rst2man-indent\\n[rst2man-indent-level] \\n[an-margin]
+. nr rst2man-indent-level +1
+.\" .rstReportMargin post:
+..
+.de UNINDENT
+. RE
+.\" indent \\n[an-margin]
+.\" old: \\n[rst2man-indent\\n[rst2man-indent-level]]
+.nr rst2man-indent-level -1
+.\" new: \\n[rst2man-indent\\n[rst2man-indent-level]]
+.in \\n[rst2man-indent\\n[rst2man-indent-level]]u
+..
+.TH "GMX-SHAM" "1" "Apr 22, 2022" "2022.1" "GROMACS"
+.SH NAME
+gmx-sham \- Compute free energies or other histograms from histograms
+.SH SYNOPSIS
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+gmx sham [\fB\-f\fP \fI[<.xvg>]\fP] [\fB\-ge\fP \fI[<.xvg>]\fP] [\fB\-ene\fP \fI[<.xvg>]\fP] [\fB\-dist\fP \fI[<.xvg>]\fP]
+         [\fB\-histo\fP \fI[<.xvg>]\fP] [\fB\-bin\fP \fI[<.ndx>]\fP] [\fB\-lp\fP \fI[<.xpm>]\fP]
+         [\fB\-ls\fP \fI[<.xpm>]\fP] [\fB\-lsh\fP \fI[<.xpm>]\fP] [\fB\-lss\fP \fI[<.xpm>]\fP]
+         [\fB\-ls3\fP \fI[<.pdb>]\fP] [\fB\-g\fP \fI[<.log>]\fP] [\fB\-[no]w\fP] [\fB\-xvg\fP \fI<enum>\fP]
+         [\fB\-[no]time\fP] [\fB\-b\fP \fI<real>\fP] [\fB\-e\fP \fI<real>\fP] [\fB\-ttol\fP \fI<real>\fP]
+         [\fB\-n\fP \fI<int>\fP] [\fB\-[no]d\fP] [\fB\-[no]sham\fP] [\fB\-tsham\fP \fI<real>\fP]
+         [\fB\-pmin\fP \fI<real>\fP] [\fB\-dim\fP \fI<vector>\fP] [\fB\-ngrid\fP \fI<vector>\fP]
+         [\fB\-xmin\fP \fI<vector>\fP] [\fB\-xmax\fP \fI<vector>\fP] [\fB\-pmax\fP \fI<real>\fP]
+         [\fB\-gmax\fP \fI<real>\fP] [\fB\-emin\fP \fI<real>\fP] [\fB\-emax\fP \fI<real>\fP]
+         [\fB\-nlevels\fP \fI<int>\fP]
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.SH DESCRIPTION
+.sp
+\fBgmx sham\fP makes multi\-dimensional free\-energy, enthalpy and entropy plots.
+\fBgmx sham\fP reads one or more \&.xvg files and analyzes data sets.
+The basic purpose of \fBgmx sham\fP is to plot Gibbs free energy landscapes
+(option \fB\-ls\fP)
+by Bolzmann inverting multi\-dimensional histograms (option \fB\-lp\fP),
+but it can also
+make enthalpy (option \fB\-lsh\fP) and entropy (option \fB\-lss\fP)
+plots. The histograms can be made for any quantities the user supplies.
+A line in the input file may start with a time
+(see option \fB\-time\fP) and any number of \fIy\fP\-values may follow.
+Multiple sets can also be
+read when they are separated by & (option \fB\-n\fP),
+in this case only one \fIy\fP\-value is read from each line.
+All lines starting with # and @ are skipped.
+.sp
+Option \fB\-ge\fP can be used to supply a file with free energies
+when the ensemble is not a Boltzmann ensemble, but needs to be biased
+by this free energy. One free energy value is required for each
+(multi\-dimensional) data point in the \fB\-f\fP input.
+.sp
+Option \fB\-ene\fP can be used to supply a file with energies.
+These energies are used as a weighting function in the single
+histogram analysis method by Kumar et al. When temperatures
+are supplied (as a second column in the file), an experimental
+weighting scheme is applied. In addition the vales
+are used for making enthalpy and entropy plots.
+.sp
+With option \fB\-dim\fP, dimensions can be gives for distances.
+When a distance is 2\- or 3\-dimensional, the circumference or surface
+sampled by two particles increases with increasing distance.
+Depending on what one would like to show, one can choose to correct
+the histogram and free\-energy for this volume effect.
+The probability is normalized by r and r^2 for dimensions of 2 and 3,
+respectively.
+A value of \-1 is used to indicate an angle in degrees between two
+vectors: a sin(angle) normalization will be applied.
+\fBNote\fP that for angles between vectors the inner\-product or cosine
+is the natural quantity to use, as it will produce bins of the same
+volume.
+.SH OPTIONS
+.sp
+Options to specify input files:
+.INDENT 0.0
+.TP
+.B \fB\-f\fP [<.xvg>] (graph.xvg)
+xvgr/xmgr file
+.TP
+.B \fB\-ge\fP [<.xvg>] (gibbs.xvg) (Optional)
+xvgr/xmgr file
+.TP
+.B \fB\-ene\fP [<.xvg>] (esham.xvg) (Optional)
+xvgr/xmgr file
+.UNINDENT
+.sp
+Options to specify output files:
+.INDENT 0.0
+.TP
+.B \fB\-dist\fP [<.xvg>] (ener.xvg) (Optional)
+xvgr/xmgr file
+.TP
+.B \fB\-histo\fP [<.xvg>] (edist.xvg) (Optional)
+xvgr/xmgr file
+.TP
+.B \fB\-bin\fP [<.ndx>] (bindex.ndx) (Optional)
+Index file
+.TP
+.B \fB\-lp\fP [<.xpm>] (prob.xpm) (Optional)
+X PixMap compatible matrix file
+.TP
+.B \fB\-ls\fP [<.xpm>] (gibbs.xpm) (Optional)
+X PixMap compatible matrix file
+.TP
+.B \fB\-lsh\fP [<.xpm>] (enthalpy.xpm) (Optional)
+X PixMap compatible matrix file
+.TP
+.B \fB\-lss\fP [<.xpm>] (entropy.xpm) (Optional)
+X PixMap compatible matrix file
+.TP
+.B \fB\-ls3\fP [<.pdb>] (gibbs3.pdb) (Optional)
+Protein data bank file
+.TP
+.B \fB\-g\fP [<.log>] (shamlog.log) (Optional)
+Log file
+.UNINDENT
+.sp
+Other options:
+.INDENT 0.0
+.TP
+.B \fB\-[no]w\fP  (no)
+View output \&.xvg, \&.xpm, \&.eps and \&.pdb files
+.TP
+.B \fB\-xvg\fP <enum> (xmgrace)
+xvg plot formatting: xmgrace, xmgr, none
+.TP
+.B \fB\-[no]time\fP  (yes)
+Expect a time in the input
+.TP
+.B \fB\-b\fP <real> (\-1)
+First time to read from set
+.TP
+.B \fB\-e\fP <real> (\-1)
+Last time to read from set
+.TP
+.B \fB\-ttol\fP <real> (0)
+Tolerance on time in appropriate units (usually ps)
+.TP
+.B \fB\-n\fP <int> (1)
+Read this number of sets separated by lines containing only an ampersand
+.TP
+.B \fB\-[no]d\fP  (no)
+Use the derivative
+.TP
+.B \fB\-[no]sham\fP  (yes)
+Turn off energy weighting even if energies are given
+.TP
+.B \fB\-tsham\fP <real> (298.15)
+Temperature for single histogram analysis
+.TP
+.B \fB\-pmin\fP <real> (0)
+Minimum probability. Anything lower than this will be set to zero
+.TP
+.B \fB\-dim\fP <vector> (1 1 1)
+Dimensions for distances, used for volume correction (max 3 values, dimensions > 3 will get the same value as the last)
+.TP
+.B \fB\-ngrid\fP <vector> (32 32 32)
+Number of bins for energy landscapes (max 3 values, dimensions > 3 will get the same value as the last)
+.TP
+.B \fB\-xmin\fP <vector> (0 0 0)
+Minimum for the axes in energy landscape (see above for > 3 dimensions)
+.TP
+.B \fB\-xmax\fP <vector> (1 1 1)
+Maximum for the axes in energy landscape (see above for > 3 dimensions)
+.TP
+.B \fB\-pmax\fP <real> (0)
+Maximum probability in output, default is calculate
+.TP
+.B \fB\-gmax\fP <real> (0)
+Maximum free energy in output, default is calculate
+.TP
+.B \fB\-emin\fP <real> (0)
+Minimum enthalpy in output, default is calculate
+.TP
+.B \fB\-emax\fP <real> (0)
+Maximum enthalpy in output, default is calculate
+.TP
+.B \fB\-nlevels\fP <int> (25)
+Number of levels for energy landscape
+.UNINDENT
+.SH SEE ALSO
+.sp
+\fBgmx(1)\fP
+.sp
+More information about GROMACS is available at <\fI\%http://www.gromacs.org/\fP>.
+.SH COPYRIGHT
+2022, GROMACS development team
+.\" Generated by docutils manpage writer.
+.

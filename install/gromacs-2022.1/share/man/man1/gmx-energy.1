@@ -1,0 +1,318 @@
+.\" Man page generated from reStructuredText.
+.
+.
+.nr rst2man-indent-level 0
+.
+.de1 rstReportMargin
+\\$1 \\n[an-margin]
+level \\n[rst2man-indent-level]
+level margin: \\n[rst2man-indent\\n[rst2man-indent-level]]
+-
+\\n[rst2man-indent0]
+\\n[rst2man-indent1]
+\\n[rst2man-indent2]
+..
+.de1 INDENT
+.\" .rstReportMargin pre:
+. RS \\$1
+. nr rst2man-indent\\n[rst2man-indent-level] \\n[an-margin]
+. nr rst2man-indent-level +1
+.\" .rstReportMargin post:
+..
+.de UNINDENT
+. RE
+.\" indent \\n[an-margin]
+.\" old: \\n[rst2man-indent\\n[rst2man-indent-level]]
+.nr rst2man-indent-level -1
+.\" new: \\n[rst2man-indent\\n[rst2man-indent-level]]
+.in \\n[rst2man-indent\\n[rst2man-indent-level]]u
+..
+.TH "GMX-ENERGY" "1" "Apr 22, 2022" "2022.1" "GROMACS"
+.SH NAME
+gmx-energy \- Writes energies to xvg files and display averages
+.SH SYNOPSIS
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+gmx energy [\fB\-f\fP \fI[<.edr>]\fP] [\fB\-f2\fP \fI[<.edr>]\fP] [\fB\-s\fP \fI[<.tpr>]\fP] [\fB\-o\fP \fI[<.xvg>]\fP]
+           [\fB\-viol\fP \fI[<.xvg>]\fP] [\fB\-pairs\fP \fI[<.xvg>]\fP] [\fB\-corr\fP \fI[<.xvg>]\fP]
+           [\fB\-vis\fP \fI[<.xvg>]\fP] [\fB\-evisco\fP \fI[<.xvg>]\fP] [\fB\-eviscoi\fP \fI[<.xvg>]\fP]
+           [\fB\-ravg\fP \fI[<.xvg>]\fP] [\fB\-odh\fP \fI[<.xvg>]\fP] [\fB\-b\fP \fI<time>\fP] [\fB\-e\fP \fI<time>\fP]
+           [\fB\-[no]w\fP] [\fB\-xvg\fP \fI<enum>\fP] [\fB\-[no]fee\fP] [\fB\-fetemp\fP \fI<real>\fP]
+           [\fB\-zero\fP \fI<real>\fP] [\fB\-[no]sum\fP] [\fB\-[no]dp\fP] [\fB\-nbmin\fP \fI<int>\fP]
+           [\fB\-nbmax\fP \fI<int>\fP] [\fB\-[no]mutot\fP] [\fB\-[no]aver\fP] [\fB\-nmol\fP \fI<int>\fP]
+           [\fB\-[no]fluct_props\fP] [\fB\-[no]driftcorr\fP] [\fB\-[no]fluc\fP]
+           [\fB\-[no]orinst\fP] [\fB\-[no]ovec\fP] [\fB\-acflen\fP \fI<int>\fP] [\fB\-[no]normalize\fP]
+           [\fB\-P\fP \fI<enum>\fP] [\fB\-fitfn\fP \fI<enum>\fP] [\fB\-beginfit\fP \fI<real>\fP]
+           [\fB\-endfit\fP \fI<real>\fP]
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.SH DESCRIPTION
+.sp
+\fBgmx energy\fP extracts energy components
+from an energy file. The user is prompted to interactively
+select the desired energy terms.
+.sp
+Average, RMSD, and drift are calculated with full precision from the
+simulation (see printed manual). Drift is calculated by performing
+a least\-squares fit of the data to a straight line. The reported total drift
+is the difference of the fit at the first and last point.
+An error estimate of the average is given based on a block averages
+over 5 blocks using the full\-precision averages. The error estimate
+can be performed over multiple block lengths with the options
+\fB\-nbmin\fP and \fB\-nbmax\fP\&.
+\fBNote\fP that in most cases the energy files contains averages over all
+MD steps, or over many more points than the number of frames in
+energy file. This makes the \fBgmx energy\fP statistics output more accurate
+than the \&.xvg output. When exact averages are not present in the energy
+file, the statistics mentioned above are simply over the single, per\-frame
+energy values.
+.sp
+The term fluctuation gives the RMSD around the least\-squares fit.
+.sp
+Some fluctuation\-dependent properties can be calculated provided
+the correct energy terms are selected, and that the command line option
+\fB\-fluct_props\fP is given. The following properties
+will be computed:
+.TS
+center;
+|l|l|.
+_
+T{
+Property
+T}	T{
+Energy terms needed
+T}
+_
+T{
+Heat capacity C_p (NPT sims):
+T}	T{
+Enthalpy, Temp
+T}
+_
+T{
+Heat capacity C_v (NVT sims):
+T}	T{
+Etot, Temp
+T}
+_
+T{
+Thermal expansion coeff. (NPT):
+T}	T{
+Enthalpy, Vol, Temp
+T}
+_
+T{
+Isothermal compressibility:
+T}	T{
+Vol, Temp
+T}
+_
+T{
+Adiabatic bulk modulus:
+T}	T{
+Vol, Temp
+T}
+_
+.TE
+.sp
+You always need to set the number of molecules \fB\-nmol\fP\&.
+The C_p/C_v computations do \fBnot\fP include any corrections
+for quantum effects. Use the gmx dos program if you need that (and you do).
+.sp
+Option \fB\-odh\fP extracts and plots the free energy data
+(Hamiltoian differences and/or the Hamiltonian derivative dhdl)
+from the \fBener.edr\fP file.
+.sp
+With \fB\-fee\fP an estimate is calculated for the free\-energy
+difference with an ideal gas state:
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+Delta A = A(N,V,T) \- A_idealgas(N,V,T) = kT
+ln(<exp(U_pot/kT)>)
+Delta G = G(N,p,T) \- G_idealgas(N,p,T) = kT
+ln(<exp(U_pot/kT)>)
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.sp
+where k is Boltzmann\(aqs constant, T is set by \fB\-fetemp\fP and
+the average is over the ensemble (or time in a trajectory).
+Note that this is in principle
+only correct when averaging over the whole (Boltzmann) ensemble
+and using the potential energy. This also allows for an entropy
+estimate using:
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+Delta S(N,V,T) = S(N,V,T) \- S_idealgas(N,V,T) =
+(<U_pot> \- Delta A)/T
+Delta S(N,p,T) = S(N,p,T) \- S_idealgas(N,p,T) =
+(<U_pot> + pV \- Delta G)/T
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.sp
+When a second energy file is specified (\fB\-f2\fP), a free energy
+difference is calculated:
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+dF = \-kT
+ln(<exp(\-(E_B\-E_A) /
+kT)>_A),
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.sp
+where E_A and E_B are the energies from the first and second energy
+files, and the average is over the ensemble A. The running average
+of the free energy difference is printed to a file specified by \fB\-ravg\fP\&.
+\fBNote\fP that the energies must both be calculated from the same trajectory.
+.SH OPTIONS
+.sp
+Options to specify input files:
+.INDENT 0.0
+.TP
+.B \fB\-f\fP [<.edr>] (ener.edr)
+Energy file
+.TP
+.B \fB\-f2\fP [<.edr>] (ener.edr) (Optional)
+Energy file
+.TP
+.B \fB\-s\fP [<.tpr>] (topol.tpr) (Optional)
+Portable xdr run input file
+.UNINDENT
+.sp
+Options to specify output files:
+.INDENT 0.0
+.TP
+.B \fB\-o\fP [<.xvg>] (energy.xvg)
+xvgr/xmgr file
+.TP
+.B \fB\-viol\fP [<.xvg>] (violaver.xvg) (Optional)
+xvgr/xmgr file
+.TP
+.B \fB\-pairs\fP [<.xvg>] (pairs.xvg) (Optional)
+xvgr/xmgr file
+.TP
+.B \fB\-corr\fP [<.xvg>] (enecorr.xvg) (Optional)
+xvgr/xmgr file
+.TP
+.B \fB\-vis\fP [<.xvg>] (visco.xvg) (Optional)
+xvgr/xmgr file
+.TP
+.B \fB\-evisco\fP [<.xvg>] (evisco.xvg) (Optional)
+xvgr/xmgr file
+.TP
+.B \fB\-eviscoi\fP [<.xvg>] (eviscoi.xvg) (Optional)
+xvgr/xmgr file
+.TP
+.B \fB\-ravg\fP [<.xvg>] (runavgdf.xvg) (Optional)
+xvgr/xmgr file
+.TP
+.B \fB\-odh\fP [<.xvg>] (dhdl.xvg) (Optional)
+xvgr/xmgr file
+.UNINDENT
+.sp
+Other options:
+.INDENT 0.0
+.TP
+.B \fB\-b\fP <time> (0)
+Time of first frame to read from trajectory (default unit ps)
+.TP
+.B \fB\-e\fP <time> (0)
+Time of last frame to read from trajectory (default unit ps)
+.TP
+.B \fB\-[no]w\fP  (no)
+View output \&.xvg, \&.xpm, \&.eps and \&.pdb files
+.TP
+.B \fB\-xvg\fP <enum> (xmgrace)
+xvg plot formatting: xmgrace, xmgr, none
+.TP
+.B \fB\-[no]fee\fP  (no)
+Do a free energy estimate
+.TP
+.B \fB\-fetemp\fP <real> (300)
+Reference temperature for free energy calculation
+.TP
+.B \fB\-zero\fP <real> (0)
+Subtract a zero\-point energy
+.TP
+.B \fB\-[no]sum\fP  (no)
+Sum the energy terms selected rather than display them all
+.TP
+.B \fB\-[no]dp\fP  (no)
+Print energies in high precision
+.TP
+.B \fB\-nbmin\fP <int> (5)
+Minimum number of blocks for error estimate
+.TP
+.B \fB\-nbmax\fP <int> (5)
+Maximum number of blocks for error estimate
+.TP
+.B \fB\-[no]mutot\fP  (no)
+Compute the total dipole moment from the components
+.TP
+.B \fB\-[no]aver\fP  (no)
+Also print the exact average and rmsd stored in the energy frames (only when 1 term is requested)
+.TP
+.B \fB\-nmol\fP <int> (1)
+Number of molecules in your sample: the energies are divided by this number
+.TP
+.B \fB\-[no]fluct_props\fP  (no)
+Compute properties based on energy fluctuations, like heat capacity
+.TP
+.B \fB\-[no]driftcorr\fP  (no)
+Useful only for calculations of fluctuation properties. The drift in the observables will be subtracted before computing the fluctuation properties.
+.TP
+.B \fB\-[no]fluc\fP  (no)
+Calculate autocorrelation of energy fluctuations rather than energy itself
+.TP
+.B \fB\-[no]orinst\fP  (no)
+Analyse instantaneous orientation data
+.TP
+.B \fB\-[no]ovec\fP  (no)
+Also plot the eigenvectors with \fB\-oten\fP
+.TP
+.B \fB\-acflen\fP <int> (\-1)
+Length of the ACF, default is half the number of frames
+.TP
+.B \fB\-[no]normalize\fP  (yes)
+Normalize ACF
+.TP
+.B \fB\-P\fP <enum> (0)
+Order of Legendre polynomial for ACF (0 indicates none): 0, 1, 2, 3
+.TP
+.B \fB\-fitfn\fP <enum> (none)
+Fit function: none, exp, aexp, exp_exp, exp5, exp7, exp9
+.TP
+.B \fB\-beginfit\fP <real> (0)
+Time where to begin the exponential fit of the correlation function
+.TP
+.B \fB\-endfit\fP <real> (\-1)
+Time where to end the exponential fit of the correlation function, \-1 is until the end
+.UNINDENT
+.SH SEE ALSO
+.sp
+\fBgmx(1)\fP
+.sp
+More information about GROMACS is available at <\fI\%http://www.gromacs.org/\fP>.
+.SH COPYRIGHT
+2022, GROMACS development team
+.\" Generated by docutils manpage writer.
+.

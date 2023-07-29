@@ -1,0 +1,173 @@
+.\" Man page generated from reStructuredText.
+.
+.
+.nr rst2man-indent-level 0
+.
+.de1 rstReportMargin
+\\$1 \\n[an-margin]
+level \\n[rst2man-indent-level]
+level margin: \\n[rst2man-indent\\n[rst2man-indent-level]]
+-
+\\n[rst2man-indent0]
+\\n[rst2man-indent1]
+\\n[rst2man-indent2]
+..
+.de1 INDENT
+.\" .rstReportMargin pre:
+. RS \\$1
+. nr rst2man-indent\\n[rst2man-indent-level] \\n[an-margin]
+. nr rst2man-indent-level +1
+.\" .rstReportMargin post:
+..
+.de UNINDENT
+. RE
+.\" indent \\n[an-margin]
+.\" old: \\n[rst2man-indent\\n[rst2man-indent-level]]
+.nr rst2man-indent-level -1
+.\" new: \\n[rst2man-indent\\n[rst2man-indent-level]]
+.in \\n[rst2man-indent\\n[rst2man-indent-level]]u
+..
+.TH "GMX-ORDER" "1" "Apr 22, 2022" "2022.1" "GROMACS"
+.SH NAME
+gmx-order \- Compute the order parameter per atom for carbon tails
+.SH SYNOPSIS
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+gmx order [\fB\-f\fP \fI[<.xtc/.trr/...>]\fP] [\fB\-n\fP \fI[<.ndx>]\fP] [\fB\-nr\fP \fI[<.ndx>]\fP]
+          [\fB\-s\fP \fI[<.tpr>]\fP] [\fB\-o\fP \fI[<.xvg>]\fP] [\fB\-od\fP \fI[<.xvg>]\fP] [\fB\-ob\fP \fI[<.pdb>]\fP]
+          [\fB\-os\fP \fI[<.xvg>]\fP] [\fB\-Sg\fP \fI[<.xvg>]\fP] [\fB\-Sk\fP \fI[<.xvg>]\fP]
+          [\fB\-Sgsl\fP \fI[<.xvg>]\fP] [\fB\-Sksl\fP \fI[<.xvg>]\fP] [\fB\-b\fP \fI<time>\fP] [\fB\-e\fP \fI<time>\fP]
+          [\fB\-dt\fP \fI<time>\fP] [\fB\-[no]w\fP] [\fB\-xvg\fP \fI<enum>\fP] [\fB\-d\fP \fI<enum>\fP] [\fB\-sl\fP \fI<int>\fP]
+          [\fB\-[no]szonly\fP] [\fB\-[no]permolecule\fP] [\fB\-[no]radial\fP]
+          [\fB\-[no]calcdist\fP]
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.SH DESCRIPTION
+.sp
+\fBgmx order\fP computes the order parameter per atom for carbon tails. For atom i the
+vector i\-1, i+1 is used together with an axis.
+The index file should contain only the groups to be used for calculations,
+with each group of equivalent carbons along the relevant acyl chain in its own
+group. There should not be any generic groups (like System, Protein) in the index
+file to avoid confusing the program (this is not relevant to tetrahedral order
+parameters however, which only work for water anyway).
+.sp
+\fBgmx order\fP can also give all
+diagonal elements of the order tensor and even calculate the deuterium
+order parameter Scd (default). If the option \fB\-szonly\fP is given, only one
+order tensor component (specified by the \fB\-d\fP option) is given and the
+order parameter per slice is calculated as well. If \fB\-szonly\fP is not
+selected, all diagonal elements and the deuterium order parameter is
+given.
+.sp
+The tetrahedrality order parameters can be determined
+around an atom. Both angle an distance order parameters are calculated. See
+P.\-L. Chau and A.J. Hardwick, Mol. Phys., 93, (1998), 511\-518.
+for more details.
+.SH OPTIONS
+.sp
+Options to specify input files:
+.INDENT 0.0
+.TP
+.B \fB\-f\fP [<.xtc/.trr/...>] (traj.xtc)
+Trajectory: xtc trr cpt gro g96 pdb tng
+.TP
+.B \fB\-n\fP [<.ndx>] (index.ndx)
+Index file
+.TP
+.B \fB\-nr\fP [<.ndx>] (index.ndx) (Optional)
+Index file
+.TP
+.B \fB\-s\fP [<.tpr>] (topol.tpr)
+Portable xdr run input file
+.UNINDENT
+.sp
+Options to specify output files:
+.INDENT 0.0
+.TP
+.B \fB\-o\fP [<.xvg>] (order.xvg)
+xvgr/xmgr file
+.TP
+.B \fB\-od\fP [<.xvg>] (deuter.xvg)
+xvgr/xmgr file
+.TP
+.B \fB\-ob\fP [<.pdb>] (eiwit.pdb) (Optional)
+Protein data bank file
+.TP
+.B \fB\-os\fP [<.xvg>] (sliced.xvg)
+xvgr/xmgr file
+.TP
+.B \fB\-Sg\fP [<.xvg>] (sg\-ang.xvg) (Optional)
+xvgr/xmgr file
+.TP
+.B \fB\-Sk\fP [<.xvg>] (sk\-dist.xvg) (Optional)
+xvgr/xmgr file
+.TP
+.B \fB\-Sgsl\fP [<.xvg>] (sg\-ang\-slice.xvg) (Optional)
+xvgr/xmgr file
+.TP
+.B \fB\-Sksl\fP [<.xvg>] (sk\-dist\-slice.xvg) (Optional)
+xvgr/xmgr file
+.UNINDENT
+.sp
+Other options:
+.INDENT 0.0
+.TP
+.B \fB\-b\fP <time> (0)
+Time of first frame to read from trajectory (default unit ps)
+.TP
+.B \fB\-e\fP <time> (0)
+Time of last frame to read from trajectory (default unit ps)
+.TP
+.B \fB\-dt\fP <time> (0)
+Only use frame when t MOD dt = first time (default unit ps)
+.TP
+.B \fB\-[no]w\fP  (no)
+View output \&.xvg, \&.xpm, \&.eps and \&.pdb files
+.TP
+.B \fB\-xvg\fP <enum> (xmgrace)
+xvg plot formatting: xmgrace, xmgr, none
+.TP
+.B \fB\-d\fP <enum> (z)
+Direction of the normal on the membrane: z, x, y
+.TP
+.B \fB\-sl\fP <int> (1)
+Calculate order parameter as function of box length, dividing the box into this number of slices.
+.TP
+.B \fB\-[no]szonly\fP  (no)
+Only give Sz element of order tensor. (axis can be specified with \fB\-d\fP)
+.TP
+.B \fB\-[no]permolecule\fP  (no)
+Compute per\-molecule Scd order parameters
+.TP
+.B \fB\-[no]radial\fP  (no)
+Compute a radial membrane normal
+.TP
+.B \fB\-[no]calcdist\fP  (no)
+Compute distance from a reference
+.UNINDENT
+.SH KNOWN ISSUES
+.INDENT 0.0
+.IP \(bu 2
+This tool only works for saturated carbons and united atom force fields.
+.IP \(bu 2
+For anything else, it is highly recommended to use a different analysis method!
+.IP \(bu 2
+The option \fB\-unsat\fP claimed to do analysis for unsaturated carbons
+.IP \(bu 2
+this but hasn\(aqt worked ever since it was added and has thus been removed.
+.UNINDENT
+.SH SEE ALSO
+.sp
+\fBgmx(1)\fP
+.sp
+More information about GROMACS is available at <\fI\%http://www.gromacs.org/\fP>.
+.SH COPYRIGHT
+2022, GROMACS development team
+.\" Generated by docutils manpage writer.
+.

@@ -1,0 +1,294 @@
+.\" Man page generated from reStructuredText.
+.
+.
+.nr rst2man-indent-level 0
+.
+.de1 rstReportMargin
+\\$1 \\n[an-margin]
+level \\n[rst2man-indent-level]
+level margin: \\n[rst2man-indent\\n[rst2man-indent-level]]
+-
+\\n[rst2man-indent0]
+\\n[rst2man-indent1]
+\\n[rst2man-indent2]
+..
+.de1 INDENT
+.\" .rstReportMargin pre:
+. RS \\$1
+. nr rst2man-indent\\n[rst2man-indent-level] \\n[an-margin]
+. nr rst2man-indent-level +1
+.\" .rstReportMargin post:
+..
+.de UNINDENT
+. RE
+.\" indent \\n[an-margin]
+.\" old: \\n[rst2man-indent\\n[rst2man-indent-level]]
+.nr rst2man-indent-level -1
+.\" new: \\n[rst2man-indent\\n[rst2man-indent-level]]
+.in \\n[rst2man-indent\\n[rst2man-indent-level]]u
+..
+.TH "GMX-ANALYZE" "1" "Apr 22, 2022" "2022.1" "GROMACS"
+.SH NAME
+gmx-analyze \- Analyze data sets
+.SH SYNOPSIS
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+gmx analyze [\fB\-f\fP \fI[<.xvg>]\fP] [\fB\-ac\fP \fI[<.xvg>]\fP] [\fB\-msd\fP \fI[<.xvg>]\fP] [\fB\-cc\fP \fI[<.xvg>]\fP]
+            [\fB\-dist\fP \fI[<.xvg>]\fP] [\fB\-av\fP \fI[<.xvg>]\fP] [\fB\-ee\fP \fI[<.xvg>]\fP]
+            [\fB\-fitted\fP \fI[<.xvg>]\fP] [\fB\-g\fP \fI[<.log>]\fP] [\fB\-[no]w\fP] [\fB\-xvg\fP \fI<enum>\fP]
+            [\fB\-[no]time\fP] [\fB\-b\fP \fI<real>\fP] [\fB\-e\fP \fI<real>\fP] [\fB\-n\fP \fI<int>\fP] [\fB\-[no]d\fP]
+            [\fB\-bw\fP \fI<real>\fP] [\fB\-errbar\fP \fI<enum>\fP] [\fB\-[no]integrate\fP]
+            [\fB\-aver_start\fP \fI<real>\fP] [\fB\-[no]xydy\fP] [\fB\-[no]regression\fP]
+            [\fB\-[no]luzar\fP] [\fB\-temp\fP \fI<real>\fP] [\fB\-fitstart\fP \fI<real>\fP]
+            [\fB\-fitend\fP \fI<real>\fP] [\fB\-filter\fP \fI<real>\fP] [\fB\-[no]power\fP]
+            [\fB\-[no]subav\fP] [\fB\-[no]oneacf\fP] [\fB\-acflen\fP \fI<int>\fP]
+            [\fB\-[no]normalize\fP] [\fB\-P\fP \fI<enum>\fP] [\fB\-fitfn\fP \fI<enum>\fP]
+            [\fB\-beginfit\fP \fI<real>\fP] [\fB\-endfit\fP \fI<real>\fP]
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.SH DESCRIPTION
+.sp
+\fBgmx analyze\fP reads an ASCII file and analyzes data sets.
+A line in the input file may start with a time
+(see option \fB\-time\fP) and any number of \fIy\fP\-values may follow.
+Multiple sets can also be
+read when they are separated by & (option \fB\-n\fP);
+in this case only one \fIy\fP\-value is read from each line.
+All lines starting with # and @ are skipped.
+All analyses can also be done for the derivative of a set
+(option \fB\-d\fP).
+.sp
+All options, except for \fB\-av\fP and \fB\-power\fP, assume that the
+points are equidistant in time.
+.sp
+\fBgmx analyze\fP always shows the average and standard deviation of each
+set, as well as the relative deviation of the third
+and fourth cumulant from those of a Gaussian distribution with the same
+standard deviation.
+.sp
+Option \fB\-ac\fP produces the autocorrelation function(s).
+Be sure that the time interval between data points is
+much shorter than the time scale of the autocorrelation.
+.sp
+Option \fB\-cc\fP plots the resemblance of set i with a cosine of
+i/2 periods. The formula is:
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+2 (integral from 0 to T of y(t) cos(i pi t) dt)^2
+/ integral from 0 to T of y^2(t) dt
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.sp
+This is useful for principal components obtained from covariance
+analysis, since the principal components of random diffusion are
+pure cosines.
+.sp
+Option \fB\-msd\fP produces the mean square displacement(s).
+.sp
+Option \fB\-dist\fP produces distribution plot(s).
+.sp
+Option \fB\-av\fP produces the average over the sets.
+Error bars can be added with the option \fB\-errbar\fP\&.
+The errorbars can represent the standard deviation, the error
+(assuming the points are independent) or the interval containing
+90% of the points, by discarding 5% of the points at the top and
+the bottom.
+.sp
+Option \fB\-ee\fP produces error estimates using block averaging.
+A set is divided in a number of blocks and averages are calculated for
+each block. The error for the total average is calculated from
+the variance between averages of the m blocks B_i as follows:
+error^2 = sum (B_i \- <B>)^2 / (m*(m\-1)).
+These errors are plotted as a function of the block size.
+Also an analytical block average curve is plotted, assuming
+that the autocorrelation is a sum of two exponentials.
+The analytical curve for the block average is:
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+f(t) = sigma\(ga\(ga*\(ga\(gasqrt(2/T (  alpha
+(tau_1 ((exp(\-t/tau_1) \- 1)
+tau_1/t + 1)) +
+(1\-alpha) (tau_2
+((exp(\-t/tau_2) \- 1) tau_2/t +
+1)))),
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.sp
+where T is the total time.
+alpha, tau_1 and tau_2 are
+obtained by fitting f^2(t) to error^2.
+When the actual block average is very close to the analytical curve,
+the error is sigma\(ga\(ga*\(ga\(gasqrt(2/T (a tau_1
++ (1\-a) tau_2)).
+The complete derivation is given in
+B. Hess, J. Chem. Phys. 116:209\-217, 2002.
+.sp
+Option \fB\-filter\fP prints the RMS high\-frequency fluctuation
+of each set and over all sets with respect to a filtered average.
+The filter is proportional to cos(pi t/len) where t goes from \-len/2
+to len/2. len is supplied with the option \fB\-filter\fP\&.
+This filter reduces oscillations with period len/2 and len by a factor
+of 0.79 and 0.33 respectively.
+.sp
+Option \fB\-g\fP fits the data to the function given with option
+\fB\-fitfn\fP\&.
+.sp
+Option \fB\-power\fP fits the data to b t^a, which is accomplished
+by fitting to a t + b on log\-log scale. All points after the first
+zero or with a negative value are ignored.
+.sp
+Option \fB\-luzar\fP performs a Luzar & Chandler kinetics analysis
+on output from gmx hbond\&. The input file can be taken directly
+from \fBgmx hbond \-ac\fP, and then the same result should be produced.
+.sp
+Option \fB\-fitfn\fP performs curve fitting to a number of different
+curves that make sense in the context of molecular dynamics, mainly
+exponential curves. More information is in the manual. To check the output
+of the fitting procedure the option \fB\-fitted\fP will print both the
+original data and the fitted function to a new data file. The fitting
+parameters are stored as comment in the output file.
+.SH OPTIONS
+.sp
+Options to specify input files:
+.INDENT 0.0
+.TP
+.B \fB\-f\fP [<.xvg>] (graph.xvg)
+xvgr/xmgr file
+.UNINDENT
+.sp
+Options to specify output files:
+.INDENT 0.0
+.TP
+.B \fB\-ac\fP [<.xvg>] (autocorr.xvg) (Optional)
+xvgr/xmgr file
+.TP
+.B \fB\-msd\fP [<.xvg>] (msd.xvg) (Optional)
+xvgr/xmgr file
+.TP
+.B \fB\-cc\fP [<.xvg>] (coscont.xvg) (Optional)
+xvgr/xmgr file
+.TP
+.B \fB\-dist\fP [<.xvg>] (distr.xvg) (Optional)
+xvgr/xmgr file
+.TP
+.B \fB\-av\fP [<.xvg>] (average.xvg) (Optional)
+xvgr/xmgr file
+.TP
+.B \fB\-ee\fP [<.xvg>] (errest.xvg) (Optional)
+xvgr/xmgr file
+.TP
+.B \fB\-fitted\fP [<.xvg>] (fitted.xvg) (Optional)
+xvgr/xmgr file
+.TP
+.B \fB\-g\fP [<.log>] (fitlog.log) (Optional)
+Log file
+.UNINDENT
+.sp
+Other options:
+.INDENT 0.0
+.TP
+.B \fB\-[no]w\fP  (no)
+View output \&.xvg, \&.xpm, \&.eps and \&.pdb files
+.TP
+.B \fB\-xvg\fP <enum> (xmgrace)
+xvg plot formatting: xmgrace, xmgr, none
+.TP
+.B \fB\-[no]time\fP  (yes)
+Expect a time in the input
+.TP
+.B \fB\-b\fP <real> (\-1)
+First time to read from set
+.TP
+.B \fB\-e\fP <real> (\-1)
+Last time to read from set
+.TP
+.B \fB\-n\fP <int> (1)
+Read this number of sets separated by &
+.TP
+.B \fB\-[no]d\fP  (no)
+Use the derivative
+.TP
+.B \fB\-bw\fP <real> (0.1)
+Binwidth for the distribution
+.TP
+.B \fB\-errbar\fP <enum> (none)
+Error bars for \fB\-av\fP: none, stddev, error, 90
+.TP
+.B \fB\-[no]integrate\fP  (no)
+Integrate data function(s) numerically using trapezium rule
+.TP
+.B \fB\-aver_start\fP <real> (0)
+Start averaging the integral from here
+.TP
+.B \fB\-[no]xydy\fP  (no)
+Interpret second data set as error in the y values for integrating
+.TP
+.B \fB\-[no]regression\fP  (no)
+Perform a linear regression analysis on the data. If \fB\-xydy\fP is set a second set will be interpreted as the error bar in the Y value. Otherwise, if multiple data sets are present a multilinear regression will be performed yielding the constant A that minimize chi^2 = (y \- A_0 x_0 \- A_1 x_1 \- ... \- A_N x_N)^2 where now Y is the first data set in the input file and x_i the others. Do read the information at the option \fB\-time\fP\&.
+.TP
+.B \fB\-[no]luzar\fP  (no)
+Do a Luzar and Chandler analysis on a correlation function and related as produced by gmx hbond\&. When in addition the \fB\-xydy\fP flag is given the second and fourth column will be interpreted as errors in c(t) and n(t).
+.TP
+.B \fB\-temp\fP <real> (298.15)
+Temperature for the Luzar hydrogen bonding kinetics analysis (K)
+.TP
+.B \fB\-fitstart\fP <real> (1)
+Time (ps) from which to start fitting the correlation functions in order to obtain the forward and backward rate constants for HB breaking and formation
+.TP
+.B \fB\-fitend\fP <real> (60)
+Time (ps) where to stop fitting the correlation functions in order to obtain the forward and backward rate constants for HB breaking and formation. Only with \fB\-gem\fP
+.TP
+.B \fB\-filter\fP <real> (0)
+Print the high\-frequency fluctuation after filtering with a cosine filter of this length
+.TP
+.B \fB\-[no]power\fP  (no)
+Fit data to: b t^a
+.TP
+.B \fB\-[no]subav\fP  (yes)
+Subtract the average before autocorrelating
+.TP
+.B \fB\-[no]oneacf\fP  (no)
+Calculate one ACF over all sets
+.TP
+.B \fB\-acflen\fP <int> (\-1)
+Length of the ACF, default is half the number of frames
+.TP
+.B \fB\-[no]normalize\fP  (yes)
+Normalize ACF
+.TP
+.B \fB\-P\fP <enum> (0)
+Order of Legendre polynomial for ACF (0 indicates none): 0, 1, 2, 3
+.TP
+.B \fB\-fitfn\fP <enum> (none)
+Fit function: none, exp, aexp, exp_exp, exp5, exp7, exp9
+.TP
+.B \fB\-beginfit\fP <real> (0)
+Time where to begin the exponential fit of the correlation function
+.TP
+.B \fB\-endfit\fP <real> (\-1)
+Time where to end the exponential fit of the correlation function, \-1 is until the end
+.UNINDENT
+.SH SEE ALSO
+.sp
+\fBgmx(1)\fP
+.sp
+More information about GROMACS is available at <\fI\%http://www.gromacs.org/\fP>.
+.SH COPYRIGHT
+2022, GROMACS development team
+.\" Generated by docutils manpage writer.
+.

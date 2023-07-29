@@ -1,0 +1,171 @@
+.\" Man page generated from reStructuredText.
+.
+.
+.nr rst2man-indent-level 0
+.
+.de1 rstReportMargin
+\\$1 \\n[an-margin]
+level \\n[rst2man-indent-level]
+level margin: \\n[rst2man-indent\\n[rst2man-indent-level]]
+-
+\\n[rst2man-indent0]
+\\n[rst2man-indent1]
+\\n[rst2man-indent2]
+..
+.de1 INDENT
+.\" .rstReportMargin pre:
+. RS \\$1
+. nr rst2man-indent\\n[rst2man-indent-level] \\n[an-margin]
+. nr rst2man-indent-level +1
+.\" .rstReportMargin post:
+..
+.de UNINDENT
+. RE
+.\" indent \\n[an-margin]
+.\" old: \\n[rst2man-indent\\n[rst2man-indent-level]]
+.nr rst2man-indent-level -1
+.\" new: \\n[rst2man-indent\\n[rst2man-indent-level]]
+.in \\n[rst2man-indent\\n[rst2man-indent-level]]u
+..
+.TH "GMX-DENSMAP" "1" "Apr 22, 2022" "2022.1" "GROMACS"
+.SH NAME
+gmx-densmap \- Calculate 2D planar or axial-radial density maps
+.SH SYNOPSIS
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+gmx densmap [\fB\-f\fP \fI[<.xtc/.trr/...>]\fP] [\fB\-s\fP \fI[<.tpr/.gro/...>]\fP] [\fB\-n\fP \fI[<.ndx>]\fP]
+            [\fB\-od\fP \fI[<.dat>]\fP] [\fB\-o\fP \fI[<.xpm>]\fP] [\fB\-b\fP \fI<time>\fP] [\fB\-e\fP \fI<time>\fP]
+            [\fB\-dt\fP \fI<time>\fP] [\fB\-[no]w\fP] [\fB\-bin\fP \fI<real>\fP] [\fB\-aver\fP \fI<enum>\fP]
+            [\fB\-xmin\fP \fI<real>\fP] [\fB\-xmax\fP \fI<real>\fP] [\fB\-n1\fP \fI<int>\fP] [\fB\-n2\fP \fI<int>\fP]
+            [\fB\-amax\fP \fI<real>\fP] [\fB\-rmax\fP \fI<real>\fP] [\fB\-[no]mirror\fP] [\fB\-[no]sums\fP]
+            [\fB\-unit\fP \fI<enum>\fP] [\fB\-dmin\fP \fI<real>\fP] [\fB\-dmax\fP \fI<real>\fP]
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.SH DESCRIPTION
+.sp
+\fBgmx densmap\fP computes 2D number\-density maps.
+It can make planar and axial\-radial density maps.
+The output \&.xpm file can be visualized with for instance xv
+and can be converted to postscript with \fBxpm2ps\fP\&.
+Optionally, output can be in text form to a \&.dat file with \fB\-od\fP,
+instead of the usual \&.xpm file with \fB\-o\fP\&.
+.sp
+The default analysis is a 2\-D number\-density map for a selected
+group of atoms in the x\-y plane.
+The averaging direction can be changed with the option \fB\-aver\fP\&.
+When \fB\-xmin\fP and/or \fB\-xmax\fP are set only atoms that are
+within the limit(s) in the averaging direction are taken into account.
+The grid spacing is set with the option \fB\-bin\fP\&.
+When \fB\-n1\fP or \fB\-n2\fP is non\-zero, the grid
+size is set by this option.
+Box size fluctuations are properly taken into account.
+.sp
+When options \fB\-amax\fP and \fB\-rmax\fP are set, an axial\-radial
+number\-density map is made. Three groups should be supplied, the centers
+of mass of the first two groups define the axis, the third defines the
+analysis group. The axial direction goes from \-amax to +amax, where
+the center is defined as the midpoint between the centers of mass and
+the positive direction goes from the first to the second center of mass.
+The radial direction goes from 0 to rmax or from \-rmax to +rmax
+when the \fB\-mirror\fP option has been set.
+.sp
+The normalization of the output is set with the \fB\-unit\fP option.
+The default produces a true number density. Unit \fBnm\-2\fP leaves out
+the normalization for the averaging or the angular direction.
+Option \fBcount\fP produces the count for each grid cell.
+When you do not want the scale in the output to go
+from zero to the maximum density, you can set the maximum
+with the option \fB\-dmax\fP\&.
+.SH OPTIONS
+.sp
+Options to specify input files:
+.INDENT 0.0
+.TP
+.B \fB\-f\fP [<.xtc/.trr/...>] (traj.xtc)
+Trajectory: xtc trr cpt gro g96 pdb tng
+.TP
+.B \fB\-s\fP [<.tpr/.gro/...>] (topol.tpr) (Optional)
+Structure+mass(db): tpr gro g96 pdb brk ent
+.TP
+.B \fB\-n\fP [<.ndx>] (index.ndx) (Optional)
+Index file
+.UNINDENT
+.sp
+Options to specify output files:
+.INDENT 0.0
+.TP
+.B \fB\-od\fP [<.dat>] (densmap.dat) (Optional)
+Generic data file
+.TP
+.B \fB\-o\fP [<.xpm>] (densmap.xpm)
+X PixMap compatible matrix file
+.UNINDENT
+.sp
+Other options:
+.INDENT 0.0
+.TP
+.B \fB\-b\fP <time> (0)
+Time of first frame to read from trajectory (default unit ps)
+.TP
+.B \fB\-e\fP <time> (0)
+Time of last frame to read from trajectory (default unit ps)
+.TP
+.B \fB\-dt\fP <time> (0)
+Only use frame when t MOD dt = first time (default unit ps)
+.TP
+.B \fB\-[no]w\fP  (no)
+View output \&.xvg, \&.xpm, \&.eps and \&.pdb files
+.TP
+.B \fB\-bin\fP <real> (0.02)
+Grid size (nm)
+.TP
+.B \fB\-aver\fP <enum> (z)
+The direction to average over: z, y, x
+.TP
+.B \fB\-xmin\fP <real> (\-1)
+Minimum coordinate for averaging
+.TP
+.B \fB\-xmax\fP <real> (\-1)
+Maximum coordinate for averaging
+.TP
+.B \fB\-n1\fP <int> (0)
+Number of grid cells in the first direction
+.TP
+.B \fB\-n2\fP <int> (0)
+Number of grid cells in the second direction
+.TP
+.B \fB\-amax\fP <real> (0)
+Maximum axial distance from the center
+.TP
+.B \fB\-rmax\fP <real> (0)
+Maximum radial distance
+.TP
+.B \fB\-[no]mirror\fP  (no)
+Add the mirror image below the axial axis
+.TP
+.B \fB\-[no]sums\fP  (no)
+Print density sums (1D map) to stdout
+.TP
+.B \fB\-unit\fP <enum> (nm\-3)
+Unit for the output: nm\-3, nm\-2, count
+.TP
+.B \fB\-dmin\fP <real> (0)
+Minimum density in output
+.TP
+.B \fB\-dmax\fP <real> (0)
+Maximum density in output (0 means calculate it)
+.UNINDENT
+.SH SEE ALSO
+.sp
+\fBgmx(1)\fP
+.sp
+More information about GROMACS is available at <\fI\%http://www.gromacs.org/\fP>.
+.SH COPYRIGHT
+2022, GROMACS development team
+.\" Generated by docutils manpage writer.
+.

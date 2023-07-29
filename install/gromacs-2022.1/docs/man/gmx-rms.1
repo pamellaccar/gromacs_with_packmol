@@ -1,0 +1,212 @@
+.\" Man page generated from reStructuredText.
+.
+.
+.nr rst2man-indent-level 0
+.
+.de1 rstReportMargin
+\\$1 \\n[an-margin]
+level \\n[rst2man-indent-level]
+level margin: \\n[rst2man-indent\\n[rst2man-indent-level]]
+-
+\\n[rst2man-indent0]
+\\n[rst2man-indent1]
+\\n[rst2man-indent2]
+..
+.de1 INDENT
+.\" .rstReportMargin pre:
+. RS \\$1
+. nr rst2man-indent\\n[rst2man-indent-level] \\n[an-margin]
+. nr rst2man-indent-level +1
+.\" .rstReportMargin post:
+..
+.de UNINDENT
+. RE
+.\" indent \\n[an-margin]
+.\" old: \\n[rst2man-indent\\n[rst2man-indent-level]]
+.nr rst2man-indent-level -1
+.\" new: \\n[rst2man-indent\\n[rst2man-indent-level]]
+.in \\n[rst2man-indent\\n[rst2man-indent-level]]u
+..
+.TH "GMX-RMS" "1" "Apr 22, 2022" "2022.1" "GROMACS"
+.SH NAME
+gmx-rms \- Calculate RMSDs with a reference structure and RMSD matrices
+.SH SYNOPSIS
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+gmx rms [\fB\-s\fP \fI[<.tpr/.gro/...>]\fP] [\fB\-f\fP \fI[<.xtc/.trr/...>]\fP]
+        [\fB\-f2\fP \fI[<.xtc/.trr/...>]\fP] [\fB\-n\fP \fI[<.ndx>]\fP] [\fB\-o\fP \fI[<.xvg>]\fP]
+        [\fB\-mir\fP \fI[<.xvg>]\fP] [\fB\-a\fP \fI[<.xvg>]\fP] [\fB\-dist\fP \fI[<.xvg>]\fP] [\fB\-m\fP \fI[<.xpm>]\fP]
+        [\fB\-bin\fP \fI[<.dat>]\fP] [\fB\-bm\fP \fI[<.xpm>]\fP] [\fB\-b\fP \fI<time>\fP] [\fB\-e\fP \fI<time>\fP]
+        [\fB\-dt\fP \fI<time>\fP] [\fB\-tu\fP \fI<enum>\fP] [\fB\-[no]w\fP] [\fB\-xvg\fP \fI<enum>\fP]
+        [\fB\-what\fP \fI<enum>\fP] [\fB\-[no]pbc\fP] [\fB\-fit\fP \fI<enum>\fP] [\fB\-prev\fP \fI<int>\fP]
+        [\fB\-[no]split\fP] [\fB\-skip\fP \fI<int>\fP] [\fB\-skip2\fP \fI<int>\fP] [\fB\-max\fP \fI<real>\fP]
+        [\fB\-min\fP \fI<real>\fP] [\fB\-bmax\fP \fI<real>\fP] [\fB\-bmin\fP \fI<real>\fP] [\fB\-[no]mw\fP]
+        [\fB\-nlevels\fP \fI<int>\fP] [\fB\-ng\fP \fI<int>\fP]
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.SH DESCRIPTION
+.sp
+\fBgmx rms\fP compares two structures by computing the root mean square
+deviation (RMSD), the size\-independent rho similarity parameter
+(\fBrho\fP) or the scaled rho (\fBrhosc\fP),
+see Maiorov & Crippen, Proteins \fB22\fP, 273 (1995).
+This is selected by \fB\-what\fP\&.
+.sp
+Each structure from a trajectory (\fB\-f\fP) is compared to a
+reference structure. The reference structure
+is taken from the structure file (\fB\-s\fP).
+.sp
+With option \fB\-mir\fP also a comparison with the mirror image of
+the reference structure is calculated.
+This is useful as a reference for \(aqsignificant\(aq values, see
+Maiorov & Crippen, Proteins \fB22\fP, 273 (1995).
+.sp
+Option \fB\-prev\fP produces the comparison with a previous frame
+the specified number of frames ago.
+.sp
+Option \fB\-m\fP produces a matrix in \&.xpm format of
+comparison values of each structure in the trajectory with respect to
+each other structure. This file can be visualized with for instance
+\fBxv\fP and can be converted to postscript with gmx xpm2ps\&.
+.sp
+Option \fB\-fit\fP controls the least\-squares fitting of
+the structures on top of each other: complete fit (rotation and
+translation), translation only, or no fitting at all.
+.sp
+Option \fB\-mw\fP controls whether mass weighting is done or not.
+If you select the option (default) and
+supply a valid \&.tpr file masses will be taken from there,
+otherwise the masses will be deduced from the \fBatommass.dat\fP file in
+\fBGMXLIB\fP (deprecated). This is fine for proteins, but not
+necessarily for other molecules. You can check whether this happened by
+turning on the \fB\-debug\fP flag and inspecting the log file.
+.sp
+With \fB\-f2\fP, the \(aqother structures\(aq are taken from a second
+trajectory, this generates a comparison matrix of one trajectory
+versus the other.
+.sp
+Option \fB\-bin\fP does a binary dump of the comparison matrix.
+.sp
+Option \fB\-bm\fP produces a matrix of average bond angle deviations
+analogously to the \fB\-m\fP option. Only bonds between atoms in the
+comparison group are considered.
+.SH OPTIONS
+.sp
+Options to specify input files:
+.INDENT 0.0
+.TP
+.B \fB\-s\fP [<.tpr/.gro/...>] (topol.tpr)
+Structure+mass(db): tpr gro g96 pdb brk ent
+.TP
+.B \fB\-f\fP [<.xtc/.trr/...>] (traj.xtc)
+Trajectory: xtc trr cpt gro g96 pdb tng
+.TP
+.B \fB\-f2\fP [<.xtc/.trr/...>] (traj.xtc) (Optional)
+Trajectory: xtc trr cpt gro g96 pdb tng
+.TP
+.B \fB\-n\fP [<.ndx>] (index.ndx) (Optional)
+Index file
+.UNINDENT
+.sp
+Options to specify output files:
+.INDENT 0.0
+.TP
+.B \fB\-o\fP [<.xvg>] (rmsd.xvg)
+xvgr/xmgr file
+.TP
+.B \fB\-mir\fP [<.xvg>] (rmsdmir.xvg) (Optional)
+xvgr/xmgr file
+.TP
+.B \fB\-a\fP [<.xvg>] (avgrp.xvg) (Optional)
+xvgr/xmgr file
+.TP
+.B \fB\-dist\fP [<.xvg>] (rmsd\-dist.xvg) (Optional)
+xvgr/xmgr file
+.TP
+.B \fB\-m\fP [<.xpm>] (rmsd.xpm) (Optional)
+X PixMap compatible matrix file
+.TP
+.B \fB\-bin\fP [<.dat>] (rmsd.dat) (Optional)
+Generic data file
+.TP
+.B \fB\-bm\fP [<.xpm>] (bond.xpm) (Optional)
+X PixMap compatible matrix file
+.UNINDENT
+.sp
+Other options:
+.INDENT 0.0
+.TP
+.B \fB\-b\fP <time> (0)
+Time of first frame to read from trajectory (default unit ps)
+.TP
+.B \fB\-e\fP <time> (0)
+Time of last frame to read from trajectory (default unit ps)
+.TP
+.B \fB\-dt\fP <time> (0)
+Only use frame when t MOD dt = first time (default unit ps)
+.TP
+.B \fB\-tu\fP <enum> (ps)
+Unit for time values: fs, ps, ns, us, ms, s
+.TP
+.B \fB\-[no]w\fP  (no)
+View output \&.xvg, \&.xpm, \&.eps and \&.pdb files
+.TP
+.B \fB\-xvg\fP <enum> (xmgrace)
+xvg plot formatting: xmgrace, xmgr, none
+.TP
+.B \fB\-what\fP <enum> (rmsd)
+Structural difference measure: rmsd, rho, rhosc
+.TP
+.B \fB\-[no]pbc\fP  (yes)
+PBC check
+.TP
+.B \fB\-fit\fP <enum> (rot+trans)
+Fit to reference structure: rot+trans, translation, none
+.TP
+.B \fB\-prev\fP <int> (0)
+Compare with previous frame
+.TP
+.B \fB\-[no]split\fP  (no)
+Split graph where time is zero
+.TP
+.B \fB\-skip\fP <int> (1)
+Only write every nr\-th frame to matrix
+.TP
+.B \fB\-skip2\fP <int> (1)
+Only write every nr\-th frame to matrix
+.TP
+.B \fB\-max\fP <real> (\-1)
+Maximum level in comparison matrix
+.TP
+.B \fB\-min\fP <real> (\-1)
+Minimum level in comparison matrix
+.TP
+.B \fB\-bmax\fP <real> (\-1)
+Maximum level in bond angle matrix
+.TP
+.B \fB\-bmin\fP <real> (\-1)
+Minimum level in bond angle matrix
+.TP
+.B \fB\-[no]mw\fP  (yes)
+Use mass weighting for superposition
+.TP
+.B \fB\-nlevels\fP <int> (80)
+Number of levels in the matrices
+.TP
+.B \fB\-ng\fP <int> (1)
+Number of groups to compute RMS between
+.UNINDENT
+.SH SEE ALSO
+.sp
+\fBgmx(1)\fP
+.sp
+More information about GROMACS is available at <\fI\%http://www.gromacs.org/\fP>.
+.SH COPYRIGHT
+2022, GROMACS development team
+.\" Generated by docutils manpage writer.
+.
