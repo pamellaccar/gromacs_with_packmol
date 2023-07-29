@@ -86,6 +86,8 @@ NPT equilibration
 
 ```gmx_mpi mdrun -deffnm md```
 
+GROMACS reminds you: "Creativity in science, as in art, cannot be organized. It arises spontaneously from individual talent. Well-run laboratories can foster it, but hierarchical organizations, inflexible bureaucratic rules, and mountains of futile paperwork can kill it." (Max Perutz)
+
 <h2> That's all folks! </h2>  
 
 ***(for now)***
